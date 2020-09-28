@@ -838,7 +838,8 @@
   :ensure t
   :defer t
   :mode ("\\.html\\'" "\\.css\\'" "\\.php\\'")
-  :bind ("C-c C-v" . browse-url-of-buffer)
+  :bind (:map web-mode-map
+	      ("C-c C-v" . browse-url-of-buffer))
   :config
   (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-enable-current-element-highlight t)

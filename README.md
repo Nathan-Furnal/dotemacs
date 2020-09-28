@@ -17,7 +17,7 @@ This is an eternal work in progress as is Emacs.
 - `snippets` : additional mode-specific code snippets. 
 
 - `lisp` : Lisp code, helper functions or useful pieces of code.
-  (empty of as now)
+  (empty as of now)
 
 - `package-quickstart.el` : is automatically generated so you shouldn't
 copy it. 
