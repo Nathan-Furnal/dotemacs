@@ -16,7 +16,8 @@ This is an eternal work in progress as is Emacs.
   
 - `snippets` : additional mode-specific code snippets. 
 
-- `lisp` : Lisp code, helper functions or useful pieces of code. 
+- `lisp` : Lisp code, helper functions or useful pieces of code.
+  (empty of as now)
 
 - `package-quickstart.el` : is automatically generated so you shouldn't
 copy it. 
@@ -24,8 +25,8 @@ copy it.
 
 ## Navigation
 
-Most of the navigation tools are included within Emacs, such as
-`icomplete`, `treemacs` to quickly move within projects. 
+I use the excellent `selectrum` and `ctrlf` to navigate and
+search. Projects can be set and then explored with `treemacs`.
 
 ## LSP-mode
 
@@ -51,8 +52,9 @@ Works well for Python/R/Julia for now. It supports different
 environments in org-mode to obtain files *à la* notebook,
 `emacs-jupyter` does the heavy lifting. 
 
-Since I use `miniconda` to manage my environments, `conda.el` works
-well to switch between environments. 
+I used `conda.el` to switch environments for Python but `elpy`, my
+Python IDE actually relies on `pyvenv` so I'll stick with that
+instead.
 
 ## Miscellaneous
 

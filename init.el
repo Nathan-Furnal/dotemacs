@@ -98,7 +98,7 @@
   :ensure t
   :init
   (setq modus-operandi-theme-org-blocks 'greyscale)
-  (setq modus-operandi-theme-completions nil)
+  (setq modus-operandi-theme-completions 'opinionated)
   (setq modus-operandi-theme-fringes 'subtle)
   (setq modus-operandi-theme-scale-headings t
 	modus-operandi-theme-slanted-constructs t
@@ -133,7 +133,7 @@
   :ensure t
   :init
   (setq modus-vivendi-theme-org-blocks 'greyscale)
-  (setq modus-vivendi-theme-completions nil)
+  (setq modus-vivendi-theme-completions 'opinionated)
   (setq modus-vivendi-theme-fringes 'subtle)
   (setq modus-vivendi-theme-scale-headings t
 	modus-vivendi-theme-slanted-constructs t
