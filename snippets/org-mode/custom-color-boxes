@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: custom-color-boxes
+# key: <cust-colorbox
+# comment:
+# This snippet provides two custom boxes, one for a summary and another
+# for exam questions, they appear in the TOC. 
+# --
+
+#+begin_src latex
+\newtcolorbox[auto counter, number within=section, list inside=qexams]{qexam}[2][]{%
+  colback=red!5!white,colframe=red!75!black,fonttitle=\bfseries,
+  title=Question d'examen ~\thetcbcounter: #2,#1}
+
+\newtcolorbox[auto counter, number within=section, list inside=resums]{resum}{%
+  fonttitle=\bfseries,
+  title=Résumé ~\thetcbcounter,}
+
+\tcblistof[\section*]{qexams}{Liste des questions d'examen}
+
+\tcblistof[\section*]{resums}{Liste des résumés}
+#+end_src

@@ -1,0 +1,18 @@
+# Ignore dot files except for gitignore
+.*
+!.gitignore
+
+# Ignore back up files, ending with ~
+*~
+
+# Ignore other irrelevant files and dirs
+eshell
+auto-save-list
+elpa
+ede-*
+projectile*
+recentf*
+transient
+flycheck*
+var
+package-quickstart*

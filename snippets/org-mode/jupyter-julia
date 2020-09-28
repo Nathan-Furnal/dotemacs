@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: julia
+# key: jul_
+# --
+#+begin_src jupyter-julia
+$0
+#+end_src
