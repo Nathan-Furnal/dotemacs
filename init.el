@@ -226,7 +226,7 @@
 (use-package imenu-list
   :ensure t
   :after imenu
-  :bind ("C-x ," . imenu-list))
+  :bind ("C-c i" . imenu-list))
 
 (use-package flimenu
   :ensure
@@ -388,8 +388,14 @@
 	org-highlight-latex-and-related '(latex))       ; Coloring latex code in org mode
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
 
+  
+  ;; Setting macros that can be expanded
+  ;; Ref in the manual https://orgmode.org/manual/Macro-Replacement.html
+  ;; Good ref in a blog post : https://bnolet.me/posts/2019/06/macros-in-org-mode/
+  (setq org-export-global-macros
+	'(("glossentry" . "#+latex_header_extra: \\newglossaryentry{$1}{name=$2, description={$3}}")))
   :bind (:map org-mode-map
-	      ("C-," . imenu-list)))
+	      ("C-c i" . imenu-list)))
 
 
 ;; Custome LaTeX templates
