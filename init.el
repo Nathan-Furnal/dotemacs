@@ -53,6 +53,7 @@
   :init
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
+  (menu-bar-mode 1)
   (set-face-attribute 'default nil :family "Roboto Mono" :height 100)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 100)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 110)
@@ -70,7 +71,6 @@
   (fset 'yes-or-no-p 'y-or-n-p)                 ; y-or-n-p makes answering questions faster
   (setq gc-cons-threshold 100000000)            ; Allocating more memory, it's the future
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
-  (electric-pair-mode t)			; Auto-pairing of parentheses
   (delete-selection-mode t)                     ; Start writing straight after deletion
   (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
   (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
@@ -85,6 +85,20 @@
 	 ("C-x \"" . split-window-right)
 	 ("C-x à" . delete-window))
   :hook (text-mode-hook . auto-fill-mode))
+
+(use-package elec-pair
+  :ensure nil
+  :defer t
+  :config
+
+  (defun my/electric-pair-local-text-mode ()
+    "Advise and wrap electric pairs in text mode."
+    (add-function :before-until electric-pair-inhibit-predicate
+		  (lambda (c) (eq c ?<)))
+    (electric-pair-local-mode))
+  
+  :hook ((prog-mode-hook . electric-pair-local-mode)
+	 (text-mode-hook . my/electric-pair-local-text-mode)))
 
 (use-package recentf
   ;; Loads after 2 second of idle time.
@@ -380,7 +394,9 @@
 
 ;; Custome LaTeX templates
 ;; Requires a full LaTeX install, usually called `texlive'.
-
+;; The arch wiki https://wiki.archlinux.org/index.php/TeX_Live details how to use it
+;; latex compilation found at https://github.com/jkitchin/org-ref/blob/master/org-ref.org
+;; Better latexmk for glossaries with a ~/.latexmkrc file. Explained at `https://tex.stackexchange.com/a/44316/223017'.
 
 (use-package ox-latex
   :after org
@@ -392,11 +408,8 @@
    org-latex-listings 'minted
    org-latex-minted-options '(("linenos=true") ("bgcolor=gray!10!white")))
 
-  (setq org-latex-pdf-process
-	'("pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
-	  "bibtex %b"
-	  "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"
-	  "pdflatex -interaction nonstopmode -shell-escape -output-directory %o %f"))
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
+
 
   (add-to-list 'org-latex-classes
 	       '("notes"
@@ -471,8 +484,7 @@
 
 (use-package org-ref
   :ensure t
-  :after org
-  :defer 3)
+  :defer 2)
   
 (use-package pdf-tools
   :ensure t
