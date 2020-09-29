@@ -573,6 +573,14 @@
 ;;; Editing
 ;;;========================================
 
+(use-package multiple-cursors
+  :ensure t
+  :defer t
+  :bind   (("C-S-m" . mc/edit-lines)
+	   ("C->" . mc/mark-next-like-this)
+	   ("C-<" . mc/mark-previous-like-this)
+	   ("C-c C-<" . mc/mark-all-like-this)))
+
 (use-package iedit
   :ensure t
   :defer t
@@ -882,9 +890,9 @@
 
 (use-package yasnippet
   :ensure t
-  :defer t
-  :hook ((prog-mode-hook . yas-minor-mode)
-	 (text-mode-hook . yas-minor-mode)))
+  :defer 5
+  :config
+  (yas-global-mode))
 
 (use-package yasnippet-snippets
   :ensure t
@@ -902,7 +910,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(centaur-tabs yasnippet-snippets emmet-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode jupyter elpy julia-repl julia-mode elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs iedit magit markdown-mode deft shackle org-ref cdlatex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum doom-modeline modus-vivendi-theme modus-operandi-theme diminish use-package)))
+   '(auctex centaur-tabs yasnippet-snippets emmet-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode jupyter elpy julia-repl julia-mode elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs iedit magit markdown-mode deft shackle org-ref cdlatex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum doom-modeline modus-vivendi-theme modus-operandi-theme diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
