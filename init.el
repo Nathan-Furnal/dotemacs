@@ -573,7 +573,13 @@
          ("\\.markdown\\'" . markdown-mode))
   :config
   (setq markdown-fontify-code-blocks-natively t)
-  :init (setq markdown-command "pandoc"))
+  :init (setq markdown-command "pandoc")
+  ;; I use those bindings for window movement
+  :bind (:map markdown-mode-map
+	      ("C-c <left>" . nil)
+	      ("C-c <right>" . nil)
+	      ("C-c <up>" . nil)
+	      ("C-c <down>" . nil)))
 
 ;;;========================================
 ;;; Version control
@@ -616,6 +622,14 @@
 	treemacs-width 20)
   :bind ("C-c t" . treemacs))
 
+;;;========================================
+;;; Project management
+;;;========================================
+
+(use-package ede
+  :ensure nil
+  :defer t
+  :hook (prog-mode-hook . ede-minor-mode))
 
 ;;;========================================
 ;;; Developement with LSP

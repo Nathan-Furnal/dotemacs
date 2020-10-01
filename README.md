@@ -6,7 +6,10 @@ dotemacs](https://protesilaos.com/dotemacs/) and tries to include
 [Doom
 Emacs'](https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly)
 good practices for startup time. Startup time is reduced through
-deferred loading as much as possible. 
+deferred loading as much as possible, native compilation is also used
+for improved performance, see [this
+presentation](http://akrl.sdf.org/gccemacs.html#org57861fe) for more
+information. 
 
 This is an eternal work in progress as is Emacs. 
 
@@ -18,9 +21,6 @@ This is an eternal work in progress as is Emacs.
 
 - `lisp` : Lisp code, helper functions or useful pieces of code.
   (empty as of now)
-
-- `package-quickstart.el` : is automatically generated so you shouldn't
-copy it. 
 
 
 ## Navigation
@@ -40,6 +40,9 @@ I often write in Org-mode so I use `flyspell` to check out my writing
 mistakes. I also use snippets for code blocks or LaTeX inserts which I
 use all the time. For easy and quick referencing, I use the excellent
 `org-ref` package. 
+
+There's additional code pertaining to my writing configuration, such
+as LaTeX classes and compilation. 
 
 ## Snippets
 
