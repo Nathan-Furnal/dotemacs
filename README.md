@@ -6,10 +6,7 @@ dotemacs](https://protesilaos.com/dotemacs/) and tries to include
 [Doom
 Emacs'](https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly)
 good practices for startup time. Startup time is reduced through
-deferred loading as much as possible, native compilation is also used
-for improved performance, see [this
-presentation](http://akrl.sdf.org/gccemacs.html#org57861fe) for more
-information. 
+deferred loading as much as possible.
 
 This is an eternal work in progress as is Emacs. 
 
