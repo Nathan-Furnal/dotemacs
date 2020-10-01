@@ -1,4 +1,5 @@
-;;; light.el --- A lightweight init file with Emacs' builtin tools. -*- lexical-binding: t; -*-
+;;; light.el --- A lightweight init file with Emacs' builtin tools.
+;;; -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; This file aims to provide a lightweight Emacs experience with focus
@@ -543,23 +544,6 @@
 		deft-use-filename-as-title t)                      ; use filename instead of first line of doc
   :bind ("C-c d" . deft))
 
-
-(use-package ob
-  :after org
-  :defer t
-  :config
-  (setq org-babel-load-languages
-	'((latex . t)
-	  (python . t)
-	  (R . t)
-	  (shell . t)
-	  (emacs-lisp . t)
-	  (jupyter . t)))
-  
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   org-babel-load-languages))
-
 ;;;========================================
 ;;; Markdown
 ;;;========================================
@@ -652,9 +636,11 @@
 (use-package lsp-ui
   :ensure t
   :defer t
+  :config
+  (setq lsp-ui-sideline-enable nil)
   :hook (lsp-mode-hook . lsp-ui-mode)
   :bind (:map lsp-ui-mode-map
-	      ("C-," . lsp-ui-imenu)))
+	      ("C-c i" . lsp-ui-imenu)))
 
 ;; Debugger
 
@@ -787,7 +773,7 @@
 (use-package jupyter
   :ensure t
   :defer t
-  :after ob
+  :after (ob)
   :init
   (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                        (:session . "py")))
@@ -799,6 +785,22 @@
   (setq org-babel-default-header-args:jupyter-R '((:async . "yes")
 						  (:session . "R")
 						  (:kernel . "ir"))))
+
+(use-package ob
+  :after org
+  :defer t
+  :config
+  (setq org-babel-load-languages
+	'((latex . t)
+	  (python . t)
+	  (R . t)
+	  (shell . t)
+	  (emacs-lisp . t)
+	  (jupyter . t)))
+  
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   org-babel-load-languages))
 
 ;;;========================================
 ;;; Web development
@@ -932,17 +934,13 @@
   :after yasnippet)
 
 ;;; light.el ends here
-
-
-
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(auctex centaur-tabs yasnippet-snippets emmet-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode jupyter elpy julia-repl julia-mode elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs iedit magit markdown-mode deft shackle org-ref cdlatex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum doom-modeline modus-vivendi-theme modus-operandi-theme diminish use-package)))
+   '(jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
