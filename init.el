@@ -520,8 +520,7 @@
 	 (prog-mode-hook . shackle-mode))
   :config
   (setq shackle-rules
-	'(("*mavenproject*" :regexp t :align 'bottom :size 0.25)    ; Open DAP-java at the bottom and take 1/4 of the frame
-	  (pdf-view-mode :align right)                                   ; Ensure PDF view opens on the right
+	'((pdf-view-mode :align right)                                   ; Ensure PDF view opens on the right
 	  ("*Python*" :align 'bottom :size 0.25))))                      ; Open *Python* buffer at the bottom and take 1/4 of the frame
 
 ;; Emacs document annotator, using Org-mode.
@@ -631,6 +630,7 @@
 	 (js2-mode-hook . lsp-deferred)
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
+	 (java-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
@@ -651,7 +651,8 @@
   :ensure t
   :defer t
   :after lsp-mode
-  :config (dap-auto-configure-mode)
+  :config
+  (dap-auto-configure-mode)
   :bind (:map dap-mode-map
 	      ("C-c C-c" . dap-java-debug)
 	      ("C-c R" . dap-java-run-test-class)
@@ -818,6 +819,7 @@
 
 (use-package lsp-java
   :ensure t
+  :defer t
   :after lsp
   :config
   (defun my/java-mode-hook ()
@@ -832,6 +834,7 @@
 
 (use-package dap-java
   :ensure nil
+  :defer t
   :after (lsp-java))
 
 ;;;========================================
