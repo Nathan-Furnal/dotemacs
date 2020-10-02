@@ -645,6 +645,13 @@
   :bind (:map lsp-ui-mode-map
 	      ("C-c i" . lsp-ui-imenu)))
 
+;; LSP integration with treemacs
+
+(use-package lsp-treemacs
+  :ensure t
+  :defer t
+  :after lsp)
+
 ;; Debugger
 
 (use-package dap-mode
@@ -822,6 +829,7 @@
   :defer t
   :after lsp
   :config
+  (setq lsp-java-format-on-type-enabled nil)
   (defun my/java-mode-hook ()
     (setq c-basic-offset 2
           c-label-offset 0
