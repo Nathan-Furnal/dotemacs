@@ -17,3 +17,9 @@ flycheck*
 var
 package-quickstart*
 eln-cache
+*dap*
+*eclipse*
+*cache*
+*lsp*
+*mc-lists*
+

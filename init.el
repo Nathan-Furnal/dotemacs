@@ -520,8 +520,9 @@
 	 (prog-mode-hook . shackle-mode))
   :config
   (setq shackle-rules
-	'((pdf-view-mode :align right)                ; Ensure PDF view opens on the right
-	  ("*Python*" :align 'bottom :size 0.25))))   ; Open *Python* buffer at the bottom and take 1/4 of the frame
+	'(("*mavenproject*" :regexp t :align 'bottom :size 0.25)    ; Open DAP-java at the bottom and take 1/4 of the frame
+	  (pdf-view-mode :align right)                                   ; Ensure PDF view opens on the right
+	  ("*Python*" :align 'bottom :size 0.25))))                      ; Open *Python* buffer at the bottom and take 1/4 of the frame
 
 ;; Emacs document annotator, using Org-mode.
 
@@ -603,7 +604,7 @@
   :defer t
   :config
   (setq treemacs-no-png-images t
-	treemacs-width 20)
+	treemacs-width 24)
   :bind ("C-c t" . treemacs))
 
 ;;;========================================
@@ -631,7 +632,9 @@
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
-  commands (lsp lsp-deferred))
+  :commands (lsp lsp-deferred)
+  :bind (:map lsp-mode-map
+	      ("M-<RET>" . lsp-execute-code-action)))
 
 (use-package lsp-ui
   :ensure t
@@ -648,7 +651,12 @@
   :ensure t
   :defer t
   :after lsp-mode
-  :config (dap-auto-configure-mode))
+  :config (dap-auto-configure-mode)
+  :bind (:map dap-mode-map
+	      ("C-c C-c" . dap-java-debug)
+	      ("C-c R" . dap-java-run-test-class)
+	      ("C-c d" . dap-java-debug-test-method)
+	      ("C-c r" . dap-java-run-test-method)))
 	      
   
 ;;;========================================
@@ -803,6 +811,30 @@
    org-babel-load-languages))
 
 ;;;========================================
+;;; Java
+;;;========================================
+
+;; Requires lsp-mode
+
+(use-package lsp-java
+  :ensure t
+  :after lsp
+  :config
+  (defun my/java-mode-hook ()
+    (setq c-basic-offset 2
+          c-label-offset 0
+          tab-width 2
+          indent-tabs-mode nil
+	  require-final-newline nil))
+  :hook (java-mode-hook . (lsp my/java-mode-hook)))
+
+;; Requires dap-mode
+
+(use-package dap-java
+  :ensure nil
+  :after (lsp-java))
+
+;;;========================================
 ;;; Web development
 ;;;========================================
 
@@ -940,7 +972,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
+   '(lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
