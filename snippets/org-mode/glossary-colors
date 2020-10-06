@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: glossary entries' color
+# key: glossary-colors
+#commentary: requires that `glossaries' is loaded
+# --
+
+#+latex_header: \defglsentryfmt{\color{$0}\glsgenentryfmt}

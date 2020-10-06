@@ -439,7 +439,7 @@
 \\usepackage{subcaption}
 \\hypersetup{
     colorlinks=true,
-    linkcolor={PineGreen!50!black},
+    linkcolor={PineGreen!30!black},
     citecolor={Bittersweet!50!Sepia},
     urlcolor={blue!80!black}}
 \\usepackage{geometry}
@@ -468,7 +468,7 @@
 \\usepackage{hyperref}
 \\hypersetup{
     colorlinks,
-    linkcolor={PineGreen!50!black},
+    linkcolor={PineGreen!30!black},
     citecolor={DarkGray},
     urlcolor={blue!80!black}}
 \\usepackage[export]{adjustbox}
@@ -594,6 +594,11 @@
   :defer t
   :bind ("C-:" . iedit-mode))
 
+(use-package rect
+  :ensure nil
+  :defer nil
+  :bind ("C-x <SPC>" . rectangle-mark-mode))
+
 ;;;========================================
 ;;; Navigation
 ;;;========================================
@@ -701,7 +706,7 @@
   :mode ("\\.jl\\'" . julia-mode)
   :init
   (setq inferior-julia-program "/usr/bin/julia")
-  (setenv "JULIA_NUM_THREADS" "4")
+  (setenv "JULIA_NUM_THREADS" "16")
   :hook (julia-mode-hook . julia-repl-mode))
 
 (use-package julia-repl
@@ -729,8 +734,7 @@
   ;; Kill the process when switching environments
 
   (add-hook 'pyvenv-post-activate-hooks (lambda ()
-					  (elpy-shell-kill)
-					  (elpy-rpc-restart)))
+					  (elpy-shell-kill)))
 
   ;; Use flycheck instead of flymake
  (when (load "flycheck" t t)
@@ -763,8 +767,8 @@
   :ensure nil
   :hook ((inferior-python-mode-hook . hide-mode-line-mode)))
 
-(use-package hide-modeline
-  :ensure nil
+(use-package hide-mode-line
+  :ensure t
   :defer t)
 
 ;;;========================================
@@ -983,7 +987,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
+   '(hide-mode-line hide-modeline lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
