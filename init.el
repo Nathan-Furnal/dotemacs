@@ -327,6 +327,12 @@
   :bind (("C-c f" . flop-frame)
          ("C-c r" . rotate-frame-clockwise)))
 
+;; Highlight where the cursor is when switching windows or buffers
+
+(use-package beacon
+  :defer 1
+  :ensure t
+  :config (beacon-mode))
 
 ;;;========================================
 ;;; Spell checking
@@ -993,7 +999,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ess hide-mode-line hide-modeline lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
+   '(beacon ess hide-mode-line hide-modeline lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
