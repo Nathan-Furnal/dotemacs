@@ -6,20 +6,23 @@
 *~
 
 # Ignore other irrelevant files and dirs
-eshell
+
+*cache*
+*dap*
+*eclipse*
+*lsp*
+*mc-lists*
 auto-save-list
-elpa
 ede-*
+eln-cache
+elpa
+eshell
+flycheck*
+package-quickstart*
 projectile*
 recentf*
 transient
-flycheck*
 var
-package-quickstart*
-eln-cache
-*dap*
-*eclipse*
-*cache*
-*lsp*
-*mc-lists*
+workspace
+
 
