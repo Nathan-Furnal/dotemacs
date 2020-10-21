@@ -1,9 +1,7 @@
-;;; light.el --- A lightweight init file with Emacs' builtin tools.
-;;; -*- lexical-binding: t; -*-
+;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; This file aims to provide a lightweight Emacs experience with focus
-;; on the builtin tools.
+;; This file aims to provide a lightweight Emacs experience, it's heavily inspired from Prot's config as explained in the README. 
 
 ;;; Code:
 
@@ -990,6 +988,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(doom-modeline-mode t)
  '(package-selected-packages
    '(rainbow-delimiters ess hide-mode-line hide-modeline lsp-java jupyter yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit flimenu emmet-mode elpy elisp-lint doom-modeline diminish deft dap-mode ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
