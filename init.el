@@ -103,6 +103,13 @@
   ;; Loads after 2 second of idle time.
   :defer 2)
 
+;; Feature that provides the ability to browse Emacs kill ring in autocomplete style popup menu 
+
+(use-package popup-kill-ring
+  :ensure t
+  :defer nil
+  :bind ("M-y" . popup-kill-ring))
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
@@ -983,3 +990,16 @@
   :after yasnippet)
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
