@@ -68,7 +68,8 @@
   (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
   (setq ring-bell-function 'ignore)             ; Disable bell sound
   (fset 'yes-or-no-p 'y-or-n-p)                 ; y-or-n-p makes answering questions faster
-  (setq gc-cons-threshold 100000000)            ; Allocating more memory, it's the future
+  (setq gc-cons-threshold 10000000)             ; Allocating more memory, it's the future
+  (setq gc-cons-percentage 0.4)			; Garbage collection behavior
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
   (delete-selection-mode t)                     ; Start writing straight after deletion
   (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
@@ -530,6 +531,7 @@
 ;; Emacs document annotator, using Org-mode.
 
 (use-package org-noter
+  :ensure t
   :defer t
   :config
   (setq org-noter-notes-search-path '("~/Documents" "~/Notes")))
@@ -568,6 +570,14 @@
 	      ("C-c <right>" . nil)
 	      ("C-c <up>" . nil)
 	      ("C-c <down>" . nil)))
+
+;;;========================================
+;;; Exporting text files
+;;;========================================
+
+(use-package pandoc-mode
+  :ensure t
+  :defer t)
 
 ;;;========================================
 ;;; Version control
@@ -825,6 +835,7 @@
 	  (python . t)
 	  (R . t)
 	  (shell . t)
+	  (sql . t)
 	  (emacs-lisp . t)
 	  (jupyter . t)))
   
@@ -936,7 +947,7 @@
 (use-package web-mode
   :ensure t
   :defer t
-  :mode ("\\.html\\'" "\\.css\\'" "\\.php\\'")
+  :mode ("\\.html\\'" "\\.php\\'")
   :bind (:map web-mode-map
 	      ("C-c C-v" . browse-url-of-buffer))
   :config
@@ -950,6 +961,12 @@
   (setq web-mode-enable-auto-expanding t)
   (setq web-mode-enable-css-colorization t)
   :hook (web-mode-hook . electric-pair-mode))
+
+(use-package css-mode
+  :ensure nil
+  :defer t
+  :mode "\\.css\\'"
+  :hook (css-mode-hook . emmet-mode))
 
 
 ;; Useful tool to have live html documents update
@@ -996,7 +1013,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex)))
+   '(pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
