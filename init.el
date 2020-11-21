@@ -1,7 +1,7 @@
 ;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; This file aims to provide a lightweight Emacs experience, it's heavily inspired from Prot's config as explained in the README. 
+;; This file aims to provide a lightweight Emacs experience, it's heavily inspired from Prot's config as explained in the README.
 
 ;;; Code:
 
@@ -75,6 +75,7 @@
   (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
   (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
+  (setq create-lockfiles nil)                   ; lock files kill `npm start'
 
   :bind (("C-z" . undo)
          ("C-x C-z" . nil)
@@ -684,8 +685,7 @@
 	      ("C-c R" . dap-java-run-test-class)
 	      ("C-c d" . dap-java-debug-test-method)
 	      ("C-c r" . dap-java-run-test-method)))
-	      
-  
+
 ;;;========================================
 ;;; (E)Lisp development
 ;;;========================================
@@ -707,6 +707,19 @@
 (use-package eshell
   :defer t
   :bind ("C-$" . eshell))
+
+;;;========================================
+;;; Clojure
+;;;========================================
+
+(use-package clojure-mode
+  :ensure t
+  :defer t)
+
+(use-package cider
+  :ensure t
+  :defer t
+  :hook (clojure-mode-hook . cider-mode))
 
 ;;;========================================
 ;;; Julia
@@ -770,6 +783,10 @@
                             (add-hook 'before-save-hook
                                       'elpy-yapf-fix-code nil t)))
 
+  ;; Get completion from shell if jedi is not available
+  
+  ;; (setq elpy-get-info-from-shell t)	
+  
   :bind (:map elpy-mode-map
 	      ("C-c a" . elpy-shell-send-statement)
 	      ("C-c q" . elpy-shell-send-region-or-buffer)
@@ -907,7 +924,7 @@
 
 (use-package tide
   :ensure t
-  :defer t
+  :defer t 
   :after (rjsx-mode flycheck company)
   :config
   (defun setup-tide-mode ()
@@ -984,9 +1001,7 @@
 (use-package skewer-mode
   :ensure t
   :defer t
-  :hook ((js2-mode-hook . skewer-mode)
-	 (skewer-mode-hook . run-skewer)))
-
+  :hook ((js2-mode-hook . skewer-mode)))
 
 ;; Useful cheat-sheet https://docs.emmet.io/cheat-sheet/
 
@@ -1057,7 +1072,7 @@
  '(ibuffer-marked-face 'modus-theme-mark-sel)
  '(ibuffer-title-face 'modus-theme-pseudo-header)
  '(package-selected-packages
-   '(skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
+   '(gif-screencast cider clojure-mode dap-chrome skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
  '(pdf-view-midnight-colors '("#000000" . "#f8f8f8"))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
