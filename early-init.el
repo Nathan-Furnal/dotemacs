@@ -1,4 +1,4 @@
-;;; early-init.el -*- lexical-binding: t; -*-
+;;; early-init.el --- early in the morning -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; Provides early initialization for Emacs 27.1+ Do not initialize the

@@ -105,11 +105,11 @@
   ;; Loads after 2 second of idle time.
   :defer 2)
 
-;; Feature that provides the ability to browse Emacs kill ring in autocomplete style popup menu 
+;; Feature that provides the ability to browse Emacs kill ring in autocomplete style popup menu.
 
 (use-package popup-kill-ring
   :ensure t
-  :defer nil
+  :defer 2
   :bind ("M-y" . popup-kill-ring))
 
 ;;;========================================
@@ -714,12 +714,17 @@
 
 (use-package clojure-mode
   :ensure t
-  :defer t)
+  :defer t
+  :config
+  (use-package flycheck-clj-kondo
+  :ensure t))
 
 (use-package cider
   :ensure t
   :defer t
   :hook (clojure-mode-hook . cider-mode))
+
+
 
 ;;;========================================
 ;;; Julia
@@ -1036,9 +1041,7 @@
 
 (use-package gif-screencast
   :ensure t
-  :defer t
-  :bind (("s-s" . gif-screencast)
-	 ("s-r" . gif-screencast-stop)))
+  :defer t)
 
 (use-package keycast
   :after doom-modeline
@@ -1096,7 +1099,7 @@
  '(ibuffer-marked-face 'modus-theme-mark-sel)
  '(ibuffer-title-face 'modus-theme-pseudo-header)
  '(package-selected-packages
-   '(keycast gif-screencast cider clojure-mode dap-chrome skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
+   '(flycheck-clj-kondo keycast gif-screencast cider clojure-mode dap-chrome skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
  '(pdf-view-midnight-colors '("#000000" . "#f8f8f8"))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
