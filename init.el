@@ -790,7 +790,7 @@
 
   ;; Get completion from shell if jedi is not available
   
-  ;; (setq elpy-get-info-from-shell t)	
+  (setq elpy-get-info-from-shell t)
   
   :bind (:map elpy-mode-map
 	      ("C-c a" . elpy-shell-send-statement)
