@@ -708,6 +708,13 @@
   :defer t
   :bind ("C-$" . eshell))
 
+
+;; Common Lisp
+
+(use-package sly
+  :ensure t
+  :defer t)
+
 ;;;========================================
 ;;; Clojure
 ;;;========================================
@@ -723,8 +730,6 @@
   :ensure t
   :defer t
   :hook (clojure-mode-hook . cider-mode))
-
-
 
 ;;;========================================
 ;;; Julia
@@ -1099,7 +1104,7 @@
  '(ibuffer-marked-face 'modus-theme-mark-sel)
  '(ibuffer-title-face 'modus-theme-pseudo-header)
  '(package-selected-packages
-   '(flycheck-clj-kondo keycast gif-screencast cider clojure-mode dap-chrome skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
+   '(sly flycheck-clj-kondo keycast gif-screencast cider clojure-mode dap-chrome skewer-mode pandoc-mode org-noter popup-kill-ring yasnippet-snippets which-key web-mode use-package transpose-frame tide shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js org-ref modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf centaur-tabs cdlatex buttercup auctex))
  '(pdf-view-midnight-colors '("#000000" . "#f8f8f8"))
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
