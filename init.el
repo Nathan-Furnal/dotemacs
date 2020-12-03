@@ -142,7 +142,7 @@
         (2 . line)
         (t . rainbow-line-no-bold)))
   
-  (run-at-time "06:00" (* 60 60 24)
+  (run-at-time "08:00" (* 60 60 24)
                (lambda () (enable-theme 'modus-operandi)))
   :config
   
