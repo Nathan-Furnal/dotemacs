@@ -199,6 +199,7 @@
 ;; Tabs navigation and groups
 
 (use-package centaur-tabs
+  :ensure t
   :demand
   :config
   (setq centaur-tabs-set-bar 'under)         ; Display underline for selected tab
@@ -724,7 +725,8 @@
   :defer t
   :config
   (use-package flycheck-clj-kondo
-  :ensure t))
+    :ensure t
+    :defer nil))
 
 (use-package cider
   :ensure t
@@ -751,9 +753,15 @@
   :ensure t
   :defer t)
 
-;;;========================================
-;;; Python
-;;;========================================
+;; ========================================
+;; Python
+;; ========================================
+
+(use-package python
+  :ensure nil
+  :config
+  ;; Remove guess indent python message
+  (setq python-indent-guess-indent-offset-verbose nil))
 
 (use-package elpy
   :ensure t
@@ -769,7 +777,6 @@
   (remove-hook 'elpy-modules 'elpy-module-django)
 
   ;; Kill the process when switching environments
-
   (add-hook 'pyvenv-post-activate-hooks (lambda ()
 					  (elpy-shell-kill)))
 
@@ -778,14 +785,11 @@
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
-  ;; Remove the guessing Python indent message
-  (setq python-indent-guess-indent-offset-verbose nil)
-  
-  (defun my/elpy-use-jupyter ()
-    "Use Jupyter & IPython instead of the regular REPL"
-  (interactive)
-  (setq python-shell-interpreter "ipython"
-	python-shell-interpreter-args "-i --simple-prompt"))
+  (defun my/use-ipython ()
+    "Enable IPython as shell interpreter."
+    (interactive)
+    (setq python-shell-interpreter "ipython"
+	  python-shell-interpreter-args "-i --simple-prompt"))
 
   ;; Format code with YAPF on save
 
@@ -794,13 +798,13 @@
                                       'elpy-yapf-fix-code nil t)))
 
   ;; Get completion from shell if jedi is not available
-  
   (setq elpy-get-info-from-shell t)
   
   :bind (:map elpy-mode-map
 	      ("C-c a" . elpy-shell-send-statement)
 	      ("C-c q" . elpy-shell-send-region-or-buffer)
-	      ("<C-tab>" . elpy-company-backend)))
+	      ("<tab>" . elpy-company-backend))
+  :hook (python-mode-hook . my/use-ipython))
 
 
 ;; Hide the modeline for inferior python processes
