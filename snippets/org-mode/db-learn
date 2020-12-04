@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: db-learn
+# key: sql-learn
+# --
+
+#+begin_src sql :engine postgresql :dbhost localhost :dbuser nathan :database learn :exports both
+$0
+#+end_src

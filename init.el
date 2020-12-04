@@ -412,6 +412,10 @@
 ;; latex compilation found at https://github.com/jkitchin/org-ref/blob/master/org-ref.org
 ;; Better latexmk for glossaries with a ~/.latexmkrc file. Explained at `https://tex.stackexchange.com/a/44316/223017'.
 
+(use-package auctex
+  :ensure t
+  :defer t)
+
 (use-package ox-latex
   :after org
   :defer t
@@ -859,7 +863,7 @@
 
 (use-package ob
   :after org
-  :defer t
+  :defer nil
   :config
   (setq org-babel-load-languages
 	'((latex . t)
