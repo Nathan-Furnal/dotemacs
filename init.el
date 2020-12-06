@@ -312,6 +312,35 @@
          (prog-mode-hook . company-mode)))
 
 ;;;========================================
+;;; Navigation & Completion
+;;;========================================
+
+;; icomplete-vertical will be included in emacs in the future
+;; See https://github.com/oantolin/icomplete-vertical/issues/14
+
+(use-package icomplete-vertical
+  :disabled
+  :ensure t
+  :demand t
+  :custom
+  (completion-styles '(partial-completion substring))
+  (completion-category-overrides '((file (styles basic substring))))
+  (read-file-name-completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (completion-ignore-case t)
+  (resize-mini-windows 'grow-only)
+  :config
+  (fido-mode)
+  (icomplete-vertical-mode)
+  :bind (:map icomplete-minibuffer-map
+              ("<down>" . icomplete-forward-completions)
+              ("C-n" . icomplete-forward-completions)
+              ("<up>" . icomplete-backward-completions)
+              ("C-p" . icomplete-backward-completions)
+              ("C-v" . icomplete-vertical-toggle)
+	      ("<tab>" . icomplete-fido-ret)))
+
+;;;========================================
 ;;; Windows & movement
 ;;;========================================
 
@@ -821,6 +850,17 @@
   :ensure t
   :defer t)
 
+(use-package lsp-pyright
+  :ensure t
+  :disabled
+  :config
+  (setq lsp-clients-python-library-directories '("/usr/" "~/miniconda3/pkgs"))
+  (setq lsp-pyright-disable-language-service nil
+	lsp-pyright-disable-organize-imports nil
+	lsp-pyright-auto-import-completions t
+	lsp-pyright-use-library-code-for-types t
+	lsp-pyright-venv-path "~/miniconda3/envs"))
+
 ;;;========================================
 ;;; Jupyter & notebooks
 ;;;========================================
@@ -1071,3 +1111,16 @@
   (add-to-list 'global-mode-string '("" mode-line-keycast)))
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(lsp-pyright yasnippet-snippets which-key web-mode use-package transpose-frame tide sly skewer-mode shackle selectrum-prescient rjsx-mode prettier-js popup-kill-ring pandoc-mode org-ref org-noter modus-vivendi-theme modus-operandi-theme magit lsp-ui lsp-java keycast jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast flimenu ess emmet-mode elpy elisp-lint doom-modeline diminish deft ctrlf cider centaur-tabs cdlatex buttercup auctex)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
