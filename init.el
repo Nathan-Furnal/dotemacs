@@ -560,8 +560,7 @@
 	 (prog-mode-hook . shackle-mode))
   :config
   (setq shackle-rules
-	'((pdf-view-mode :align right)                                   ; Ensure PDF view opens on the right
-	  ("*Python*" :align 'bottom :size 0.25))))                      ; Open *Python* buffer at the bottom and take 1/4 of the frame
+	'((pdf-view-mode :align right))))                                   ; Ensure PDF view opens on the right
 
 ;; Emacs document annotator, using Org-mode.
 
@@ -685,16 +684,26 @@
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
 	 (java-mode-hook . lsp-deferred)
+	 (python-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
-	      ("M-<RET>" . lsp-execute-code-action)))
+	      ("M-<RET>" . lsp-execute-code-action))
+  :config
+  (setq lsp-prefer-capf t
+	lsp-keep-workspace-alive nil
+	lsp-auto-guess-root t)
+  (add-hook 'lsp-completion-mode-hook
+	    (lambda ()
+	      (when (eq (car company-backends) 'company-capf)
+		(setq company-backends (cdr company-backends))))))
 
 (use-package lsp-ui
   :ensure t
   :defer t
   :config
-  (setq lsp-ui-sideline-enable nil)
+  (setq lsp-ui-sideline-enable nil
+	lsp-ui-doc-delay 2)
   :hook (lsp-mode-hook . lsp-ui-mode)
   :bind (:map lsp-ui-mode-map
 	      ("C-c i" . lsp-ui-imenu)))
@@ -713,12 +722,7 @@
   :defer t
   :after lsp-mode
   :config
-  (dap-auto-configure-mode)
-  :bind (:map dap-mode-map
-	      ("C-c C-c" . dap-java-debug)
-	      ("C-c R" . dap-java-run-test-class)
-	      ("C-c d" . dap-java-debug-test-method)
-	      ("C-c r" . dap-java-run-test-method)))
+  (dap-auto-configure-mode))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -789,53 +793,10 @@
 ;; ========================================
 
 (use-package python
-  :ensure nil
+  :ensure t
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil))
-
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  ;; Setting work on to easily switch between environments
-  (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs/"))
-  (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (setq elpy-rpc-virtualenv-path 'current)
-  
-  (remove-hook 'elpy-modules 'elpy-module-pyvenv)
-  (remove-hook 'elpy-modules 'elpy-module-django)
-
-  ;; Kill the process when switching environments
-  (add-hook 'pyvenv-post-activate-hooks (lambda ()
-					  (elpy-shell-kill)))
-
-  ;; Use flycheck instead of flymake
- (when (load "flycheck" t t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-  (defun my/use-ipython ()
-    "Enable IPython as shell interpreter."
-    (interactive)
-    (setq python-shell-interpreter "ipython"
-	  python-shell-interpreter-args "-i --simple-prompt"))
-
-  ;; Format code with YAPF on save
-
-  (add-hook 'elpy-mode-hook (lambda ()
-                            (add-hook 'before-save-hook
-                                      'elpy-yapf-fix-code nil t)))
-
-  ;; Get completion from shell if jedi is not available
-  (setq elpy-get-info-from-shell t)
-  
-  :bind (:map elpy-mode-map
-	      ("C-c a" . elpy-shell-send-statement)
-	      ("C-c q" . elpy-shell-send-region-or-buffer)
-	      ("<tab>" . elpy-company-backend))
-  :hook (python-mode-hook . my/use-ipython))
 
 
 ;; Hide the modeline for inferior python processes
@@ -848,16 +809,41 @@
   :ensure t
   :defer t)
 
+(use-package pyvenv
+  :ensure t
+  :defer t
+  :config
+  ;; Setting work on to easily switch between environments
+  (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs/"))
+  ;; Display virtual envs in the menu bar
+  (setq pyvenv-menu t)
+  ;; Restart the python process when switching environments
+  (add-hook 'pyvenv-post-activate-hooks (lambda ()
+					  (pyvenv-restart-python)))
+  :hook (python-mode-hook . pyvenv-mode))
+
 (use-package lsp-pyright
   :ensure t
-  :disabled
+  :defer t
   :config
   (setq lsp-clients-python-library-directories '("/usr/" "~/miniconda3/pkgs"))
   (setq lsp-pyright-disable-language-service nil
 	lsp-pyright-disable-organize-imports nil
 	lsp-pyright-auto-import-completions t
 	lsp-pyright-use-library-code-for-types t
-	lsp-pyright-venv-path "~/miniconda3/envs"))
+	lsp-pyright-venv-path "~/miniconda3/envs")
+  (defun my/use-ipython ()
+    "Enable IPython as shell interpreter."
+    (interactive)
+    (setq python-shell-interpreter "ipython"
+	  python-shell-interpreter-args "-i --simple-prompt"))
+  :hook ((python-mode-hook . (lambda () (require 'lsp-pyright) (lsp-deferred)))
+	 (python-mode-hook . my/use-ipython)))
+
+(use-package yapfify
+  :ensure t
+  :defer t
+  :hook (python-mode-hook . yapf-mode))
 
 ;;;========================================
 ;;; Jupyter & notebooks
@@ -926,6 +912,7 @@
   :ensure t
   :defer t
   :after lsp
+  :mode ("\\.java\\'")
   :config
   (setq lsp-java-format-on-type-enabled nil)
   (defun my/java-mode-hook ()
@@ -1115,7 +1102,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
+   '(yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
