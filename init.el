@@ -757,9 +757,7 @@
   :ensure t
   :defer t
   :config
-  (use-package flycheck-clj-kondo
-    :ensure t
-    :defer nil))
+  (require 'flycheck-clj-kondo))
 
 (use-package cider
   :ensure t
