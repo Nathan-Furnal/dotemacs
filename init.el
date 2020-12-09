@@ -224,10 +224,9 @@
 ;; Enable richer annotations using the Marginalia package
 (use-package marginalia
   :ensure t
-  :defer nil
-  :init
-  (marginalia-mode)
+  :defer 2
   :config
+  (marginalia-mode)
   (setq marginalia-annotators '(marginalia-annotators-light)))
 
 (use-package imenu
@@ -243,11 +242,13 @@
 
 (use-package imenu-list
   :ensure t
+  :defer t
   :after imenu
   :bind ("C-c i" . imenu-list))
 
 (use-package flimenu
-  :ensure
+  :ensure t
+  :defer t
   :after imenu
   :config
   (flimenu-global-mode 1))
@@ -285,6 +286,7 @@
 
 (use-package which-key
   :ensure t
+  :defer 1
   :diminish which-key-mode
   :config
   (which-key-mode 1))
