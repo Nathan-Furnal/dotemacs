@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: esi-sql
-# key: esi-sql
+# key: <esi
 # --
 #+begin_src sql :engine postgresql :dbhost localhost :dbuser nathan :database esi :exports both
 $0

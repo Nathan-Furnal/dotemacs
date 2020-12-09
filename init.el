@@ -1102,7 +1102,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
+   '(marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
