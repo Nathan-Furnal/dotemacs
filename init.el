@@ -221,6 +221,15 @@
   :ensure t
   :after selectrum)
 
+;; Enable richer annotations using the Marginalia package
+(use-package marginalia
+  :ensure t
+  :defer nil
+  :init
+  (marginalia-mode)
+  :config
+  (setq marginalia-annotators '(marginalia-annotators-light)))
+
 (use-package imenu
   :config
   (setq imenu-use-markers t)
