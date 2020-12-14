@@ -784,7 +784,8 @@
   :ensure t
   :defer t
   :config
-  (require 'flycheck-clj-kondo))
+  (require 'flycheck-clj-kondo)
+  :hook (clojure-mode-hook . paredit-mode))
 
 (use-package cider
   :ensure t
