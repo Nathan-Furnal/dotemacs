@@ -29,7 +29,8 @@ search. Projects can be set and then explored with `treemacs`.
 
 Most of the programming configuration gravitates around `lsp-mode`,
 the language server protocol mode. It's particularly helpful to
-deal with multiple programming languages in a similar fashion.
+deal with multiple programming languages in a similar fashion. I
+recently added a working Python configuration which performs well. 
 
 ## Writing
 
@@ -51,10 +52,6 @@ expressions in any file, be it text or code files.
 Works well for Python/R/Julia for now. It supports different
 environments in org-mode to obtain files *à la* notebook,
 `emacs-jupyter` does the heavy lifting. 
-
-I used `conda.el` to switch environments for Python but `elpy`, my
-Python IDE actually relies on `pyvenv` so I'll stick with that
-instead.
 
 ## Miscellaneous
 
