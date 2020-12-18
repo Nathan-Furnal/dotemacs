@@ -68,14 +68,19 @@
   (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
   (setq ring-bell-function 'ignore)             ; Disable bell sound
   (fset 'yes-or-no-p 'y-or-n-p)                 ; y-or-n-p makes answering questions faster
-  (setq gc-cons-threshold 10000000)             ; Allocating more memory, it's the future
-  (setq gc-cons-percentage 0.4)			; Garbage collection behavior
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
   (delete-selection-mode t)                     ; Start writing straight after deletion
   (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
   (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
+
+  ;; Speed up startup High garbage collection at startup needs to be
+  ;; reset at some point then we defer the work to `gcmh'.
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (setq gc-cons-threshold 16777216 ; 16mb
+		    gc-cons-percentage 0.1)))
 
   :bind (("C-z" . undo)
          ("C-x C-z" . nil)
@@ -86,6 +91,18 @@
 	 ("C-x \"" . split-window-right)
 	 ("C-x à" . delete-window))
   :hook (text-mode-hook . auto-fill-mode))
+
+;; Adopt a sneaky garbage collection strategy of waiting until idle
+;; time to collect; staving off the collector while the user is
+;; working.  Thanks Doom -
+;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
+(use-package gcmh
+  :ensure t
+  :defer nil
+  :config
+  (setq gcmh-mode 1
+	gcmh-idle-delay 5
+	gcmh-high-cons-threshold (* 16 1024 1024)))
 
 (use-package elec-pair
   :ensure nil
@@ -1138,7 +1155,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
+   '(gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java jupyter ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
