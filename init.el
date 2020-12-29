@@ -700,7 +700,12 @@
   :defer t
   :bind ("M-p" . projectile-mode)
   (:map projectile-mode-map
-	      ("C-c p" . projectile-command-map)))
+	("C-c p" . projectile-command-map)))
+
+(use-package treemacs-projectile
+  :ensure t
+  :after treemacs projectile
+  :defer t)
 
 ;;;========================================
 ;;; Developement with LSP
@@ -719,6 +724,7 @@
 	 (c-mode-hook . lsp-deferred)
 	 (java-mode-hook . lsp-deferred)
 	 (python-mode-hook . lsp-deferred)
+	 (sql-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
@@ -787,7 +793,9 @@
   :bind ("C-$" . eshell))
 
 
-;; Common Lisp
+;;;========================================
+;;; Common Lisp
+;;;========================================
 
 (use-package sly
   :ensure t
@@ -820,6 +828,16 @@
   :ensure t
   :defer t
   :hook (clojure-mode-hook . cider-mode))
+
+;;;========================================
+;;; Scheme
+;;;========================================
+
+(use-package scheme
+  :defer t
+  :ensure nil
+  :mode ("\\.scm$\\'")
+  :hook (scheme-mode-hook . paredit-mode))
 
 ;;;========================================
 ;;; Julia
@@ -1176,7 +1194,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
+   '(treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
