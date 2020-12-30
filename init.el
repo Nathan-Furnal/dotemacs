@@ -473,9 +473,13 @@
   :ensure t
   :defer t)
 
-(use-package ox-latex
+(use-package template
   :after org
+  :load-path (lambda () (concat user-emacs-directory "latex")))
+
+(use-package ox-latex
   :defer t
+  :after org
   :config
   (add-to-list 'org-latex-packages-alist
 	       '("AUTO" "polyglossia" t ("xelatex" "lualatex")))
@@ -483,71 +487,10 @@
    org-latex-listings 'minted
    org-latex-minted-options '(("linenos=true") ("bgcolor=gray!10!white")))
 
-  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
 
-  (add-to-list 'org-latex-classes
-	       '("notes"
-		 "\\documentclass[french]{article}
-\\usepackage{minted}
-\\usepackage[round]{natbib}
-\\usepackage{babel}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{mathptmx}
-\\usepackage{booktabs}
-\\usepackage{longtable}
-\\usepackage[skip=1.\\baselineskip]{caption}
-\\usepackage{soul}
-\\usepackage[usenames,dvipsnames,svgnames]{xcolor}
-\\usepackage{parskip}
-\\usepackage[many]{tcolorbox}
-\\usepackage{hyperref}
-\\usepackage[export]{adjustbox}
-\\usepackage{subcaption}
-\\hypersetup{
-    colorlinks=true,
-    linkcolor={PineGreen!30!black},
-    citecolor={Bittersweet!50!Sepia},
-    urlcolor={blue!80!black}}
-\\usepackage{geometry}
-\\geometry{a4paper,left=2.5cm,top=1.2cm,right=2.5cm,bottom=1.5cm,marginparsep=7pt, marginparwidth=.6in}"
-		 ("\\section{%s}" . "\\section*{%s}")
-		 ("\\subsection{%s}" . "\\subsection*{%s}")
-		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-  (add-to-list 'org-latex-classes
-	       '("notes_en"
-		 "\\documentclass{article}
-\\usepackage{minted}
-\\usepackage[round]{natbib}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{mathptmx}
-\\usepackage{booktabs}
-\\usepackage{longtable}
-\\usepackage[skip=1.\\baselineskip]{caption}
-\\usepackage{soul}
-\\usepackage[usenames,dvipsnames,svgnames]{xcolor}
-\\usepackage{parskip}
-\\usepackage[many]{tcolorbox}
-\\usepackage{hyperref}
-\\hypersetup{
-    colorlinks,
-    linkcolor={PineGreen!30!black},
-    citecolor={DarkGray},
-    urlcolor={blue!80!black}}
-\\usepackage[export]{adjustbox}
-\\usepackage{subcaption}
-\\usepackage{geometry}
-\\geometry{a4paper,left=2.5cm,top=1.2cm,right=2.5cm,bottom=1.5cm,marginparsep=7pt, marginparwidth=.6in}"
-		 ("\\section{%s}" . "\\section*{%s}")
-		 ("\\subsection{%s}" . "\\subsection*{%s}")
-		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (use-package cdlatex
   :ensure t
