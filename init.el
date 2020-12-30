@@ -549,7 +549,6 @@
 		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
 		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-
 (use-package cdlatex
   :ensure t
   :defer t
@@ -821,7 +820,8 @@
   :ensure t
   :defer t
   :config
-  (require 'flycheck-clj-kondo)
+  (use-package flycheck-clj-kondo
+    :ensure t)
   :hook (clojure-mode-hook . paredit-mode))
 
 (use-package cider
