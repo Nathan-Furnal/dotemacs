@@ -474,7 +474,7 @@
   :defer t)
 
 (use-package template
-  :after org
+  :after org ox-latex
   :load-path (lambda () (concat user-emacs-directory "latex")))
 
 (use-package ox-latex
@@ -787,7 +787,7 @@
   :defer t
   :config
   (setq geiser-mit-binary "/usr/bin/mit-scheme"
-	geiser-active-implementations '(mit)))
+	geiser-active-implementations '(mit guile)))
 
 ;;;========================================
 ;;; Julia
@@ -1106,20 +1106,6 @@
   :ensure t
   :defer t)
 
-(use-package keycast
-  :after doom-modeline
-  :ensure t
-  :defer t
-  :init
-  (define-minor-mode keycast-mode
-    "Show current command and its key binding in the mode line."
-    :global t
-    (if keycast-mode
-        (add-hook 'pre-command-hook 'keycast-mode-line-update t)
-      (remove-hook 'pre-command-hook 'keycast-mode-line-update)))
-  :config
-  (add-to-list 'global-mode-string '("" mode-line-keycast)))
-
 ;;;========================================
 ;;; Mathematics
 ;;;========================================
@@ -1144,7 +1130,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode keycast gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package))
+   '(geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package))
  '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
