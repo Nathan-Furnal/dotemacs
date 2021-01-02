@@ -921,6 +921,7 @@
 	  (shell . t)
 	  (sql . t)
 	  (emacs-lisp . t)
+	  (maxima . t)
 	  (jupyter . t)))
   
   (org-babel-do-load-languages
