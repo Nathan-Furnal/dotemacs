@@ -485,7 +485,7 @@
 	       '("AUTO" "polyglossia" t ("xelatex" "lualatex")))
   (setq
    org-latex-listings 'minted
-   org-latex-minted-options '(("linenos=true") ("bgcolor=gray!10!white")))
+   org-latex-minted-options '(("linenos=true") ("bgcolor=gray!10!white") ("breaklines=true")))
 
   (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
@@ -1090,7 +1090,7 @@
 
 (use-package yasnippet
   :ensure t
-  :defer 5
+  :defer 3
   :config
   (yas-global-mode))
 
