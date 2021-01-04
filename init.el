@@ -1090,13 +1090,13 @@
 
 (use-package yasnippet
   :ensure t
-  :defer 2
+  :defer 3
   :config
   (yas-global-mode))
 
 (use-package yasnippet-snippets
   :ensure t
-  :defer nil
+  :defer t
   :after yasnippet)
 
 ;;;========================================
