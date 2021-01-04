@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: right arrow
 # key: ->
+# group: latex 
 # --
 
 \rightarrow $0

@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: minted
 # key: <minted
+# group: latex 
 # --
 #+begin_export latex
 \begin{minted}[linenos, bgcolor=gray!10!white, escapeinside=||]{${1:language}}

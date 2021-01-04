@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: jupyter-R
 # key: R_
+# group: jupyter 
 # --
 
 #+begin_src jupyter-R

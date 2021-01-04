@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: jupyter-python
 # key: jpy_
+# group: jupyter 
 # --
 #+begin_src jupyter-python :kernel ds
 $0

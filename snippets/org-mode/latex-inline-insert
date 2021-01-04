@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
 # name: latex_insert
 # key: l_
+# group: latex 
 # --
 
 \\($0\\)
