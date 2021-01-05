@@ -672,8 +672,7 @@
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action))
   :config
-  (setq lsp-prefer-capf t
-	lsp-keep-workspace-alive nil
+  (setq lsp-keep-workspace-alive nil
 	lsp-auto-guess-root nil)
   (add-hook 'lsp-completion-mode-hook
 	    (lambda ()
@@ -733,7 +732,6 @@
 (use-package eshell
   :defer t
   :bind ("C-$" . eshell))
-
 
 ;;;========================================
 ;;; Common Lisp
