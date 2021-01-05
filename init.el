@@ -162,10 +162,10 @@
   (run-at-time "08:00" (* 60 60 24)
                (lambda () (enable-theme 'modus-operandi)))
   :config
-  
-  (defadvice load-theme (before theme-dont-propagate activate)
+  (defun load-theme--disable-old-theme (theme &rest args)
     "Disable theme before loading new one."
-    (mapc #'disable-theme custom-enabled-themes))
+    (mapcar #'disable-theme custom-enabled-themes))
+  (advice-add 'load-theme :before #'load-theme--disable-old-theme)
   (load-theme 'modus-operandi t))
 
 (use-package modus-vivendi-theme
@@ -197,10 +197,10 @@
   (run-at-time "20:00" (* 60 60 24)
                (lambda () (enable-theme 'modus-vivendi)))
   :config
-  
-  (defadvice load-theme (before theme-dont-propagate activate)
+  (defun load-theme--disable-old-theme (theme &rest args)
     "Disable theme before loading new one."
-    (mapc #'disable-theme custom-enabled-themes))
+    (mapcar #'disable-theme custom-enabled-themes))
+  (advice-add 'load-theme :before #'load-theme--disable-old-theme)
   (load-theme 'modus-vivendi t))
 
 ;; More useful modeline
@@ -785,6 +785,7 @@
 (use-package geiser
   :ensure t
   :defer t
+  :commands (geiser run-geiser)
   :config
   ;; Send the argument of `run-geiser' to
   ;; `geiser-impl--set-buffer-implementation' BEFORE `run-geiser' is
