@@ -786,8 +786,11 @@
   :ensure t
   :defer t
   :config
-  (setq geiser-mit-binary "/usr/bin/mit-scheme"
-	geiser-active-implementations '(mit guile)))
+  ;; Send the argument of `run-geiser' to
+  ;; `geiser-impl--set-buffer-implementation' BEFORE `run-geiser' is
+  ;; ran. As I had to set the Scheme implementation by hand otherwise
+  ;; with `geiser-set-scheme'
+  (advice-add 'run-geiser :before #'geiser-impl--set-buffer-implementation))
 
 ;;;========================================
 ;;; Julia
