@@ -142,7 +142,7 @@
   (setq modus-themes-scale-headings t
 	modus-themes-slanted-constructs t
 	modus-themes-bold-constructs t
-	modus-themes-syntax 'faint
+	modus-themes-syntax 'alt-syntax
 	modus-themes-intense-hl-line nil
 	modus-themes-variable-pitch-headings t
 	modus-themes-paren-match 'intense
