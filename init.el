@@ -463,9 +463,6 @@
 
   (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
-
-
-
 (use-package cdlatex
   :ensure t
   :defer t
@@ -527,6 +524,12 @@
 		deft-recursive t                                   ; Allows searching through sub-directories
 		deft-use-filename-as-title t)                      ; use filename instead of first line of doc
   :bind ("C-c d" . deft))
+
+;;;========================================
+;;; Agenda & Organization
+;;;========================================
+
+;; Empty for now
 
 ;;;========================================
 ;;; Markdown
