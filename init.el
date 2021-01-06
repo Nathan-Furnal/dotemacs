@@ -133,75 +133,49 @@
 ;;; Themes
 ;;;========================================
 
-(use-package modus-operandi-theme
+(use-package modus-themes
   :ensure t
   :init
-  (setq modus-operandi-theme-org-blocks 'greyscale)
-  (setq modus-operandi-theme-completions 'opinionated)
-  (setq modus-operandi-theme-fringes 'subtle)
-  (setq modus-operandi-theme-scale-headings t
-	modus-operandi-theme-slanted-constructs t
-	modus-operandi-theme-bold-constructs t
-	modus-operandi-theme-faint-syntax nil
-	modus-operandi-theme-intense-hl-line nil
-	modus-operandi-theme-variable-pitch-headings t
-	modus-operandi-theme-intense-paren-match t
-	modus-operandi-theme-section-headings t)
+  (setq modus-themes-org-blocks 'greyscale)
+  (setq modus-themes-completions 'opinionated)
+  (setq modus-themes-fringes 'subtle)
+  (setq modus-themes-scale-headings t
+	modus-themes-slanted-constructs t
+	modus-themes-bold-constructs t
+	modus-themes-syntax 'faint
+	modus-themes-intense-hl-line nil
+	modus-themes-variable-pitch-headings t
+	modus-themes-paren-match 'intense
+	modus-themes-headings 'section)
 
-  (setq modus-operandi-theme-scale-1 1.05
-	modus-operandi-theme-scale-2 1.1
-	modus-operandi-theme-scale-3 1.15
-	modus-operandi-theme-scale-4 1.2
-	modus-operandi-theme-scale-5 1.3)
+  (setq modus-themes-scale-1 1.05
+	modus-themes-scale-2 1.1
+	modus-themes-scale-3 1.15
+	modus-themes-scale-4 1.2
+	modus-themes-scale-5 1.3)
 
-  (setq modus-operandi-theme-headings
-      '((1 . highlight)
-        (2 . line)
-        (t . rainbow-line-no-bold)))
-  
-  (run-at-time "08:00" (* 60 60 24)
-               (lambda () (enable-theme 'modus-operandi)))
+  (setq modus-themes-headings
+	'((1 . section)
+          (2 . section-no-bold)
+          (3 . rainbow-line)
+          (t . rainbow-line-no-bold))))
+
+
+;; Running modus-themes depending on the time of the day.
+
+(use-package solar
   :config
-  (defun load-theme--disable-old-theme (theme &rest args)
-    "Disable theme before loading new one."
-    (mapcar #'disable-theme custom-enabled-themes))
-  (advice-add 'load-theme :before #'load-theme--disable-old-theme)
-  (load-theme 'modus-operandi t))
+  (setq calendar-latitude 50.85
+        calendar-longitude 4.35))
 
-(use-package modus-vivendi-theme
+(use-package circadian
   :ensure t
-  :init
-  (setq modus-vivendi-theme-org-blocks 'greyscale)
-  (setq modus-vivendi-theme-completions 'opinionated)
-  (setq modus-vivendi-theme-fringes 'subtle)
-  (setq modus-vivendi-theme-scale-headings t
-	modus-vivendi-theme-slanted-constructs t
-	modus-vivendi-theme-bold-constructs t
-	modus-vivendi-theme-faint-syntax nil
-	modus-vivendi-theme-intense-hl-line t
-	modus-vivendi-theme-variable-pitch-headings t
-	modus-vivendi-theme-intense-paren-match t
-	modus-vivendi-theme-section-headings t)
-
-   (setq modus-vivendi-theme-scale-1 1.05
-	 modus-vivendi-theme-scale-2 1.1
-	 modus-vivendi-theme-scale-3 1.15
-	 modus-vivendi-theme-scale-4 1.2
-	 modus-vivendi-theme-scale-5 1.3)
-
-   (setq modus-vivendi-theme-headings
-      '((1 . highlight)
-        (2 . line)
-        (t . rainbow-line-no-bold)))
-  
-  (run-at-time "20:00" (* 60 60 24)
-               (lambda () (enable-theme 'modus-vivendi)))
+  :after solar
   :config
-  (defun load-theme--disable-old-theme (theme &rest args)
-    "Disable theme before loading new one."
-    (mapcar #'disable-theme custom-enabled-themes))
-  (advice-add 'load-theme :before #'load-theme--disable-old-theme)
-  (load-theme 'modus-vivendi t))
+  (setq circadian-themes '((:sunrise . modus-operandi)
+                           (:sunset  . modus-vivendi)))
+  (circadian-setup))
+
 
 ;; More useful modeline
 
@@ -1132,8 +1106,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("0710b0bdd59c8a7aacf0640591b38fcad5978a0fcfff3fdd999e63499ada8e3e" "37768a79b479684b0756dec7c0fc7652082910c37d8863c35b702db3f16000f8" default))
  '(package-selected-packages
-   '(geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline modus-vivendi-theme modus-operandi-theme popup-kill-ring diminish use-package))
+   '(modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
