@@ -109,14 +109,14 @@
   :defer t
   :config
 
-  (defun my/electric-pair-local-text-mode ()
+  (defun nf/electric-pair-local-text-mode ()
     "Advise and wrap electric pairs in text mode."
     (add-function :before-until electric-pair-inhibit-predicate
 		  (lambda (c) (eq c ?<)))
     (electric-pair-local-mode))
   
   :hook ((prog-mode-hook . electric-pair-local-mode)
-	 (text-mode-hook . my/electric-pair-local-text-mode)))
+	 (text-mode-hook . nf/electric-pair-local-text-mode)))
 
 (use-package recentf
   ;; Loads after 2 second of idle time.
@@ -390,21 +390,21 @@
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
 
-  (defvar my/ispell-dicts
+  (defvar nf/ispell-dicts
     '(("English" . "en_US")
       ("Français" . "fr"))
     "Alist of languages dictionaries")
 
-  (defun my/ispell-dictionaries-complete ()
-    "Select an item from `my/ispell-dicts'."
+  (defun nf/ispell-dictionaries-complete ()
+    "Select an item from `nf/ispell-dicts'."
     (interactive)
-    (let* ((dicts (mapcar #'car my/ispell-dicts))
+    (let* ((dicts (mapcar #'car nf/ispell-dicts))
            (choice (completing-read "Select dictionary: " dicts nil t))
-           (key (cdr (assoc `,choice my/ispell-dicts))))
+           (key (cdr (assoc `,choice nf/ispell-dicts))))
       (ispell-change-dictionary key)
       (message "Switched to %s" key)))
 
-  :bind ("C-x C-;" . my/ispell-dictionaries-complete))
+  :bind ("C-x C-;" . nf/ispell-dictionaries-complete))
 
 
 ;; Syntax checking for GNU Emacs
@@ -440,7 +440,7 @@
   (setq org-export-global-macros
 	'(("glossentry" . "#+latex_header_extra: \\newglossaryentry{$1}{name=$2, description={$3}}")))
 
-  (defun my/toggle-presentation ()
+  (defun nf/toggle-presentation ()
     "Toggle between presentation and regular `org-mode'.
     The modes used are `olivetti-mode' and
     `org-tree-slide-mode'."
@@ -454,7 +454,7 @@
 
   :bind (:map org-mode-map
 	      ("C-c i" . imenu-list)
-	      ("C-x p" . my/toggle-presentation)))
+	      ("C-x p" . nf/toggle-presentation)))
 
 
 ;; Custome LaTeX templates
@@ -897,13 +897,13 @@
 	lsp-pyright-auto-import-completions t
 	lsp-pyright-use-library-code-for-types t
 	lsp-pyright-venv-path "~/miniconda3/envs")
-  (defun my/use-ipython ()
+  (defun nf/use-ipython ()
     "Enable IPython as shell interpreter."
     (interactive)
     (setq python-shell-interpreter "ipython"
 	  python-shell-interpreter-args "-i --simple-prompt"))
   :hook ((python-mode-hook . (lambda () (require 'lsp-pyright) (lsp-deferred)))
-	 (python-mode-hook . my/use-ipython)))
+	 (python-mode-hook . nf/use-ipython)))
 
 (use-package yapfify
   :ensure t
@@ -981,13 +981,13 @@
   :mode ("\\.java\\'")
   :config
   (setq lsp-java-format-on-type-enabled nil)
-  (defun my/java-mode-hook ()
+  (defun nf/java-mode-hook ()
     (setq c-basic-offset 2
           c-label-offset 0
           tab-width 2
           indent-tabs-mode nil
 	  require-final-newline nil))
-  :hook (java-mode-hook . (lsp my/java-mode-hook)))
+  :hook (java-mode-hook . (lsp nf/java-mode-hook)))
 
 ;; Requires dap-mode
 
