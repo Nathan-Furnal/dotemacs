@@ -1155,81 +1155,18 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline success warning error])
- '(ansi-color-names-vector
-   ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
- '(awesome-tray-mode-line-active-color "#2fafff")
- '(awesome-tray-mode-line-inactive-color "#323232")
  '(custom-safe-themes
    '("9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "bf387180109d222aee6bb089db48ed38403a1e330c9ec69fe1f52460a8936b66" "0710b0bdd59c8a7aacf0640591b38fcad5978a0fcfff3fdd999e63499ada8e3e" "37768a79b479684b0756dec7c0fc7652082910c37d8863c35b702db3f16000f8" default))
- '(exwm-floating-border-color "#646464")
  '(fci-rule-color "#4C566A")
- '(flymake-error-bitmap '(flymake-double-exclamation-mark modus-theme-fringe-red))
- '(flymake-note-bitmap '(exclamation-mark modus-theme-fringe-cyan))
- '(flymake-warning-bitmap '(exclamation-mark modus-theme-fringe-yellow))
- '(highlight-tail-colors '(("#2f4a00" . 0) ("#00415e" . 20)))
- '(hl-todo-keyword-faces
-   '(("HOLD" . "#cfdf30")
-     ("TODO" . "#feacd0")
-     ("NEXT" . "#b6a0ff")
-     ("THEM" . "#f78fe7")
-     ("PROG" . "#00d3d0")
-     ("OKAY" . "#4ae8fc")
-     ("DONT" . "#80d200")
-     ("FAIL" . "#ff8059")
-     ("BUG" . "#ff8059")
-     ("DONE" . "#44bc44")
-     ("NOTE" . "#f0ce43")
-     ("KLUDGE" . "#eecc00")
-     ("HACK" . "#eecc00")
-     ("TEMP" . "#ffcccc")
-     ("FIXME" . "#ff9977")
-     ("XXX+" . "#f4923b")
-     ("REVIEW" . "#6ae4b9")
-     ("DEPRECATED" . "#bfd9ff")))
- '(ibuffer-deletion-face 'modus-theme-mark-del)
- '(ibuffer-filter-group-name-face 'modus-theme-mark-symbol)
- '(ibuffer-marked-face 'modus-theme-mark-sel)
- '(ibuffer-title-face 'modus-theme-pseudo-header)
  '(jdee-db-active-breakpoint-face-colors (cons "#191C25" "#81A1C1"))
  '(jdee-db-requested-breakpoint-face-colors (cons "#191C25" "#A3BE8C"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#191C25" "#434C5E"))
  '(objed-cursor-color "#BF616A")
- '(org-src-block-faces 'nil)
  '(package-selected-packages
-   '(lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
- '(pdf-view-midnight-colors (cons "#ECEFF4" "#2E3440"))
+   '(hydra js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
- '(safe-local-variable-values '((geiser-scheme-implementation quote mit)))
- '(vc-annotate-background "#2E3440")
- '(vc-annotate-background-mode nil)
- '(vc-annotate-color-map
-   (list
-    (cons 20 "#A3BE8C")
-    (cons 40 "#bbc28b")
-    (cons 60 "#d3c68b")
-    (cons 80 "#EBCB8B")
-    (cons 100 "#e2b482")
-    (cons 120 "#d99d79")
-    (cons 140 "#D08770")
-    (cons 160 "#c68984")
-    (cons 180 "#bd8b98")
-    (cons 200 "#B48EAD")
-    (cons 220 "#b77f96")
-    (cons 240 "#bb7080")
-    (cons 260 "#BF616A")
-    (cons 280 "#a05b67")
-    (cons 300 "#815664")
-    (cons 320 "#625161")
-    (cons 340 "#4C566A")
-    (cons 360 "#4C566A")))
- '(vc-annotate-very-old-color nil)
- '(xterm-color-names
-   ["black" "#ff8059" "#44bc44" "#eecc00" "#2fafff" "#feacd0" "#00d3d0" "gray65"])
- '(xterm-color-names-bright
-   ["gray35" "#f4923b" "#80d200" "#cfdf30" "#79a8ff" "#f78fe7" "#4ae8fc" "white"]))
+ '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
