@@ -10,7 +10,7 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
-;; Initialise the packages, avoiding a re-initialization.
+;; Initialize the packages, avoiding a re-initialization.
 
 (unless (bound-and-true-p package--initialized)
   (setq package-enable-at-startup nil)
@@ -30,7 +30,7 @@
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
-  (setq use-package-compute-statistics t)
+  (setq use-package-compute-statistics nil)
   ;; The following is VERY IMPORTANT.  Write hooks using their real name
   ;; instead of a shorter version: after-init ==> `after-init-hook'.
   ;;
@@ -135,6 +135,7 @@
 
 (use-package modus-themes
   :ensure t
+  :functions load-theme--disable-old-theme
   :init
   (setq modus-themes-org-blocks 'greyscale)
   (setq modus-themes-completions 'opinionated)
@@ -161,7 +162,7 @@
           (t . rainbow-line-no-bold)))
   :config
   ;; before loading new theme
-  (defun load-theme--disable-old-theme(theme &rest args)
+  (defun load-theme--disable-old-theme(_theme &rest _args)
     "Disable current theme before loading new one."
     (mapcar #'disable-theme custom-enabled-themes))
   (advice-add 'load-theme :before #'load-theme--disable-old-theme))
@@ -209,7 +210,8 @@
 
 (use-package selectrum
   :ensure t
-  :config
+  :commands (selectrum-mode selectrum-prescient-mode prescient-persist-mode)
+  :init
   (selectrum-mode)
   (selectrum-prescient-mode)
   (prescient-persist-mode))
@@ -252,39 +254,13 @@
 
 (use-package ctrlf
   :ensure t
+  :commands (ctrlf-mode ctrlf-local-mode)
   :init (ctrlf-mode)
   :config
   (defun nf/ctrlf-hook ()
     (if (eq major-mode 'pdf-view-mode)
 	(ctrlf-local-mode -1)))
   :hook (pdf-view-mode-hook . nf/ctrlf-hook))
-
-(use-package ibuffer
-  :config
-  (setq ibuffer-expert t)
-  (setq ibuffer-display-summary nil)
-  (setq ibuffer-use-other-window nil)
-  (setq ibuffer-show-empty-filter-groups nil)
-  (setq ibuffer-movement-cycle nil)
-  (setq ibuffer-default-sorting-mode 'filename/process)
-  (setq ibuffer-use-header-line t)
-  (setq ibuffer-default-shrink-to-minimum-size nil)
-  (setq ibuffer-formats
-        '((mark modified read-only locked " "
-                (name 30 30 :left :elide)
-                " "
-                (size 9 -1 :right)
-                " "
-                (mode 16 16 :left :elide)
-                " " filename-and-process)
-          (mark " "
-                (name 16 -1)
-                " " filename)))
-  (setq ibuffer-saved-filter-groups nil)
-  (setq ibuffer-old-time 48)
-
-  :hook (ibuffer-mode-hook . hl-line-mode)
-  :bind ("C-x C-b" . ibuffer))
 
 (use-package which-key
   :ensure t
@@ -297,6 +273,10 @@
   :ensure t
   :defer t
   :diminish
+  :defines (company-dabbrev-other-buffers
+	    company-dabbrev-code-other-buffers
+	    company-dabbrev-downcase
+	    company-dabbrev-ignore-case)
   :config
   (setq company-dabbrev-other-buffers t
         company-dabbrev-code-other-buffers t
@@ -441,11 +421,6 @@
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (setq org-format-latex-options '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
 	   ("begin" "$1" "$" "$$" "\\(" "\\[")))
-  ;; Setting macros that can be expanded
-  ;; Ref in the manual https://orgmode.org/manual/Macro-Replacement.html
-  ;; Good ref in a blog post : https://bnolet.me/posts/2019/06/macros-in-org-mode/
-  (setq org-export-global-macros
-	'(("glossentry" . "#+latex_header_extra: \\newglossaryentry{$1}{name=$2, description={$3}}")))
 
   (defun nf/toggle-presentation ()
     "Toggle between presentation and regular `org-mode'.
@@ -505,6 +480,7 @@
   :ensure t
   :mode  ("\\.pdf\\'" . pdf-view-mode)
   :hook (TeX-after-compilation-finished-hook . TeX-revert-document-buffer)
+  :defines pdf-annot-activate-created-annotations
   :config
   (setq-default pdf-view-display-size 'fit-page)
 
@@ -528,7 +504,7 @@
 	 (prog-mode-hook . shackle-mode))
   :config
   (setq shackle-rules
-	'((pdf-view-mode :align right))))                                   ; Ensure PDF view opens on the right
+	'((pdf-view-mode :align right)))) ; Ensure PDF view opens on the right
 
 ;; Emacs document annotator, using Org-mode.
 
@@ -703,6 +679,8 @@
   :defer t
   :init
   (setq lsp-keymap-prefix "C-c l")
+  :defines (lsp-clients-clangd-args
+	    lsp-sqls-server)
   :hook ((css-mode-hook . lsp-deferred)
 	 (html-mode-hook . lsp-deferred)
 	 (web-mode-hook . lsp-deferred)
@@ -824,6 +802,7 @@
 (use-package geiser
   :ensure t
   :defer t
+  :functions geiser-impl--set-buffer-implementation
   :commands (geiser run-geiser)
   :config
   ;; Send the argument of `run-geiser' to
@@ -841,6 +820,7 @@
 (use-package julia-mode
   :ensure t
   :defer t
+  :defines inferior-julia-program
   :mode ("\\.jl\\'" . julia-mode)
   :init
   (setq inferior-julia-program "/usr/bin/julia")
@@ -861,12 +841,6 @@
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil))
-
-(use-package python-mode
-  ;; Provides Python major-mode
-  :ensure t
-  :defer t
-  :mode "\\.py\\'")
 
 ;; Hide the modeline for inferior python processes
 (use-package inferior-python-mode
@@ -894,6 +868,8 @@
 (use-package lsp-pyright
   :ensure t
   :defer t
+  :defines (lsp-clients-python-library-directories
+	    lsp-pyright-disable-language-service)
   :config
   (setq lsp-clients-python-library-directories '("/usr/" "~/miniconda3/pkgs"))
   (setq lsp-pyright-disable-language-service nil
@@ -941,6 +917,9 @@
 (use-package jupyter
   :ensure t
   :defer t
+  :defines (org-babel-default-header-args:jupyter-python
+	    org-babel-default-header-args:jupyter-julia
+	    org-babel-default-header-args:jupyter-R)
   :after (ob)
   :init
   (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
@@ -981,6 +960,7 @@
 (use-package lsp-java
   :ensure t
   :defer t
+  :defines c-label-offset
   :after lsp
   :mode ("\\.java\\'")
   :config
@@ -1038,6 +1018,7 @@
 (use-package tide
   :ensure t
   :defer t
+  :commands flycheck-add-next-checker
   :after (rjsx-mode flycheck company)
   :config
   (defun setup-tide-mode ()
@@ -1217,7 +1198,7 @@
  '(objed-cursor-color "#BF616A")
  '(org-src-block-faces 'nil)
  '(package-selected-packages
-   '(lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
+   '(lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(pdf-view-midnight-colors (cons "#ECEFF4" "#2E3440"))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
