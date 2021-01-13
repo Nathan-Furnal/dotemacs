@@ -719,10 +719,6 @@
   :config
   (setq lsp-keep-workspace-alive nil
 	lsp-auto-guess-root nil)
-  (add-hook 'lsp-completion-mode-hook
-	    (lambda ()
-	      (when (eq (car company-backends) 'company-capf)
-		(setq company-backends (cdr company-backends)))))
   ;; C++ config
   (setq lsp-clients-clangd-args '("--clang-tidy"))
 
@@ -867,6 +863,7 @@
   (setq python-indent-guess-indent-offset-verbose nil))
 
 (use-package python-mode
+  ;; Provides Python major-mode
   :ensure t
   :defer t
   :mode "\\.py\\'")
