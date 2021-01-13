@@ -252,7 +252,12 @@
 
 (use-package ctrlf
   :ensure t
-  :config (ctrlf-mode))
+  :init (ctrlf-mode)
+  :config
+  (defun nf/ctrlf-hook ()
+    (if (eq major-mode 'pdf-view-mode)
+	(ctrlf-local-mode -1)))
+  :hook (pdf-view-mode-hook . nf/ctrlf-hook))
 
 (use-package ibuffer
   :config
@@ -433,7 +438,9 @@
 	org-highlight-latex-and-related '(latex))       ; Coloring latex code in org mode
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
 
-  
+  ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
+  (setq org-format-latex-options '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+	   ("begin" "$1" "$" "$$" "\\(" "\\[")))
   ;; Setting macros that can be expanded
   ;; Ref in the manual https://orgmode.org/manual/Macro-Replacement.html
   ;; Good ref in a blog post : https://bnolet.me/posts/2019/06/macros-in-org-mode/
@@ -497,8 +504,6 @@
 (use-package pdf-tools
   :ensure t
   :mode  ("\\.pdf\\'" . pdf-view-mode)
-  :bind  (:map pdf-view-mode-map
-	       ("C-s" . isearch-forward))
   :hook (TeX-after-compilation-finished-hook . TeX-revert-document-buffer)
   :config
   (setq-default pdf-view-display-size 'fit-page)
@@ -512,7 +517,9 @@
   (setq pdf-annot-activate-created-annotations t)
    
   (pdf-tools-install :no-query)
-  (require 'pdf-occur))
+  (require 'pdf-occur)
+  :bind (:map pdf-view-mode-map
+	      ("C-s" . isearch-forward)))
 
 (use-package shackle
   :ensure t
@@ -1213,7 +1220,7 @@
  '(objed-cursor-color "#BF616A")
  '(org-src-block-faces 'nil)
  '(package-selected-packages
-   '(doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python lsp-pyright python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode lsp-java ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup dap-mode lsp-treemacs lsp-ui lsp-mode treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle org-ref cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
+   '(lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python python-mode gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(pdf-view-midnight-colors (cons "#ECEFF4" "#2E3440"))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
