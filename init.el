@@ -803,6 +803,7 @@
 (use-package geiser
   :ensure t
   :defer t
+  :defines geiser-guile-binary
   :functions geiser-impl--set-buffer-implementation
   :commands (geiser run-geiser)
   :config
@@ -810,7 +811,8 @@
   ;; `geiser-impl--set-buffer-implementation' BEFORE `run-geiser' is
   ;; ran. As I had to set the Scheme implementation by hand otherwise
   ;; with `geiser-set-scheme'
-  (advice-add 'run-geiser :before #'geiser-impl--set-buffer-implementation))
+  (advice-add 'run-geiser :before #'geiser-impl--set-buffer-implementation)
+  (setq geiser-guile-binary "/usr/bin/guile3"))
 
 ;;;========================================
 ;;; Julia
@@ -841,7 +843,20 @@
   :ensure t
   :config
   ;; Remove guess indent python message
-  (setq python-indent-guess-indent-offset-verbose nil))
+  (setq python-indent-guess-indent-offset-verbose nil)
+  ;; Use IPython when available or fall back to regular Python
+  (cond
+   ((executable-find "ipython")
+    (progn
+      (setq python-shell-buffer-name "IPython")
+      (setq python-shell-interpreter "ipython")
+      (setq python-shell-interpreter-args "-i --simple-prompt")))
+   ((executable-find "python3")
+    (setq python-shell-interpreter "python3"))
+   ((executable-find "python2")
+    (setq python-shell-interpreter "python2"))
+   (t
+    (setq python-shell-interpreter "python"))))
 
 ;; Hide the modeline for inferior python processes
 (use-package inferior-python-mode
@@ -878,13 +893,8 @@
 	lsp-pyright-auto-import-completions t
 	lsp-pyright-use-library-code-for-types t
 	lsp-pyright-venv-path "~/miniconda3/envs")
-  (defun nf/use-ipython ()
-    "Enable IPython as shell interpreter."
-    (interactive)
-    (setq python-shell-interpreter "ipython"
-	  python-shell-interpreter-args "-i --simple-prompt"))
-  :hook ((python-mode-hook . (lambda () (require 'lsp-pyright) (lsp-deferred)))
-	 (python-mode-hook . nf/use-ipython)))
+  :hook ((python-mode-hook . (lambda ()
+			       (require 'lsp-pyright) (lsp-deferred)))))
 
 (use-package yapfify
   :ensure t
