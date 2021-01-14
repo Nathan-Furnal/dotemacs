@@ -690,6 +690,7 @@
 	 (java-mode-hook . lsp-deferred)
 	 (python-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
+	 (rust-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
@@ -1110,6 +1111,21 @@
 	 (web-mode-hook . emmet-mode)))
 
 ;;;========================================
+;;; Rust
+;;;========================================
+
+(use-package rustic
+  :ensure t
+  :defer t
+  :config
+  (setq rustic-cargo-bin (expand-file-name "~/.cargo/bin/cargo")))
+
+(use-package cargo
+  :ensure t
+  :defer t
+  :hook (rust-mode-hook . cargo-minor-mode))
+
+;;;========================================
 ;;; Code snippets and skeletons
 ;;;========================================
 
@@ -1163,7 +1179,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#191C25" "#434C5E"))
  '(objed-cursor-color "#BF616A")
  '(package-selected-packages
-   '(hydra js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
+   '(cargo rustic hydra js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
  '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
