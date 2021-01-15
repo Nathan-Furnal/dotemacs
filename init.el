@@ -41,8 +41,8 @@
 (eval-when-compile
   (require 'use-package))
 
-(use-package diminish :ensure t) ;; if you use :diminish
-(use-package bind-key :ensure t) ;; if you use any :bind variant
+(use-package diminish :ensure t :after use-package) ;; if you use :diminish
+(use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
 
 ;;;========================================
 ;;; Useful defaults
@@ -129,13 +129,24 @@
   :defer 2
   :bind ("M-y" . popup-kill-ring))
 
+(use-package dashboard
+  :ensure t
+  :config
+  (setq dashboard-startup-banner 'logo
+	dashboard-show-shortcuts t)
+  (setq dashboard-items '((recents  . 5)
+                          (projects . 5)
+                          (agenda . 5)))
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (dashboard-setup-startup-hook))
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
 
 (use-package modus-themes
   :ensure t
-  :functions load-theme--disable-old-theme
   :init
   (setq modus-themes-org-blocks 'greyscale)
   (setq modus-themes-completions 'opinionated)
@@ -159,14 +170,7 @@
 	'((1 . section)
           (2 . section-no-bold)
           (3 . rainbow-line)
-          (t . rainbow-line-no-bold)))
-  :config
-  ;; before loading new theme
-  (defun load-theme--disable-old-theme(_theme &rest _args)
-    "Disable current theme before loading new one."
-    (mapcar #'disable-theme custom-enabled-themes))
-  (advice-add 'load-theme :before #'load-theme--disable-old-theme))
-
+          (t . rainbow-line-no-bold))))
 
 ;; Running modus-themes depending on the time of the day.
 
@@ -216,6 +220,7 @@
   (selectrum-prescient-mode)
   (prescient-persist-mode))
 
+
 (use-package selectrum-prescient
   :ensure t
   :after selectrum)
@@ -242,13 +247,11 @@
 (use-package imenu-list
   :ensure t
   :defer t
-  :after imenu
   :bind ("C-c i" . imenu-list))
 
 (use-package flimenu
   :ensure t
   :defer t
-  :after imenu
   :config
   (flimenu-global-mode 1))
 
@@ -264,7 +267,7 @@
 
 (use-package which-key
   :ensure t
-  :defer 1
+  :defer 4
   :diminish which-key-mode
   :config
   (which-key-mode 1))
@@ -305,39 +308,12 @@
          (prog-mode-hook . company-mode)))
 
 ;;;========================================
-;;; Navigation & Completion
-;;;========================================
-
-;; icomplete-vertical will be included in emacs in the future
-;; See https://github.com/oantolin/icomplete-vertical/issues/14
-
-(use-package icomplete-vertical
-  :disabled
-  :ensure t
-  :demand t
-  :custom
-  (completion-styles '(partial-completion substring))
-  (completion-category-overrides '((file (styles basic substring))))
-  (read-file-name-completion-ignore-case t)
-  (read-buffer-completion-ignore-case t)
-  (completion-ignore-case t)
-  (resize-mini-windows 'grow-only)
-  :config
-  (fido-mode)
-  (icomplete-vertical-mode)
-  :bind (:map icomplete-minibuffer-map
-              ("<down>" . icomplete-forward-completions)
-              ("C-n" . icomplete-forward-completions)
-              ("<up>" . icomplete-backward-completions)
-              ("C-p" . icomplete-backward-completions)
-              ("C-v" . icomplete-vertical-toggle)
-	      ("<tab>" . icomplete-fido-ret)))
-
-;;;========================================
 ;;; Windows & movement
 ;;;========================================
 
 (use-package windmove
+  :ensure nil
+  :defer t
   :config
   (setq windmove-create-window nil)     ; Emacs 27.1
   :bind (("C-c <up>" . windmove-up)
@@ -347,7 +323,7 @@
 
 (use-package transpose-frame
   :ensure t
-  :defer 2
+  :defer t
   :commands (transpose-frame
              flip-frame
              flop-frame
@@ -396,10 +372,10 @@
 
 (use-package flycheck
   :ensure t
-  :init (global-flycheck-mode)
+  :defer t
   :config
-  (setq flycheck-check-syntax-automatically '(mode-enabled save))) ; Check on save instead of running constantly
-
+  (setq flycheck-check-syntax-automatically '(mode-enabled save)) ; Check on save instead of running constantly
+  :hook ((prog-mode-hook text-mode-hook) . flycheck-mode))
 ;;;========================================
 ;;; Org-mode
 ;;;========================================
@@ -419,8 +395,13 @@
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
 
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
-  (setq org-format-latex-options '(:foreground default :background default :scale 2.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-	   ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (setq org-format-latex-options '(:foreground default
+					       :background default
+					       :scale 2.0
+					       :html-foreground "Black"
+					       :html-background "Transparent"
+					       :html-scale 1.0
+					       :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
   (defun nf/toggle-presentation ()
     "Toggle between presentation and regular `org-mode'.
@@ -474,7 +455,8 @@
 
 (use-package org-ref
   :ensure t
-  :defer 2)
+  :defer 2
+  :after org)
   
 (use-package pdf-tools
   :ensure t
@@ -495,24 +477,37 @@
   (pdf-tools-install :no-query)
   (require 'pdf-occur)
   :bind (:map pdf-view-mode-map
-	      ("C-s" . isearch-forward)))
+	      ("C-s" . isearch-forward)
+	      ("C-r" . isearch-backward)))
 
 (use-package shackle
   :ensure t
   :defer t
-  :hook ((org-mode-hook . shackle-mode)
-	 (prog-mode-hook . shackle-mode))
+  :hook (org-mode-hook . shackle-mode)
   :config
   (setq shackle-rules
 	'((pdf-view-mode :align right)))) ; Ensure PDF view opens on the right
 
-;; Emacs document annotator, using Org-mode.
+;;;========================================
+;;; Note taking
+;;;========================================
 
-(use-package org-noter
+;; Roam based workflow for org-mode
+
+(use-package org-roam
   :ensure t
-  :defer t
-  :config
-  (setq org-noter-notes-search-path '("~/Documents" "~/Notes")))
+  :diminish "-Ω-"
+  :hook
+  (after-init-hook . org-roam-mode)
+  :custom
+  (org-roam-directory (expand-file-name "~/org-roam"))
+  :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
 
 ;; Adding Deft an easy way to go through files and create notes on the fly
 ;; Source : https://jblevins.org/projects/deft/
@@ -635,7 +630,7 @@
 
 (use-package rect
   :ensure nil
-  :defer nil
+  :defer t
   :bind ("C-x <SPC>" . rectangle-mark-mode))
 
 ;;;========================================
@@ -653,10 +648,6 @@
 ;;;========================================
 ;;; Project management
 ;;;========================================
-
-(use-package ede
-  :ensure nil
-  :defer t)
 
 (use-package projectile
   :ensure t
@@ -1189,7 +1180,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#191C25" "#434C5E"))
  '(objed-cursor-color "#BF616A")
  '(package-selected-packages
-   '(cargo rustic hydra js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft org-noter shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
+   '(dashboard org-roam memoize cargo rustic js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-java lsp-pyright dap-mode lsp-treemacs lsp-ui lsp-mode doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
  '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
