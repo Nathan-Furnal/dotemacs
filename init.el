@@ -757,7 +757,7 @@
 (use-package paredit
   :ensure t
   :defer t
-  :hook ((emacs-lisp-mode lisp-mode-hook) . paredit-mode))
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook) . paredit-mode))
 
 (use-package rainbow-delimiters
   :ensure t
