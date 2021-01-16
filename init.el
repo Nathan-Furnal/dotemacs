@@ -501,7 +501,7 @@
   (after-init-hook . org-roam-mode)
   :custom
   (org-roam-directory (expand-file-name "~/org-roam"))
-  (org-roam-db-location (expand-file-name "~/org-roam.db"))
+  (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
   :bind (:map org-roam-mode-map
               (("C-c n l" . org-roam)
                ("C-c n f" . org-roam-find-file)
