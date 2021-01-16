@@ -187,7 +187,6 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-
 ;; More useful modeline
 
 (use-package doom-modeline
@@ -758,7 +757,7 @@
 (use-package paredit
   :ensure t
   :defer t
-  :hook ((emacs lisp-mode lisp-mode-hook) . paredit-mode))
+  :hook ((emacs-lisp-mode lisp-mode-hook) . paredit-mode))
 
 (use-package rainbow-delimiters
   :ensure t
