@@ -456,28 +456,6 @@
   :ensure t
   :defer 2
   :after org)
-  
-(use-package pdf-tools
-  :ensure t
-  :mode  ("\\.pdf\\'" . pdf-view-mode)
-  :hook (TeX-after-compilation-finished-hook . TeX-revert-document-buffer)
-  :defines pdf-annot-activate-created-annotations
-  :config
-  (setq-default pdf-view-display-size 'fit-page)
-
-  ;; more fine-grained zooming
-  
-  (setq pdf-view-resize-factor 1.05)
-
-  ;; create annotation on highlight
-  
-  (setq pdf-annot-activate-created-annotations t)
-   
-  (pdf-tools-install :no-query)
-  (require 'pdf-occur)
-  :bind (:map pdf-view-mode-map
-	      ("C-s" . isearch-forward)
-	      ("C-r" . isearch-backward)))
 
 (use-package shackle
   :ensure t
@@ -569,6 +547,32 @@
   (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
+
+;;;========================================
+;;; Reading
+;;;========================================
+
+(use-package pdf-tools
+  :ensure t
+  :mode  ("\\.pdf\\'" . pdf-view-mode)
+  :hook (TeX-after-compilation-finished-hook . TeX-revert-document-buffer)
+  :defines pdf-annot-activate-created-annotations
+  :config
+  (setq-default pdf-view-display-size 'fit-page)
+
+  ;; more fine-grained zooming
+  
+  (setq pdf-view-resize-factor 1.05)
+
+  ;; create annotation on highlight
+  
+  (setq pdf-annot-activate-created-annotations t)
+   
+  (pdf-tools-install :no-query)
+  (require 'pdf-occur)
+  :bind (:map pdf-view-mode-map
+	      ("C-s" . isearch-forward)
+	      ("C-r" . isearch-backward)))
 
 ;;;========================================
 ;;; Agenda & Organization
