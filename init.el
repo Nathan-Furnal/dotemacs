@@ -479,6 +479,27 @@
   :custom
   (org-roam-directory (expand-file-name "~/org-roam"))
   (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
+  :config
+
+  (setq org-roam-capture-templates
+	'(("d" "default" plain
+           (function org-roam-capture--get-point)
+           "%?"
+           :file-name "fleeting/%<%Y%m%d%H%M%S>-${slug}"
+           :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n\n"
+           :unnarrowed t)
+	  ("c" "concept" plain
+	   (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "concepts/${slug}"
+	   :head "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+created: %U\n#+las_modified: %U\n\n"
+	   :unnarrowed t)
+	  ("l" "literature" plain
+	   (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "literature/${slug}"
+	   :head "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+created: %U\n#+las_modified: %U\n\n"
+	   :unnarrowed t)))
   :bind (:map org-roam-mode-map
               (("C-c n l" . org-roam)
                ("C-c n f" . org-roam-find-file)
@@ -494,7 +515,7 @@
   :ensure t
   :defer t
   :config (setq deft-default-extension "org"
-	        deft-directory "~/Notes"
+	        deft-directory "~/projects/notes"
 		deft-use-filter-string-for-filename t
 		deft-recursive t                                   ; Allows searching through sub-directories
 		deft-use-filename-as-title t)                      ; use filename instead of first line of doc
