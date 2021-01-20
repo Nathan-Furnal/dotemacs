@@ -1112,7 +1112,6 @@
   :mode "\\.css\\'"
   :hook (css-mode-hook . emmet-mode))
 
-
 ;; Useful tool to have live html documents update
 ;; To use : M-x httpd-start
 ;; One has to visit http://localhost:8080/imp/ (which I bookmarked) to display the file in browser
