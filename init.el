@@ -981,6 +981,7 @@
 	  (sql . t)
 	  (emacs-lisp . t)
 	  (maxima . t)
+	  (java . t)
 	  (ditaa . t)
 	  (plantuml . t)
 	  (jupyter . t)))
