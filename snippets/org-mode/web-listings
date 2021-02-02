@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: latex-web-input
+# key: <web
+# group: latex 
+# --
+
+#+begin_export latex
+\lstinputlisting[style=htmlcssjs]{${0:filename}}
+#+end_export
