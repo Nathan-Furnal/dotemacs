@@ -44,6 +44,7 @@
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
 
+
 ;;;========================================
 ;;; Useful defaults
 ;;;========================================

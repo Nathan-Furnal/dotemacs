@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: nasm
+# key: nasm
+# --
+
+nasm -f elf64 -F dwarf $0
