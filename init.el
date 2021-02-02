@@ -968,6 +968,7 @@
 (use-package ob
   :after org
   :defer nil
+  :defines org-ditaa-jar-path
   :config
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
   (setq org-babel-load-languages
