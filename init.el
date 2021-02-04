@@ -381,6 +381,8 @@
 ;;;========================================
 
 (use-package org
+  :ensure t
+  :pin gnu 
   :config
   (setq org-imenu-depth 7)
   (setq org-fontify-done-headline nil
@@ -969,10 +971,10 @@
 (use-package ob
   :after org
   :defer nil
-  :defines  (org-ditaa-jar-path plantuml-jar-path)
+  :defines (org-ditaa-jar-path org-plantuml-jar-path)
   :config
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar"
-	plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
+	org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
   (setq org-babel-load-languages
 	'((latex . t)
 	  (python . t)
@@ -1208,7 +1210,10 @@
 
 (use-package plantuml-mode
   :ensure t
-  :defer t)
+  :defer t
+  :config
+  (setq plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
+  (setq plantuml-default-exec-mode 'jar))
 
 ;;; init.el ends here
 (custom-set-variables
@@ -1224,7 +1229,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#191C25" "#434C5E"))
  '(objed-cursor-color "#BF616A")
  '(package-selected-packages
-   '(flycheck-nasm plantuml-mode lsp-java dap-mode org-download dashboard org-roam memoize cargo rustic js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-pyright lsp-treemacs lsp-ui doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
+   '(org flycheck-nasm plantuml-mode lsp-java dap-mode org-download dashboard org-roam memoize cargo rustic js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-pyright lsp-treemacs lsp-ui doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
  '(rustic-ansi-faces
    ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
  '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
