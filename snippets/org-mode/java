@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: java
+# key: <j
+# --
+
+#+begin_src java :classname ${1:Main} :eval no-export
+$0
+#+end_src
