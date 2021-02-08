@@ -7,8 +7,10 @@
 
 (require 'package)
 
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+(setq package-archives
+      '(("melpa" . "https://melpa.org/packages/")
+	("org" . "https://orgmode.org/elpa/")
+	("elpa" . "https://elpa.gnu.org/packages/")))
 
 ;; Initialize the packages, avoiding a re-initialization.
 
@@ -382,7 +384,7 @@
 
 (use-package org
   :ensure t
-  :pin gnu 
+  :pin org
   :config
   (setq org-imenu-depth 7)
   (setq org-fontify-done-headline nil

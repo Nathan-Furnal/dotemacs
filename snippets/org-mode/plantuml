@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: plantuml
+# key: <puml
+# --
+
+#+begin_src plantuml :file img/${1:filename}.png :eval no-export
+@startuml
+skinparam dpi 300
+skinparam shadowing false
+$0
+@enduml
+#+end_src
