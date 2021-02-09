@@ -3,4 +3,4 @@
 # key: ld
 # --
 
-ld -o ${1:filename} -e main $0
+ld -o ${1:filename} -e main $1.o $0
