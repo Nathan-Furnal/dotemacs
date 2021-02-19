@@ -46,7 +46,6 @@
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
 
-
 ;;;========================================
 ;;; Useful defaults
 ;;;========================================
@@ -222,7 +221,6 @@
   (selectrum-prescient-mode)
   (prescient-persist-mode))
 
-
 (use-package selectrum-prescient
   :ensure t
   :after selectrum)
@@ -368,7 +366,6 @@
       (message "Switched to %s" key)))
 
   :bind ("C-x C-;" . nf/ispell-dictionaries-complete))
-
 
 ;; Syntax checking for GNU Emacs
 
