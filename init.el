@@ -434,7 +434,7 @@
   :ensure t
   :defer t)
 
-;; LaTeX config and use PDF-tools to view pdf's 
+;; LaTeX config and use PDF-tools to view PDF files
 (use-package tex
   :ensure nil
   :defer t
