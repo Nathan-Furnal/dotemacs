@@ -434,6 +434,19 @@
   :ensure t
   :defer t)
 
+;; LaTeX config and use PDF-tools to view pdf's 
+(use-package tex
+  :ensure nil
+  :defer t
+  :defines TeX-view-program-selection
+  :config
+  (setq TeX-view-program-selection
+	'(((output-dvi has-no-display-manager)  "dvi2tty")
+	  ((output-dvi style-pstricks)   "dvips and gv")
+	  (output-dvi "xdvi")
+	  (output-pdf "PDF Tools")
+	  (output-html "xdg-open"))))
+
 (use-package template
   :after org ox-latex
   :load-path (lambda () (concat user-emacs-directory "latex")))
@@ -1218,26 +1231,3 @@
   (setq plantuml-default-exec-mode 'jar))
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("9efb2d10bfb38fe7cd4586afb3e644d082cbcdb7435f3d1e8dd9413cbe5e61fc" "bf387180109d222aee6bb089db48ed38403a1e330c9ec69fe1f52460a8936b66" "0710b0bdd59c8a7aacf0640591b38fcad5978a0fcfff3fdd999e63499ada8e3e" "37768a79b479684b0756dec7c0fc7652082910c37d8863c35b702db3f16000f8" default))
- '(fci-rule-color "#4C566A")
- '(jdee-db-active-breakpoint-face-colors (cons "#191C25" "#81A1C1"))
- '(jdee-db-requested-breakpoint-face-colors (cons "#191C25" "#A3BE8C"))
- '(jdee-db-spec-breakpoint-face-colors (cons "#191C25" "#434C5E"))
- '(objed-cursor-color "#BF616A")
- '(package-selected-packages
-   '(org flycheck-nasm plantuml-mode lsp-java dap-mode org-download dashboard org-roam memoize cargo rustic js2-mode json-reformat prescient yasnippet xterm-color pdf-tools org-ref lsp-pyright lsp-treemacs lsp-ui doom-themes olivetti org-tree-slide modus-themes circadian geiser treemacs-projectile projectile pyvenv jupyter yaml-mode gcmh rainbow-delimiters paredit maxima marginalia flycheck-clj-kondo yapfify python gif-screencast yasnippet-snippets emmet-mode skewer-mode impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess hide-mode-line elpy julia-repl julia-mode cider clojure-mode sly elisp-lint package-lint buttercup treemacs iedit multiple-cursors magit pandoc-mode markdown-mode deft shackle cdlatex auctex flycheck transpose-frame company which-key ctrlf flimenu imenu-list selectrum-prescient selectrum centaur-tabs doom-modeline popup-kill-ring diminish use-package))
- '(rustic-ansi-faces
-   ["#2E3440" "#BF616A" "#A3BE8C" "#EBCB8B" "#81A1C1" "#B48EAD" "#88C0D0" "#ECEFF4"])
- '(safe-local-variable-values '((geiser-scheme-implementation quote mit))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
