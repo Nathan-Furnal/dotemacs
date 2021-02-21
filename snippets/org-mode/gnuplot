@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: gnuplot
+# key: <gplot
+# --
+
+#+begin_src gnuplot :file img/${1:file}.eps :exports results
+reset
+set encoding utf8
+set terminal postscript enhanced color
+set key font "Times"
+$0
+#+end_src
