@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: end
+# key: <end
+# group: nasm-mode
+# --
+
+;; end
+
+   mov rax, 60
+   mov rdi, 0
+   syscall
+   $0
+
+

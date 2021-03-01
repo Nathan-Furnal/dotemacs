@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: template
+# key: <temp
+# group: nasm-mode
+# --
+
+;; `(file-name-nondirectory (buffer-file-name))`
+
+global main
+
+section .text
+
+main:
+
+;; end
+
+   mov rax, 60
+   mov rdi, 0
+   syscall

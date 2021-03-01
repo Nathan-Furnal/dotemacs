@@ -1233,6 +1233,18 @@
   :ensure t
   :defer t)
 
+;;;========================================
+;;; Assembly language
+;;;========================================
+
+(use-package nasm-mode
+  :defines nasm-basic-offset
+  :mode ("\\.asm\\'" . nasm-mode)
+  :ensure t
+  :defer t
+  :config
+  (setq nasm-basic-offset 4))
+
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1240,7 +1252,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
