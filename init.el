@@ -55,9 +55,9 @@
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (menu-bar-mode 1)
-  (set-face-attribute 'default nil :family "Roboto Mono" :height 100)
-  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 100)
-  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 110)
+  (set-face-attribute 'default nil :family "Roboto Mono" :height 90)
+  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 90)
+  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100)
   
   :config
   (set-language-environment "UTF-8")
