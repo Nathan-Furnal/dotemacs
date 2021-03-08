@@ -466,7 +466,9 @@
   :defer t
   :hook ((org-mode-hook . turn-on-org-cdlatex)    ; Enable cdlatex by default
 	 (LaTex-mode-hook . turn-on-cdlatex)
-	 (latex-mode-hook . turn-on-cdlatex)))
+	 (latex-mode-hook . turn-on-cdlatex))
+  :bind (:map org-cdlatex-mode-map
+	      ("`" . nil)))
 
 (use-package org-ref
   :ensure t

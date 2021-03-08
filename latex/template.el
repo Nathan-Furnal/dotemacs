@@ -58,9 +58,9 @@
 \\usepackage[many]{tcolorbox}
 \\usepackage{hyperref}
 \\hypersetup{
-    colorlinks,
+    colorlinks=true,
     linkcolor={PineGreen!30!black},
-    citecolor={DarkGray},
+    citecolor={Bittersweet!50!Sepia},
     urlcolor={blue!80!black}}
 \\usepackage[export]{adjustbox}
 \\usepackage{subcaption}
