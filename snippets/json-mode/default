@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: default
+# key: <default
+# --
+{                                        
+    "compilerOptions": {                   
+        "target": "es2017",                  
+        "allowSyntheticDefaultImports": true,
+        "noEmit": true,                      
+        "checkJs": true,                     
+        "jsx": "react",                      
+        "lib": [ "dom", "es2017"]
+    },
+    "typeAcquisition" : {
+        "include" : ["jquery"]
+    }                                      
+}

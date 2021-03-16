@@ -30,7 +30,7 @@
 \\usepackage{subcaption}
 \\hypersetup{
     colorlinks=true,
-    linkcolor={PineGreen!30!black},
+    linkcolor={PineGreen!50!black},
     citecolor={Bittersweet!50!Sepia},
     urlcolor={blue!80!black}}
 \\usepackage{geometry}

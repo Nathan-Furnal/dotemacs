@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: jquery
+# key: <jq
+# --
+
+"typeAcquisition" : {
+"include" : ["jquery"]
+	}
