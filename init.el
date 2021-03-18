@@ -879,7 +879,18 @@
 (use-package julia-repl
   :requires julia-mode
   :ensure t
-  :defer t)
+  :defer t
+  :config
+  (julia-repl-set-terminal-backend 'vterm))
+
+(use-package lsp-julia
+  :ensure t
+  :defer t
+  :defines lsp-julia-default-environment
+  :config
+  (setq lsp-julia-default-environment "~/.julia/environments/v1.5")
+  :hook (julia-mode-hook . (lambda ()
+			     (require 'lsp-julia) (lsp-deferred))))
 
 ;; ========================================
 ;; Python
@@ -1261,7 +1272,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-pyright vterm nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(lsp-julia lsp-pyright vterm nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
