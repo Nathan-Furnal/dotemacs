@@ -730,6 +730,7 @@
 	 (python-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
+	 (clojure-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
@@ -823,18 +824,19 @@
 ;;; Clojure
 ;;;========================================
 
+(use-package cider
+  :ensure t
+  :defer t)
+
 (use-package clojure-mode
   :ensure t
   :defer t
+  :defines lsp-completion-enable
   :config
-  (use-package flycheck-clj-kondo
-    :ensure t)
-  :hook (clojure-mode-hook . paredit-mode))
-
-(use-package cider
-  :ensure t
-  :defer t
-  :hook (clojure-mode-hook . cider-mode))
+  (setq lsp-completion-enable nil) ; use cider completion
+  :hook (clojure-mode-hook . (lambda ()
+			       (cider)
+			       (paredit-mode))))
 
 ;;;========================================
 ;;; Scheme
@@ -1272,7 +1274,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-julia lsp-pyright vterm nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(flycheck-clj-kondo lsp-julia lsp-pyright vterm nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame tide sly skewer-mode shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
