@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: psql
+# key: <psql
+# group: sql
+# --
+#+begin_src sql :engine postgresql :dbhost localhost :dbuser nathan :database ${1:db} :exports both
+$0
+#+end_src
