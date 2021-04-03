@@ -9,7 +9,6 @@
 
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-	("org" . "https://orgmode.org/elpa/")
 	("elpa" . "https://elpa.gnu.org/packages/")))
 
 ;; Initialize the packages, avoiding a re-initialization.
@@ -382,7 +381,7 @@
 
 (use-package org
   :ensure t
-  :pin org
+  :pin elpa
   :config
   (setq org-imenu-depth 7)
   (setq org-fontify-done-headline nil
@@ -1279,17 +1278,3 @@
   (setq nasm-basic-offset 4))
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(tide nodejs-repl flycheck-clj-kondo lsp-julia lsp-pyright vterm nasm-mode gnuplot yasnippet-snippets yapfify yaml-mode which-key web-mode use-package treemacs-projectile transpose-frame sly shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti modus-themes maxima marginalia magit lsp-ui lsp-java jupyter julia-repl julia-mode json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard dash-functional ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex))
- '(warning-suppress-types '((comp) (comp) (:warning))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
