@@ -839,7 +839,7 @@
 			       (paredit-mode))))
 
 ;;;========================================
-;;; Scheme
+;;; Scheme & Racket
 ;;;========================================
 
 (use-package scheme
@@ -861,6 +861,10 @@
   ;; with `geiser-set-scheme'
   (advice-add 'run-geiser :before #'geiser-impl--set-buffer-implementation)
   (setq geiser-guile-binary "/usr/bin/guile3"))
+
+(use-package racket-mode
+  :defer t
+  :ensure t)
 
 ;;;========================================
 ;;; Julia
@@ -1278,3 +1282,16 @@
   (setq nasm-basic-offset 4))
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
