@@ -149,6 +149,7 @@
 
 (use-package modus-themes
   :ensure t
+  :pin melpa
   :init
   (setq modus-themes-org-blocks 'greyscale)
   (setq modus-themes-completions 'opinionated)
@@ -932,18 +933,10 @@
   :ensure t
   :defer t)
 
-(use-package pyvenv
+(use-package poetry
   :ensure t
   :defer t
-  :config
-  ;; Setting work on to easily switch between environments
-  (setenv "WORKON_HOME" (expand-file-name "~/miniconda3/envs/"))
-  ;; Display virtual envs in the menu bar
-  (setq pyvenv-menu t)
-  ;; Restart the python process when switching environments
-  (add-hook 'pyvenv-post-activate-hooks (lambda ()
-					  (pyvenv-restart-python)))
-  :hook (python-mode-hook . pyvenv-mode))
+  :hook (python-mode-hook . poetry-tracking-mode))
 
 (use-package lsp-pyright
   :ensure t
@@ -951,12 +944,10 @@
   :defines (lsp-clients-python-library-directories
 	    lsp-pyright-disable-language-service)
   :config
-  (setq lsp-clients-python-library-directories '("/usr/" "~/miniconda3/pkgs"))
   (setq lsp-pyright-disable-language-service nil
 	lsp-pyright-disable-organize-imports nil
 	lsp-pyright-auto-import-completions t
-	lsp-pyright-use-library-code-for-types t
-	lsp-pyright-venv-path "~/miniconda3/envs")
+	lsp-pyright-use-library-code-for-types t)
   :hook ((python-mode-hook . (lambda ()
 			       (require 'lsp-pyright) (lsp-deferred)))))
 
@@ -1288,7 +1279,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters pyvenv prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(poetry modus-themes racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
