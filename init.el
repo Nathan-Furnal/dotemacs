@@ -814,7 +814,7 @@
 (use-package paredit
   :ensure t
   :defer t
-  :hook ((emacs-lisp-mode-hook lisp-mode-hook) . paredit-mode))
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -865,7 +865,11 @@
 
 (use-package racket-mode
   :defer t
-  :ensure t)
+  :ensure t
+  :bind (:map racket-mode-map
+	      ("C-c C-c" . racket-run)
+	      ("M-<RET>" . racket-eval-last-sexp))
+  :hook (racket-mode-hook . racket-xp-mode))
 
 ;;;========================================
 ;;; Julia
