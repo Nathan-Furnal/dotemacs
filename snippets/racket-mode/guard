@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: guard-keyword
+# key: :g
+# --
+#:guard (λ ($0))

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: transparent-keyword
+# key: :t
+# --
+#:transparent $0

@@ -75,7 +75,7 @@
   (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
-  (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases. 
+  (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
 
   ;; Speed up startup High garbage collection at startup needs to be
   ;; reset at some point then we defer the work to `gcmh'.
@@ -852,40 +852,42 @@
 (use-package geiser
   :ensure t
   :defer t
-  :defines geiser-guile-binary
-  :functions geiser-impl--set-buffer-implementation
   :commands (geiser run-geiser)
   :config
-  ;; Send the argument of `run-geiser' to
-  ;; `geiser-impl--set-buffer-implementation' BEFORE `run-geiser' is
-  ;; ran. As I had to set the Scheme implementation by hand otherwise
-  ;; with `geiser-set-scheme'
-  (advice-add 'run-geiser :before #'geiser-impl--set-buffer-implementation)
-  (setq geiser-guile-binary "/usr/bin/guile3"))
+  (use-package geiser-mit
+    :ensure t
+    :defer t)
+  (use-package geiser-guile
+    :ensure t
+    :defer t
+    :defines geiser-guile-binary
+    :config
+    (setq geiser-guile-binary "/usr/bin/guile3")))
 
-(use-package racket-mode
-  :defer t
-  :ensure t
-  :bind (:map racket-mode-map
-	      ("C-c C-c" . racket-run)
-	      ("M-<RET>" . racket-eval-last-sexp))
-  :hook (racket-mode-hook . racket-xp-mode))
+  (use-package racket-mode
+    :defer t
+    :ensure t
+    :bind (:map racket-mode-map
+		("C-c C-c" . racket-run)
+		("M-<RET>" . racket-eval-last-sexp))
+    :hook ((racket-mode-hook . racket-xp-mode)
+	   (racket-repl-mode-hook . hide-mode-line-mode)))
 
 ;;;========================================
 ;;; Julia
 ;;;========================================
 
-;; Requires a Julia install
+  ;; Requires a Julia install
 
-(use-package julia-mode
-  :ensure t
-  :defer t
-  :defines inferior-julia-program
-  :mode ("\\.jl\\'" . julia-mode)
-  :init
-  (setq inferior-julia-program "/usr/bin/julia")
-  (setenv "JULIA_NUM_THREADS" "16")
-  :hook (julia-mode-hook . julia-repl-mode))
+  (use-package julia-mode
+    :ensure t
+    :defer t
+    :defines inferior-julia-program
+    :mode ("\\.jl\\'" . julia-mode)
+    :init
+    (setq inferior-julia-program "/usr/bin/julia")
+    (setenv "JULIA_NUM_THREADS" "16")
+    :hook (julia-mode-hook . julia-repl-mode))
 
 (use-package julia-repl
   :requires julia-mode
@@ -1063,9 +1065,9 @@
 
 
 ;; LSP requirements on the server
-;; sudo npm i -g typescript-language-server; sudo npm i -g typescript
-;; sudo npm i -g javascript-typescript-langserver
-;; sudo npm install -g prettier ; it's a linter/formatter
+;; npm i typescript-language-server; npm i typescript
+;; npm i javascript-typescript-langserver
+;; npm install prettier ; it's a linter/formatter
 ;; -> checkout https://youtu.be/0zuYCEzrchk
 
 (use-package rjsx-mode
@@ -1198,6 +1200,10 @@
 ;;; Rust
 ;;;========================================
 
+(use-package rust-mode
+  :ensure t
+  :defer t)
+
 (use-package rustic
   :ensure t
   :defer t
@@ -1283,7 +1289,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(poetry modus-themes racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rjsx-mode rainbow-delimiters prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(geiser-mit geiser-guile rust-mode rustic poetry modus-themes racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
