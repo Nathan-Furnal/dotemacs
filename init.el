@@ -1153,6 +1153,7 @@
   (setq web-mode-enable-auto-pairing t)
   (setq web-mode-enable-auto-expanding t)
   (setq web-mode-enable-css-colorization t)
+  (setq browse-url-browser-function 'browse-url-chrome)
   :hook (web-mode-hook . electric-pair-mode))
 
 (use-package css-mode
