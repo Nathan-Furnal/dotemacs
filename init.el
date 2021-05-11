@@ -739,23 +739,23 @@
   :config
   (setq lsp-keep-workspace-alive nil
 	lsp-auto-guess-root nil)
-
+  ;; Use a popup instead of the minibuffer to display information
+  (setq lsp-signature-function 'lsp-signature-posframe)
   ;; C++ config
   (setq lsp-clients-clangd-args '("--clang-tidy"))
-
   ;; SQL config
-
   (setq lsp-sqls-server "~/go/bin/sqls"))
+  
 
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :config
-  (setq lsp-ui-sideline-enable nil
-	lsp-ui-doc-delay 2)
-  :hook (lsp-mode-hook . lsp-ui-mode)
-  :bind (:map lsp-ui-mode-map
-	      ("C-c i" . lsp-ui-imenu)))
+  (use-package lsp-ui
+    :ensure t
+    :defer t
+    :config
+    (setq lsp-ui-sideline-enable nil
+	  lsp-ui-doc-delay 2)
+    :hook (lsp-mode-hook . lsp-ui-mode)
+    :bind (:map lsp-ui-mode-map
+		("C-c i" . lsp-ui-imenu)))
 
 ;; LSP integration with treemacs
 
@@ -1065,9 +1065,10 @@
 
 
 ;; LSP requirements on the server
-;; npm i typescript-language-server; npm i typescript
-;; npm i javascript-typescript-langserver
-;; npm install prettier ; it's a linter/formatter
+;; sudo pacman -Syu typescript
+;; yay -Syu typescript-language-server
+;; yay -Syu javascript-typescript-langserver
+;; sudo pacman -Syu prettier ; it's a linter/formatter
 ;; -> checkout https://youtu.be/0zuYCEzrchk
 
 (use-package rjsx-mode
