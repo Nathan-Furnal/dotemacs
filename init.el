@@ -76,6 +76,7 @@
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
   (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
+  (setq comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup 
 
   ;; Speed up startup High garbage collection at startup needs to be
   ;; reset at some point then we defer the work to `gcmh'.
@@ -942,6 +943,9 @@
 (use-package poetry
   :ensure t
   :defer t
+  :config
+  ;; Set the home for virtual environments
+  (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs")
   :hook (python-mode-hook . poetry-tracking-mode))
 
 (use-package lsp-pyright
@@ -1285,16 +1289,3 @@
   (setq nasm-basic-offset 4))
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(geiser-mit geiser-guile rust-mode rustic poetry modus-themes racket-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rjsx-mode rainbow-delimiters prettier-js popup-kill-ring plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser gcmh flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
