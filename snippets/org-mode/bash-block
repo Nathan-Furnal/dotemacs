@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: bash-block
+# key: <sh
+# --
+#+begin_src sh :exports code :eval no
+$0
+#+end_src

@@ -830,12 +830,17 @@
   :ensure t
   :defer t)
 
+(use-package flycheck-clj-kondo
+  :ensure t
+  :defer t)
+
 (use-package clojure-mode
   :ensure t
   :defer t
   :defines lsp-completion-enable
   :config
   (setq lsp-completion-enable nil) ; use cider completion
+  (require 'flycheck-clj-kondo)
   :hook (clojure-mode-hook . (lambda ()
 			       (cider)
 			       (paredit-mode))))
@@ -1287,5 +1292,15 @@
   :defer t
   :config
   (setq nasm-basic-offset 4))
+
+
+;;;========================================
+;;; Assembly language
+;;;========================================
+
+(use-package erc
+  :config
+  (setq erc-server "irc.libera.chat"
+	erc-nick "Enom"))
 
 ;;; init.el ends here
