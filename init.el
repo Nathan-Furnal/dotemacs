@@ -382,8 +382,8 @@
 ;;;========================================
 
 (use-package org
-  :ensure t
   :pin elpa
+  :ensure t
   :config
   (setq org-imenu-depth 7)
   (setq org-fontify-done-headline nil
@@ -1295,7 +1295,7 @@
 
 
 ;;;========================================
-;;; Assembly language
+;;; IRC setup
 ;;;========================================
 
 (use-package erc
@@ -1304,3 +1304,16 @@
 	erc-nick "Enom"))
 
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js popup-kill-ring poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
