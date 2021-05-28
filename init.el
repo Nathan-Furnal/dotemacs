@@ -1,7 +1,10 @@
 ;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
+;; Package-Requires : ((emacs "25.1"))
+
 ;;; Commentary:
-;; This file aims to provide a lightweight Emacs experience, it's heavily inspired from Prot's config as explained in the README.
+;; This file aims to provide a lightweight Emacs experience, it's heavily
+;; inspired from Prot's config as explained in the README.
 
 ;;; Code:
 
@@ -112,14 +115,14 @@
   :defer t
   :config
 
-  (defun nf/electric-pair-local-text-mode ()
+  (defun nf-electric-pair-local-text-mode ()
     "Advise and wrap electric pairs in text mode."
     (add-function :before-until electric-pair-inhibit-predicate
 		  (lambda (c) (eq c ?<)))
     (electric-pair-local-mode))
   
   :hook ((prog-mode-hook . electric-pair-local-mode)
-	 (text-mode-hook . nf/electric-pair-local-text-mode)))
+	 (text-mode-hook . nf-electric-pair-local-text-mode)))
 
 (use-package recentf
   ;; Loads after 2 second of idle time.
@@ -262,10 +265,10 @@
   :commands (ctrlf-mode ctrlf-local-mode)
   :init (ctrlf-mode)
   :config
-  (defun nf/ctrlf-hook ()
+  (defun nf-ctrlf-hook ()
     (if (eq major-mode 'pdf-view-mode)
 	(ctrlf-local-mode -1)))
-  :hook (pdf-view-mode-hook . nf/ctrlf-hook))
+  :hook (pdf-view-mode-hook . nf-ctrlf-hook))
 
 (use-package which-key
   :ensure t
@@ -353,21 +356,21 @@
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
 
-  (defvar nf/ispell-dicts
+  (defvar nf-ispell-dicts
     '(("English" . "en_US")
       ("Français" . "fr"))
     "Alist of languages dictionaries")
 
-  (defun nf/ispell-dictionaries-complete ()
-    "Select an item from `nf/ispell-dicts'."
+  (defun nf-ispell-dictionaries-complete ()
+    "Select an item from `nf-ispell-dicts'."
     (interactive)
-    (let* ((dicts (mapcar #'car nf/ispell-dicts))
+    (let* ((dicts (mapcar #'car nf-ispell-dicts))
            (choice (completing-read "Select dictionary: " dicts nil t))
-           (key (cdr (assoc `,choice nf/ispell-dicts))))
+           (key (cdr (assoc `,choice nf-ispell-dicts))))
       (ispell-change-dictionary key)
       (message "Switched to %s" key)))
 
-  :bind ("C-x C-;" . nf/ispell-dictionaries-complete))
+  :bind ("C-x C-;" . nf-ispell-dictionaries-complete))
 
 ;; Syntax checking for GNU Emacs
 
@@ -407,7 +410,7 @@
 					       :html-scale 1.0
 					       :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
-  (defun nf/toggle-presentation ()
+  (defun nf-toggle-presentation ()
     "Toggle between presentation and regular `org-mode'.
     The modes used are `olivetti-mode' and
     `org-tree-slide-mode'."
@@ -421,7 +424,7 @@
 
   :bind (:map org-mode-map
 	      ("C-c i" . imenu-list)
-	      ("C-x p" . nf/toggle-presentation)))
+	      ("C-x p" . nf-toggle-presentation)))
 
 
 ;; Custome LaTeX templates
@@ -899,7 +902,7 @@
   :requires julia-mode
   :ensure t
   :defer t
-  :functions (julia-repl-set-terminal-backend)
+  :functions julia-repl-set-terminal-backend
   :config
   (julia-repl-set-terminal-backend 'vterm))
 
@@ -1053,13 +1056,13 @@
   :mode ("\\.java\\'")
   :config
   (setq lsp-java-format-on-type-enabled nil)
-  (defun nf/java-mode-hook ()
+  (defun nf-java-mode-hook ()
     (setq c-basic-offset 2
           c-label-offset 0
           tab-width 2
           indent-tabs-mode nil
 	  require-final-newline nil))
-  :hook (java-mode-hook . (lsp nf/java-mode-hook)))
+  :hook (java-mode-hook . (lsp nf-java-mode-hook)))
 
 ;; Requires dap-mode
 
