@@ -535,13 +535,14 @@
 ;; Source : https://jblevins.org/projects/deft/
 
 (use-package deft
+  :after org
   :ensure t
   :defer t
   :config (setq deft-default-extension "org"
 	        deft-directory "~/projects/notes"
 		deft-use-filter-string-for-filename t
-		deft-recursive t                                   ; Allows searching through sub-directories
-		deft-use-filename-as-title t)                      ; use filename instead of first line of doc
+		deft-recursive t                           ; Allows searching through sub-directories
+		deft-use-filename-as-title t)                ; use filename instead of first line of doc
   :bind ("C-c d" . deft))
 
 ;; Take screenshots
@@ -865,21 +866,16 @@
   :config
   (use-package geiser-mit
     :ensure t
-    :defer t)
-  (use-package geiser-guile
-    :ensure t
-    :defer t
-    :defines geiser-guile-binary
-    :config
-    (setq geiser-guile-binary "/usr/bin/guile3")))
+    :defer t))
 
   (use-package racket-mode
     :defer t
     :ensure t
+    :mode ("\\.rkt\\'")
     :bind (:map racket-mode-map
 		("C-c C-c" . racket-run)
 		("M-<RET>" . racket-eval-last-sexp))
-    :hook ((racket-mode-hook . racket-xp-mode)
+    :hook ((racket-mode-hook .  racket-xp-mode)
 	   (racket-repl-mode-hook . hide-mode-line-mode)))
 
 ;;;========================================
@@ -969,10 +965,18 @@
   :hook ((python-mode-hook . (lambda ()
 			       (require 'lsp-pyright) (lsp-deferred)))))
 
+;; Buffer formatting on save
 (use-package yapfify
   :ensure t
   :defer t
   :hook (python-mode-hook . yapf-mode))
+
+;; numpy docstring for python 
+(use-package numpydoc
+  :ensure t
+  :defer t
+  :bind (:map python-mode-map
+              ("C-c C-n" . numpydoc-generate)))
 
 ;;;========================================
 ;;; Jupyter & notebooks
@@ -1230,6 +1234,50 @@
   :hook (rust-mode-hook . cargo-minor-mode))
 
 ;;;========================================
+;;; Stan
+;;;========================================
+
+(use-package stan-mode
+  :ensure t
+  :defer t
+  :mode ("\\.stan\\'" . stan-mode)
+  :hook (stan-mode-hook . stan-mode-setup)
+  :config
+  (setq stan-indentation-offset 2))
+
+(use-package company-stan
+  :ensure t
+  :defer t
+  :after stan-mode 
+  :defines company-stan-fuzzy
+  :hook (stan-mode-hook . company-stan-setup)
+  :config
+  (setq company-stan-fuzzy nil))
+
+(use-package eldoc-stan
+  :ensure t
+  :defer t
+  :hook (stan-mode-hook . eldoc-stan-setup))
+
+(use-package flycheck-stan
+  :ensure t
+  :defer t
+  :hook ((stan-mode-hook . flycheck-stan-stanc2-setup)
+         (stan-mode-hook . flycheck-stan-stanc3-setup))
+  :config
+  ;; A string containing the name or the path of the stanc2 executable
+  ;; If nil, defaults to `stanc2'
+  (setq flycheck-stanc-executable nil)
+  ;; A string containing the name or the path of the stanc3 executable
+  ;; If nil, defaults to `stanc3'
+  (setq flycheck-stanc3-executable "~/Code/cmdstan/bin/stanc"))
+
+(use-package stan-snippets
+  :ensure t
+  :defer t
+  :hook (stan-mode-hook . stan-snippets-initialize))
+
+;;;========================================
 ;;; Code snippets and skeletons
 ;;;========================================
 
@@ -1313,7 +1361,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js popup-kill-ring poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish deft dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(numpydoc org deft company-stan geiser eldoc-stan stan-snippets flycheck-stan stan-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js popup-kill-ring poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java jupyter julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
