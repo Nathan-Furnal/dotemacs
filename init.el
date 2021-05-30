@@ -17,7 +17,6 @@
 ;; Initialize the packages, avoiding a re-initialization.
 
 (unless (bound-and-true-p package--initialized)
-  (setq package-enable-at-startup nil)
   (package-initialize))
 
 ;; Make sure `use-package' is available.
@@ -54,9 +53,6 @@
 
 (use-package emacs
   :init
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (menu-bar-mode 1)
   (set-face-attribute 'default nil :family "Roboto Mono" :height 95)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100)
@@ -70,7 +66,6 @@
   (setq initial-scratch-message "")	        ; Make *scratch* buffer blank
   (setq-default frame-title-format '("%b"))     ; Make window title the buffer name
   (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
-  (setq ring-bell-function 'ignore)             ; Disable bell sound
   (fset 'yes-or-no-p 'y-or-n-p)                 ; y-or-n-p makes answering questions faster
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
   (delete-selection-mode t)                     ; Start writing straight after deletion
@@ -79,7 +74,6 @@
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
   (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
-  (setq comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup 
 
   ;; Speed up startup High garbage collection at startup needs to be
   ;; reset at some point then we defer the work to `gcmh'.
@@ -105,22 +99,20 @@
 (use-package gcmh
   :ensure t
   :defer nil
-  :config
-  (setq gcmh-mode 1
-	gcmh-idle-delay 5
-	gcmh-high-cons-threshold (* 16 1024 1024)))
+  :custom
+  (gcmh-mode 1)
+  (gcmh-idle-delay 5)
+  (gcmh-high-cons-threshold (* 16 1024 1024)))
 
 (use-package elec-pair
   :ensure nil
   :defer t
   :config
-
   (defun nf-electric-pair-local-text-mode ()
     "Advise and wrap electric pairs in text mode."
     (add-function :before-until electric-pair-inhibit-predicate
 		  (lambda (c) (eq c ?<)))
     (electric-pair-local-mode))
-  
   :hook ((prog-mode-hook . electric-pair-local-mode)
 	 (text-mode-hook . nf-electric-pair-local-text-mode)))
 
@@ -137,14 +129,15 @@
 
 (use-package dashboard
   :ensure t
+  :custom
+  (dashboard-startup-banner 'logo)
+  (dashboard-show-shortcuts t)
+  (dasbhoard-items '((recents . 5)
+		     (projects . 5)
+		     (agenda . 5)))
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
   :config
-  (setq dashboard-startup-banner 'logo
-	dashboard-show-shortcuts t)
-  (setq dashboard-items '((recents  . 5)
-                          (projects . 5)
-                          (agenda . 5)))
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
   (dashboard-setup-startup-hook))
 
 ;;;========================================
@@ -209,15 +202,14 @@
 (use-package centaur-tabs
   :ensure t
   :demand
-  :config
-  (setq centaur-tabs-set-bar 'under)         ; Display underline for selected tab
+  :custom
+  (centaur-tabs-set-bar 'under)         ; Display underline for selected tab
   (centaur-tabs-mode t)
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
 
 ;; Selectrum for completion and prescient keys
-
 (use-package selectrum
   :ensure t
   :commands (selectrum-mode selectrum-prescient-mode prescient-persist-mode)
@@ -234,9 +226,9 @@
 (use-package marginalia
   :ensure t
   :defer 2
+  :custom (marginalia-annotators '(marginalia-annotators-light))
   :config
-  (marginalia-mode)
-  (setq marginalia-annotators '(marginalia-annotators-light)))
+  (marginalia-mode))
 
 (use-package imenu
   :config
@@ -281,35 +273,23 @@
   :ensure t
   :defer t
   :diminish
-  :defines (company-dabbrev-other-buffers
-	    company-dabbrev-code-other-buffers
-	    company-dabbrev-downcase
-	    company-dabbrev-ignore-case)
-  :config
-  (setq company-dabbrev-other-buffers t
-        company-dabbrev-code-other-buffers t
-
-        ;; M-<num> to select an option according to its number.
-        company-show-numbers t
-
-        ;; Only 2 letters required for completion to activate.
-        company-minimum-prefix-length 3
-
-        ;; Do not downcase completions by default.
-        company-dabbrev-downcase nil
-
-        ;; Even if I write something with the wrong case,
-        ;; provide the correct casing.
-	
-        company-dabbrev-ignore-case t
-
-        ;; Don't way before completion.
-        company-idle-delay 0
-
-	;; No company-mode in shell & eshell
-	company-global-modes '(not eshell-mode shell-mode))
-  
-  :hook ((text-mode-hook . company-mode)
+  :custom
+  (company-dabbrev-other-buffers t)
+  (company-dabbrev-code-other-buffers t)
+  ;; M-<num> to select an option according to its number.
+  (company-show-numbers t)
+  ;; Only 2 letters required for completion to activate.
+  (company-minimum-prefix-length 3)
+  ;; Do not downcase completions by default.
+  (company-dabbrev-downcase nil)
+  ;; Even if I write something with the wrong case,
+  ;; provide the correct casing.
+  (company-dabbrev-ignore-case t)
+  ;; Don't way before completion.
+  (company-idle-delay 0)
+  ;; No company-mode in shell & eshell
+  (company-global-modes '(not eshell-mode shell-mode))
+    :hook ((text-mode-hook . company-mode)
          (prog-mode-hook . company-mode)))
 
 ;;;========================================
@@ -349,13 +329,12 @@
   :defer t
   :hook ((text-mode-hook . flyspell-mode)
 	 (prog-mode-hook . flyspell-prog-mode))
-  
+  :custom
+  (flyspell-issue-message-flag nil)
+  (flyspell-issue-welcome-flag nil)
+  (ispell-program-name "aspell")
+  (ispell-dictionary "en_US")
   :config
-  (setq flyspell-issue-message-flag nil)
-  (setq flyspell-issue-welcome-flag nil)
-  (setq ispell-program-name "aspell")
-  (setq ispell-dictionary "en_US")
-
   (defvar nf-ispell-dicts
     '(("English" . "en_US")
       ("Français" . "fr"))
@@ -377,9 +356,10 @@
 (use-package flycheck
   :ensure t
   :defer t
-  :config
-  (setq flycheck-check-syntax-automatically '(mode-enabled save)) ; Check on save instead of running constantly
+  :custom
+  (flycheck-check-syntax-automatically '(mode-enabled save)) ; Check on save instead of running constantly
   :hook ((prog-mode-hook text-mode-hook) . flycheck-mode))
+
 ;;;========================================
 ;;; Org-mode
 ;;;========================================
@@ -497,13 +477,13 @@
 (use-package org-roam
   :ensure t
   :diminish "-Ω-"
+  :defines (org-roam-capture-templates org-roam-mode-map)
   :hook
   (after-init-hook . org-roam-mode)
   :custom
   (org-roam-directory (expand-file-name "~/org-roam"))
   (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
   :config
-
   (setq org-roam-capture-templates
 	'(("d" "default" plain
            (function org-roam-capture--get-point)
@@ -538,11 +518,12 @@
   :after org
   :ensure t
   :defer t
-  :config (setq deft-default-extension "org"
-	        deft-directory "~/projects/notes"
-		deft-use-filter-string-for-filename t
-		deft-recursive t                           ; Allows searching through sub-directories
-		deft-use-filename-as-title t)                ; use filename instead of first line of doc
+  :custom
+  (deft-default-extension "org")
+  (deft-directory "~/projects/notes")
+  (deft-use-filter-string-for-filename t)
+  (deft-recursive t)
+  (deft-use-filename-as-title t)
   :bind ("C-c d" . deft))
 
 ;; Take screenshots
@@ -559,22 +540,21 @@
   :ensure t
   :defer t
   :diminish
-  :config
-  (setq org-tree-slide-breadcrumbs nil)
-  (setq org-tree-slide-header nil)
-  (setq org-tree-slide-slide-in-effect nil)
-  (setq org-tree-slide-heading-emphasis nil)
-  (setq org-tree-slide-cursor-init t)
-  (setq org-tree-slide-modeline-display nil)
-  (setq org-tree-slide-skip-done nil)
-  (setq org-tree-slide-skip-comments t)
-  (setq org-tree-slide-fold-subtrees-skipped t)
-  (setq org-tree-slide-skip-outline-level 8)
-  (setq org-tree-slide-never-touch-face t)
-  (setq org-tree-slide-activate-message
-        (format "Presentation %s" (propertize "ON" 'face 'success)))
-  (setq org-tree-slide-deactivate-message
-        (format "Presentation %s" (propertize "OFF" 'face 'error)))
+  :custom
+  (org-tree-slide-breadcrumbs nil)
+  (org-tree-slide-header nil)
+  (org-tree-slide-slide-in-effect nil)
+  (org-tree-slide-heading-emphasis nil)
+  (org-tree-slide-cursor-init t)
+  (org-tree-slide-modeline-display nil)
+  (org-tree-slide-skip-done nil)
+  (org-tree-slide-skip-comments t)
+  (org-tree-slide-fold-subtrees-skipped t)
+  (org-tree-slide-skip-outline-level 8)
+  (org-tree-slide-never-touch-face t)
+  (org-tree-slide-activate-message (format "Presentation %s" (propertize "ON" 'face 'success)))
+  (org-tree-slide-deactivate-message (format "Presentation %s" (propertize "OFF" 'face 'error)))
+  :defines org-tree-slide-mode-map
   :bind (:map org-tree-slide-mode-map
          ("<C-down>" . org-tree-slide-display-header-toggle)
          ("<C-right>" . org-tree-slide-move-next-tree)
@@ -588,10 +568,10 @@
   :ensure t
   :defer t
   :diminish
-  :config
-  (setq olivetti-body-width 0.7)
-  (setq olivetti-minimum-body-width 80)
-  (setq olivetti-recall-visual-line-mode-entry-state t))
+  :custom
+  (olivetti-body-width 0.7)
+  (olivetti-minimum-body-width 80)
+  (olivetti-recall-visual-line-mode-entry-state t))
 
 ;;;========================================
 ;;; Reading
@@ -604,15 +584,10 @@
   :defines pdf-annot-activate-created-annotations
   :config
   (setq-default pdf-view-display-size 'fit-page)
-
   ;; more fine-grained zooming
-  
   (setq pdf-view-resize-factor 1.05)
-
   ;; create annotation on highlight
-  
-  (setq pdf-annot-activate-created-annotations t)
-   
+   (setq pdf-annot-activate-created-annotations t)
   (pdf-tools-install :no-query)
   (require 'pdf-occur)
   :bind (:map pdf-view-mode-map
@@ -636,9 +611,10 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :config
-  (setq markdown-fontify-code-blocks-natively t)
-  :init (setq markdown-command "pandoc")
+  :custom
+  (markdown-fontify-code-blocks-natively t)
+  (markdown-command "pandoc")
+  :defines markdown-mode-map
   ;; I use those bindings for window movement
   :bind (:map markdown-mode-map
 	      ("C-c <left>" . nil)
@@ -658,7 +634,7 @@
 ;;; Version control
 ;;;========================================
 
-;; Git integration for emacs
+;; Git integration for Emacs
 ;; Requires git
 
 (use-package magit
@@ -695,9 +671,9 @@
 (use-package treemacs
   :ensure t
   :defer t
-  :config
-  (setq treemacs-no-png-images t
-	treemacs-width 24)
+  :custom
+  (treemacs-no-png-images t)
+  (treemacs-width 24)
   :bind ("C-c t" . treemacs))
 
 ;;;========================================
@@ -707,6 +683,7 @@
 (use-package projectile
   :ensure t
   :defer t
+  :defines projectile-mode-map
   :bind ("M-p" . projectile-mode)
   (:map projectile-mode-map
 	("C-c p" . projectile-command-map)))
@@ -717,16 +694,21 @@
   :defer t)
 
 ;;;========================================
-;;; Developement with LSP
+;;; Development with LSP
 ;;;========================================
 
 (use-package lsp-mode
   :ensure t
   :defer t
+  :defines (lsp-keymap-prefix lsp-mode-map)
   :init
   (setq lsp-keymap-prefix "C-c l")
-  :defines (lsp-clients-clangd-args
-	    lsp-sqls-server)
+  :custom
+  (lsp-keep-workspace-alive nil)
+  (lsp-auto-guess-root nil)
+  (lsp-signature-function 'lsp-signature-posframe)
+  (lsp-clients-clangd-args '("--clang-tidy"))
+  (lsp-sqls-server "~/go/bin/sqls")
   :hook ((css-mode-hook . lsp-deferred)
 	 (web-mode-hook . lsp-deferred)
 	 (js2-mode-hook . lsp-deferred)
@@ -740,24 +722,15 @@
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
-	      ("M-<RET>" . lsp-execute-code-action))
-  :config
-  (setq lsp-keep-workspace-alive nil
-	lsp-auto-guess-root nil)
-  ;; Use a popup instead of the minibuffer to display information
-  (setq lsp-signature-function 'lsp-signature-posframe)
-  ;; C++ config
-  (setq lsp-clients-clangd-args '("--clang-tidy"))
-  ;; SQL config
-  (setq lsp-sqls-server "~/go/bin/sqls"))
-  
+	      ("M-<RET>" . lsp-execute-code-action)))
 
   (use-package lsp-ui
     :ensure t
     :defer t
-    :config
-    (setq lsp-ui-sideline-enable nil
-	  lsp-ui-doc-delay 2)
+    :custom
+    (lsp-ui-sideline-enable nil)
+    (lsp-ui-doc-delay 2)
+    :defines lsp-ui-mode-map
     :hook (lsp-mode-hook . lsp-ui-mode)
     :bind (:map lsp-ui-mode-map
 		("C-c i" . lsp-ui-imenu)))
@@ -794,11 +767,6 @@
   :ensure t
   :defer t)
 
-;; Emacs shell
-
-(use-package eshell
-  :defer t)
-
 ;; Better shell
 
 (use-package vterm
@@ -813,7 +781,8 @@
 (use-package sly
   :ensure t
   :defer t
-  :config
+  :defines inferior-lisp-program
+  :init
   (setq inferior-lisp-program "sbcl"))
 
 (use-package paredit
@@ -872,6 +841,7 @@
     :defer t
     :ensure t
     :mode ("\\.rkt\\'")
+    :defines racket-mode-map
     :bind (:map racket-mode-map
 		("C-c C-c" . racket-run)
 		("M-<RET>" . racket-eval-last-sexp))
@@ -882,17 +852,20 @@
 ;;; Julia
 ;;;========================================
 
-  ;; Requires a Julia install
+;; Requires a Julia install
 
-  (use-package julia-mode
-    :ensure t
-    :defer t
-    :defines inferior-julia-program
-    :mode ("\\.jl\\'" . julia-mode)
-    :init
-    (setq inferior-julia-program "/usr/bin/julia")
-    (setenv "JULIA_NUM_THREADS" "16")
-    :hook (julia-mode-hook . julia-repl-mode))
+(use-package julia-mode
+  :ensure t
+  :defer t
+  :mode ("\\.jl\\'" . julia-mode)
+  :defines inferior-julia-program
+  :init
+  (setq inferior-julia-program "/usr/bin/julia")
+  :custom
+  (lsp-julia-package-dir nil)
+  :config
+  (setenv "JULIA_NUM_THREADS" "16")
+  :hook (julia-mode-hook . julia-repl-mode))
 
 (use-package julia-repl
   :requires julia-mode
@@ -957,11 +930,11 @@
   :defer t
   :defines (lsp-clients-python-library-directories
 	    lsp-pyright-disable-language-service)
-  :config
-  (setq lsp-pyright-disable-language-service nil
-	lsp-pyright-disable-organize-imports nil
-	lsp-pyright-auto-import-completions t
-	lsp-pyright-use-library-code-for-types t)
+  :custom
+  (lsp-pyright-disable-language-service nil)
+  (lsp-pyright-disable-organize-imports nil)
+  (lsp-pyright-auto-import-completions t)
+  (lsp-pyright-use-library-code-for-types t)
   :hook ((python-mode-hook . (lambda ()
 			       (require 'lsp-pyright) (lsp-deferred)))))
 
@@ -971,7 +944,7 @@
   :defer t
   :hook (python-mode-hook . yapf-mode))
 
-;; numpy docstring for python 
+;; numpy docstring for python
 (use-package numpydoc
   :ensure t
   :defer t
@@ -1055,11 +1028,12 @@
 (use-package lsp-java
   :ensure t
   :defer t
-  :defines c-label-offset
+  :defines (c-label-offset c-basic-offset)
   :after lsp
   :mode ("\\.java\\'")
+  :custom
+  (lsp-java-format-on-type-enabled nil)
   :config
-  (setq lsp-java-format-on-type-enabled nil)
   (defun nf-java-mode-hook ()
     (setq c-basic-offset 2
           c-label-offset 0
@@ -1116,6 +1090,8 @@
   :defer t
   :commands flycheck-add-next-checker
   :after (rjsx-mode flycheck company)
+  :defines (tide-mode-map flycheck-check-syntax-automatically)
+  :custom (company-tooltip-align-annotations t)
   :config
   (defun setup-tide-mode ()
     (interactive)
@@ -1125,9 +1101,6 @@
     (eldoc-mode +1)
     (tide-hl-identifier-mode +1)
     (company-mode +1))
-
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
 
   ;; configure javascript-tide checker to run after your default javascript checker
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
@@ -1157,20 +1130,21 @@
 (use-package web-mode
   :ensure t
   :defer t
+  :defines web-mode-map
   :mode ("\\.html\\'" "\\.php\\'")
   :bind (:map web-mode-map
 	      ("C-c C-v" . browse-url-of-buffer))
-  :config
-  (setq web-mode-enable-current-column-highlight t)
-  (setq web-mode-enable-current-element-highlight t)
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq js-indent-level 2)
-  (setq web-mode-enable-auto-pairing t)
-  (setq web-mode-enable-auto-expanding t)
-  (setq web-mode-enable-css-colorization t)
-  (setq browse-url-browser-function 'browse-url-chrome)
+  :custom
+  (web-mode-enable-current-column-highlight t)
+  (web-mode-enable-current-element-highlight t)
+  (web-mode-markup-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (js-indent-level 2)
+  (web-mode-enable-auto-pairing t)
+  (web-mode-enable-auto-expanding t)
+  (web-mode-enable-css-colorization t)
+  (browse-url-browser-function 'browse-url-chrome)
   :hook (web-mode-hook . electric-pair-mode))
 
 (use-package css-mode
@@ -1193,6 +1167,7 @@
 (use-package nodejs-repl
   :ensure t
   :defer t
+  :defines js2-mode-map
   :commands nodejs-repl
   :bind (:map js2-mode-map
 	      ("C-x C-e" . nodejs-repl-send-last-expression)
@@ -1207,9 +1182,9 @@
 (use-package emmet-mode
   :ensure t
   :defer t
-  :init
-  (setq emmet-indentation 2)
-  (setq emmet-move-cursor-between-quotes t)
+  :custom
+  (emmet-indentation 2)
+  (emmet-move-cursor-between-quotes t)
   ;; Auto-start on any markup modes
   :hook ((sgml-mode-hook . emmet-mode)
 	 (web-mode-hook . emmet-mode)))
@@ -1225,8 +1200,8 @@
 (use-package rustic
   :ensure t
   :defer t
-  :config
-  (setq rustic-cargo-bin (expand-file-name "~/.cargo/bin/cargo")))
+  :custom
+  (rustic-cargo-bin (expand-file-name "~/.cargo/bin/cargo")))
 
 (use-package cargo
   :ensure t
@@ -1242,17 +1217,16 @@
   :defer t
   :mode ("\\.stan\\'" . stan-mode)
   :hook (stan-mode-hook . stan-mode-setup)
-  :config
-  (setq stan-indentation-offset 2))
+  :custom
+  (stan-indentation-offset 2))
 
 (use-package company-stan
   :ensure t
   :defer t
-  :after stan-mode 
-  :defines company-stan-fuzzy
+  :after stan-mode
   :hook (stan-mode-hook . company-stan-setup)
-  :config
-  (setq company-stan-fuzzy nil))
+  :custom
+  (company-stan-fuzzy nil))
 
 (use-package eldoc-stan
   :ensure t
@@ -1264,13 +1238,13 @@
   :defer t
   :hook ((stan-mode-hook . flycheck-stan-stanc2-setup)
          (stan-mode-hook . flycheck-stan-stanc3-setup))
-  :config
+  :custom
   ;; A string containing the name or the path of the stanc2 executable
   ;; If nil, defaults to `stanc2'
-  (setq flycheck-stanc-executable nil)
+  (flycheck-stanc-executable nil)
   ;; A string containing the name or the path of the stanc3 executable
   ;; If nil, defaults to `stanc3'
-  (setq flycheck-stanc3-executable "~/Code/cmdstan/bin/stanc"))
+  (flycheck-stanc3-executable "~/Code/cmdstan/bin/stanc"))
 
 (use-package stan-snippets
   :ensure t
@@ -1324,9 +1298,9 @@
 (use-package plantuml-mode
   :ensure t
   :defer t
-  :config
-  (setq plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-  (setq plantuml-default-exec-mode 'jar))
+  :custom
+  (plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
+  (plantuml-default-exec-mode 'jar))
 
 (use-package gnuplot
   :ensure t
@@ -1337,13 +1311,11 @@
 ;;;========================================
 
 (use-package nasm-mode
-  :defines nasm-basic-offset
   :mode ("\\.asm\\'" . nasm-mode)
   :ensure t
   :defer t
-  :config
-  (setq nasm-basic-offset 4))
-
+  :custom
+  (nasm-basic-offset 4))
 
 ;;;========================================
 ;;; IRC setup
