@@ -1,0 +1,3 @@
+[submodule "org-transclusion"]
+	path = org-transclusion
+	url = https://github.com/nobiot/org-transclusion
