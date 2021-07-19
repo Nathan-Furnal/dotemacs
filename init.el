@@ -470,6 +470,22 @@
   (setq shackle-rules
 	'((pdf-view-mode :align right)))) ; Ensure PDF view opens on the right
 
+(use-package languagetool
+  :ensure t
+  :defer t
+  :commands (languagetool-check
+             languagetool-clear-buffer
+             languagetool-correct-at-point
+             languagetool-correct-buffer
+             languagetool-set-language)
+  :config
+  (setq languagetool-language-tool-class t
+        languagetool-language-tool-jar "org.languagetool.commandline.Main"
+        languagetool-server-language-tool-jar "org.languagetool.server.HTTPServer"
+        languagetool-java-arguments '("-Dfile.encoding=UTF-8" "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
+        languagetool-default-language "en-US"
+        languagetool-java-bin "/usr/bin/java"))
+
 ;;;========================================
 ;;; Note taking
 ;;;========================================
@@ -479,6 +495,8 @@
 (use-package org-roam
   :ensure t
   :diminish "-Ω-"
+  :init
+  (setq org-roam-v2-ack t)
   :defines (org-roam-capture-templates org-roam-mode-map)
   :hook
   (after-init-hook . org-roam-mode)
@@ -505,29 +523,28 @@
 	   :file-name "literature/${slug}"
 	   :head "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+roam_tags:\n#+created: %U\n#+las_modified: %U\n\n"
 	   :unnarrowed t)))
-  :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
+  (org-roam-setup)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+	 ("C-c n i" . org-roam-node-insert)
+	 ("C-c n c" . org-roam-capture)))
 
-;; Adding Deft an easy way to go through files and create notes on the fly
-;; Source : https://jblevins.org/projects/deft/
+  ;; Adding Deft an easy way to go through files and create notes on the fly
+  ;; Source : https://jblevins.org/projects/deft/
 
-(use-package deft
-  :after org 
-  :ensure t
-  :defer t
-  :custom
-  (deft-directory "~/projects/notes")
-  (deft-use-filter-string-for-filename t)
-  (deft-recursive t)
-  (deft-use-filename-as-title t)
-  :config
-  (setq deft-default-extension "org")
-  :bind ("C-c d" . deft))
+  (use-package deft
+    :after org
+    :ensure t
+    :defer t
+    :custom
+    (deft-directory "~/projects/notes")
+    (deft-use-filter-string-for-filename t)
+    (deft-recursive t)
+    (deft-use-filename-as-title t)
+    :config
+    (setq deft-default-extension "org")
+    :bind ("C-c d" . deft))
 
 ;; Take screenshots
 
@@ -1347,8 +1364,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(scribble-mode racket-mode flymake-nasm numpydoc org deft company-stan geiser eldoc-stan stan-snippets flycheck-stan stan-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(languagetool popup-kill-ring jupyter scribble-mode racket-mode flymake-nasm numpydoc org deft company-stan geiser eldoc-stan stan-snippets flycheck-stan stan-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
