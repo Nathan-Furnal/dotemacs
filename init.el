@@ -501,27 +501,21 @@
   :hook
   (after-init-hook . org-roam-mode)
   :custom
-  (org-roam-directory (expand-file-name "~/org-roam"))
+  (org-roam-directory (file-truename (expand-file-name "~/org-roam")))
   (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
   :config
   (setq org-roam-capture-templates
-	'(("d" "default" plain
-           (function org-roam-capture--get-point)
-           "%?"
-           :file-name "fleeting/%<%Y%m%d%H%M%S>-${slug}"
-           :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n\n"
+	'(("d" "default" plain "%?"
+           :if-new (file+head "fleeting/%<%Y%m%d%H%M%S>-${slug}.org"
+			      "#+title: ${title}\n#+created: %U \n#+last_modified: %U\n\n")
            :unnarrowed t)
-	  ("c" "concept" plain
-	   (function org-roam-capture--get-point)
-	   "%?"
-	   :file-name "concepts/${slug}"
-	   :head "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+roam_tags:\n#+created: %U\n#+las_modified: %U\n\n"
+	  ("c" "concept" plain "%?"
+	   :if-new (file+head "concepts/${slug}.org"
+	   "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+last_modified: %U\n\n")
 	   :unnarrowed t)
-	  ("l" "literature" plain
-	   (function org-roam-capture--get-point)
-	   "%?"
-	   :file-name "literature/${slug}"
-	   :head "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+roam_tags:\n#+created: %U\n#+las_modified: %U\n\n"
+	  ("l" "literature" plain "%?"
+	   :if-new (file+head "literature/${slug}.org"
+	   "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+las_modified: %U\n\n")
 	   :unnarrowed t)))
   (org-roam-setup)
   :bind (("C-c n l" . org-roam-buffer-toggle)
