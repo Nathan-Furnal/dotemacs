@@ -943,7 +943,10 @@
   :config
   ;; Set the home for virtual environments
   (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs")
-  :hook (python-mode-hook . poetry-tracking-mode))
+  :hook ((python-mode-hook . poetry-tracking-mode)
+	 ;; Restart the workspace after the virtual environment is activated to
+	 ;; find the packages accordingly.
+	 (poetry-tracking-mode-hook . (lambda () (lsp-workspace-restart (lsp--read-workspace))))))
 
 (use-package lsp-pyright
   :ensure t
