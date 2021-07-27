@@ -1,10 +1,11 @@
 ;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
-;; Package-Requires : ((emacs "25.1"))
+;; Package-Requires : ((emacs "28.050"))
 
 ;;; Commentary:
 ;; This file aims to provide a lightweight Emacs experience, it's heavily
-;; inspired from Prot's config as explained in the README.
+;; inspired from Prot's config as explained in the README. I also try use Emacs
+;; internals as well as possible.
 
 ;;; Code:
 
@@ -116,29 +117,10 @@
   :hook ((prog-mode-hook . electric-pair-local-mode)
 	 (text-mode-hook . nf-electric-pair-local-text-mode)))
 
-(use-package recentf
-  ;; Loads after 2 second of idle time.
-  :defer 2)
-
-;; Feature that provides the ability to browse Emacs kill ring in autocomplete style popup menu.
-
-(use-package popup-kill-ring
-  :ensure t
-  :defer 2
-  :bind ("M-y" . popup-kill-ring))
-
-(use-package dashboard
-  :ensure t
-  :custom
-  (dashboard-startup-banner 'logo)
-  (dashboard-show-shortcuts t)
-  (dasbhoard-items '((recents . 5)
-		     (projects . 5)
-		     (agenda . 5)))
-  (dashboard-set-heading-icons t)
-  (dashboard-set-file-icons t)
-  :config
-  (dashboard-setup-startup-hook))
+;;; https://github.com/purcell/inheritenv
+;;; Allows processes and child buffers to inherit environment variables
+(use-package inheritenv
+  :ensure t)
 
 ;;;========================================
 ;;; Themes
@@ -146,13 +128,12 @@
 
 (use-package modus-themes
   :ensure t
-  :pin melpa
   :init
   (setq modus-themes-org-blocks 'greyscale)
   (setq modus-themes-completions 'opinionated)
   (setq modus-themes-fringes 'subtle)
   (setq modus-themes-scale-headings t
-	modus-themes-slanted-constructs t
+	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-syntax 'alt-syntax
 	modus-themes-intense-hl-line nil
@@ -164,7 +145,7 @@
 	modus-themes-scale-2 1.1
 	modus-themes-scale-3 1.15
 	modus-themes-scale-4 1.2
-	modus-themes-scale-5 1.3)
+	modus-themes-scale-title 1.3)
 
   (setq modus-themes-headings
 	'((1 . section)
@@ -175,9 +156,10 @@
 ;; Running modus-themes depending on the time of the day.
 
 (use-package solar
-  :config
-  (setq calendar-latitude 50.85
-        calendar-longitude 4.35))
+  :ensure nil
+  :custom
+  (calendar-latitude 50.85)
+  (calendar-longitude 4.35))
 
 (use-package circadian
   :ensure t
@@ -187,11 +169,9 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-;; More useful modeline
-
 (use-package doom-modeline
   :ensure t
-  :init (doom-modeline-mode 1))
+  :hook (after-init-hook . doom-modeline-mode))
 
 ;;;========================================
 ;;; Completion & Navigation
@@ -229,28 +209,6 @@
   :custom (marginalia-annotators '(marginalia-annotators-light))
   :config
   (marginalia-mode))
-
-(use-package imenu
-  :config
-  (setq imenu-use-markers t)
-  (setq imenu-auto-rescan t)
-  (setq imenu-auto-rescan-maxout 600000)
-  (setq imenu-max-item-length 100)
-  (setq imenu-use-popup-menu nil)
-  (setq imenu-eager-completion-buffer t)
-  (setq imenu-space-replacement " ")
-  (setq imenu-level-separator "/"))
-
-(use-package imenu-list
-  :ensure t
-  :defer t
-  :bind ("C-c i" . imenu-list))
-
-(use-package flimenu
-  :ensure t
-  :defer t
-  :config
-  (flimenu-global-mode 1))
 
 (use-package ctrlf
   :ensure t
@@ -291,6 +249,14 @@
   (company-global-modes '(not eshell-mode shell-mode))
     :hook ((text-mode-hook . company-mode)
          (prog-mode-hook . company-mode)))
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :custom
+  (treemacs-no-png-images t)
+  (treemacs-width 24)
+  :bind ("C-c t" . treemacs))
 
 ;;;========================================
 ;;; Windows & movement
@@ -348,10 +314,7 @@
            (key (cdr (assoc `,choice nf-ispell-dicts))))
       (ispell-change-dictionary key)
       (message "Switched to %s" key)))
-
-  :bind (("C-x C-;" . nf-ispell-dictionaries-complete)
-	 :map flyspell-mode-map
-	 ("C-;" . nil)))
+  :bind ("C-x C-;" . nf-ispell-dictionaries-complete))
 
 ;; Syntax checking for GNU Emacs
 
@@ -367,7 +330,7 @@
 ;;;========================================
 
 (use-package org
-  :pin elpa
+  :pin manual
   :ensure t
   :config
   (setq org-imenu-depth 7)
@@ -405,9 +368,7 @@
       (org-tree-slide-mode 1)))
 
   :bind (:map org-mode-map
-	      ("C-c i" . imenu-list)
 	      ("C-x p" . nf-toggle-presentation)))
-
 
 ;; Custome LaTeX templates
 ;; Requires a full LaTeX install, usually called `texlive'.
@@ -423,14 +384,13 @@
 (use-package tex
   :ensure nil
   :defer t
-  :defines TeX-view-program-selection
-  :config
-  (setq TeX-view-program-selection
-	'(((output-dvi has-no-display-manager)  "dvi2tty")
-	  ((output-dvi style-pstricks)   "dvips and gv")
-	  (output-dvi "xdvi")
-	  (output-pdf "PDF Tools")
-	  (output-html "xdg-open"))))
+  :custom
+  (TeX-view-program-selection
+   '(((output-dvi has-no-display-manager)  "dvi2tty")
+     ((output-dvi style-pstricks)   "dvips and gv")
+     (output-dvi "xdvi")
+     (output-pdf "PDF Tools")
+     (output-html "xdg-open"))))
 
 (use-package template
   :after org ox-latex
@@ -470,28 +430,6 @@
   (setq shackle-rules
 	'((pdf-view-mode :align right)))) ; Ensure PDF view opens on the right
 
-(use-package languagetool
-  :ensure t
-  :defer t
-  :commands (languagetool-check
-             languagetool-clear-buffer
-             languagetool-correct-at-point
-             languagetool-correct-buffer
-             languagetool-set-language)
-  :config
-  (setq languagetool-language-tool-class t
-        languagetool-language-tool-jar "org.languagetool.commandline.Main"
-        languagetool-server-language-tool-jar "org.languagetool.server.HTTPServer"
-        languagetool-java-arguments '("-Dfile.encoding=UTF-8" "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
-        languagetool-default-language "en-US"
-        languagetool-java-bin "/usr/bin/java"))
-
-;;;========================================
-;;; Note taking
-;;;========================================
-
-;; Roam based workflow for org-mode
-
 (use-package org-roam
   :ensure t
   :diminish "-Ω-"
@@ -524,21 +462,20 @@
 	 ("C-c n i" . org-roam-node-insert)
 	 ("C-c n c" . org-roam-capture)))
 
-  ;; Adding Deft an easy way to go through files and create notes on the fly
-  ;; Source : https://jblevins.org/projects/deft/
+;; Adding Deft an easy way to go through files and create notes on the fly
+;; Source : https://jblevins.org/projects/deft/
 
-  (use-package deft
-    :after org
-    :ensure t
-    :defer t
-    :custom
-    (deft-directory "~/projects/notes")
-    (deft-use-filter-string-for-filename t)
-    (deft-recursive t)
-    (deft-use-filename-as-title t)
-    :config
-    (setq deft-default-extension "org")
-    :bind ("C-c d" . deft))
+(use-package deft
+  :after org
+  :ensure t
+  :defer t
+  :custom
+  (deft-default-extension "org")
+  (deft-directory "~/projects/notes")
+  (deft-use-filter-string-for-filename t)
+  (deft-recursive t)
+  (deft-use-filename-as-title t)
+  :bind ("C-c d" . deft))
 
 ;; Take screenshots
 
@@ -598,10 +535,15 @@
   :defines pdf-annot-activate-created-annotations
   :config
   (setq-default pdf-view-display-size 'fit-page)
+
   ;; more fine-grained zooming
+  
   (setq pdf-view-resize-factor 1.05)
+
   ;; create annotation on highlight
-   (setq pdf-annot-activate-created-annotations t)
+  
+  (setq pdf-annot-activate-created-annotations t)
+   
   (pdf-tools-install :no-query)
   (require 'pdf-occur)
   :bind (:map pdf-view-mode-map
@@ -660,14 +602,6 @@
 ;;; Editing
 ;;;========================================
 
-(use-package multiple-cursors
-  :ensure t
-  :defer t
-  :bind   (("C-S-m" . mc/edit-lines)
-	   ("C->" . mc/mark-next-like-this)
-	   ("C-<" . mc/mark-previous-like-this)
-	   ("C-c C-<" . mc/mark-all-like-this)))
-
 (use-package iedit
   :ensure t
   :defer t
@@ -677,18 +611,6 @@
   :ensure nil
   :defer t
   :bind ("C-x <SPC>" . rectangle-mark-mode))
-
-;;;========================================
-;;; Navigation
-;;;========================================
-
-(use-package treemacs
-  :ensure t
-  :defer t
-  :custom
-  (treemacs-no-png-images t)
-  (treemacs-width 24)
-  :bind ("C-c t" . treemacs))
 
 ;;;========================================
 ;;; Project management
@@ -733,7 +655,17 @@
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
 	 (clojure-mode-hook . lsp-deferred)
+	 (clojurec-mode-hook . lsp-deferred)
+	 (clojurescript-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
+  :config
+  ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
+  (setenv "PATH" (concat "/usr/local/bin" path-separator (getenv "PATH")))
+  (dolist (m '(clojure-mode
+	       clojurec-mode
+	       clojurescript-mode
+	       clojurex-mode))
+    (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
@@ -749,19 +681,12 @@
     :bind (:map lsp-ui-mode-map
 		("C-c i" . lsp-ui-imenu)))
 
-;; LSP integration with treemacs
-
-(use-package lsp-treemacs
-  :ensure t
-  :defer t
-  :after lsp)
-
 ;; Debugger
 
 (use-package dap-mode
   :ensure t
   :defer t
-  :after lsp-mode lsp-treemacs
+  :after lsp-mode
   :config
   (dap-auto-configure-mode))
 
@@ -795,9 +720,8 @@
 (use-package sly
   :ensure t
   :defer t
-  :defines inferior-lisp-program
-  :init
-  (setq inferior-lisp-program "sbcl"))
+  :custom
+  (inferior-lisp-program "sbcl"))
 
 (use-package paredit
   :ensure t
@@ -824,9 +748,9 @@
 (use-package clojure-mode
   :ensure t
   :defer t
-  :defines lsp-completion-enable
+  :custom
+  (lsp-completion-enable nil) ; use cider completion
   :config
-  (setq lsp-completion-enable nil) ; use cider completion
   (require 'flycheck-clj-kondo)
   :hook (clojure-mode-hook . (lambda ()
 			       (cider)
@@ -851,22 +775,16 @@
     :ensure t
     :defer t))
 
-(use-package racket-mode
-  :defer t
-  :ensure t
-  :mode ("\\.rkt\\'")
-  :defines racket-mode-map
-  :bind (:map racket-mode-map
-	      ("C-c C-c" . racket-run)
-	      ("M-<RET>" . racket-eval-last-sexp))
-  :hook ((racket-mode-hook .  racket-xp-mode)
-	 (racket-repl-mode-hook . hide-mode-line-mode)))
-
-;; Writing Racket and Scheme documentation
-
-(use-package scribble-mode
-  :ensure t
-  :defer t)
+  (use-package racket-mode
+    :defer t
+    :ensure t
+    :mode ("\\.rkt\\'")
+    :defines racket-mode-map
+    :bind (:map racket-mode-map
+		("C-c C-c" . racket-run)
+		("M-<RET>" . racket-eval-last-sexp))
+    :hook ((racket-mode-hook .  racket-xp-mode)
+	   (racket-repl-mode-hook . hide-mode-line-mode)))
 
 ;;;========================================
 ;;; Julia
@@ -882,6 +800,7 @@
   :init
   (setq inferior-julia-program "/usr/bin/julia")
   :custom
+  ;; Use installed LanguageServer instead of the default
   (lsp-julia-package-dir nil)
   :config
   (setenv "JULIA_NUM_THREADS" "16")
@@ -898,9 +817,8 @@
 (use-package lsp-julia
   :ensure t
   :defer t
-  :defines lsp-julia-default-environment
-  :config
-  (setq lsp-julia-default-environment "~/.julia/environments/v1.6")
+  :custom
+  (lsp-julia-default-environment "~/.julia/environments/v1.6")
   :hook (julia-mode-hook . (lambda ()
 			     (require 'lsp-julia) (lsp-deferred))))
 
@@ -918,8 +836,7 @@
    ((executable-find "ipython")
     (progn
       (setq python-shell-buffer-name "IPython")
-      (setq python-shell-interpreter "ipython")
-      (setq python-shell-interpreter-args "-i --simple-prompt")))
+      (setq python-shell-interpreter "ipython")))
    ((executable-find "python3")
     (setq python-shell-interpreter "python3"))
    ((executable-find "python2")
@@ -943,10 +860,27 @@
   :config
   ;; Set the home for virtual environments
   (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs")
-  :hook ((python-mode-hook . poetry-tracking-mode)
-	 ;; Restart the workspace after the virtual environment is activated to
-	 ;; find the packages accordingly.
-	 (poetry-tracking-mode-hook . (lambda () (lsp-workspace-restart (lsp--read-workspace))))))
+  ;; Set correct Python interpreter
+  (setq pyvenv-post-activate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter "python3"))))
+  :hook ((python-mode-hook . poetry-tracking-mode)))
+
+(use-package direnv
+  :ensure t
+  :hook (after-init-hook . direnv-mode))
+
+;;; https://github.com/purcell/envrc
+;;; Allows using the proper environment variables when required
+(use-package envrc
+  :ensure t
+  :defer t
+  :commands (envrc-mode)
+  :hook ((python-mode-hook . envrc-mode)
+         (jupyter-org-interaction-mode-hook . envrc-mode)))
 
 (use-package lsp-pyright
   :ensure t
@@ -1355,7 +1289,7 @@
   (setq erc-server "irc.libera.chat"
 	erc-nick "Enom"))
 
-;;; init.el ends here
+;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1363,7 +1297,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(languagetool popup-kill-ring jupyter scribble-mode racket-mode flymake-nasm numpydoc org deft company-stan geiser eldoc-stan stan-snippets flycheck-stan stan-mode yasnippet-snippets yapfify yaml-mode which-key web-mode vterm use-package treemacs-projectile transpose-frame tide sly shackle selectrum-prescient rustic rust-mode rjsx-mode rainbow-delimiters prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref org-download olivetti nodejs-repl nasm-mode modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia lsp-java julia-repl json-mode js2-refactor impatient-mode imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit geiser-guile gcmh flycheck-clj-kondo flimenu ess emmet-mode elisp-lint doom-modeline diminish dashboard ctrlf company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(direnv envrc inheritenv jupyter scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

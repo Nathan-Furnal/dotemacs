@@ -25,7 +25,6 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode 1)
-
 ;; Create a package-quickstart.el
 (setq package-quickstart t)
 
@@ -38,5 +37,7 @@
 ;; in this file and can conflict with later config (particularly where the
 ;; cursor color is concerned).
 (advice-add #'x-apply-session-resources :override #'ignore)
+
+(setq native-comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup
 
 ;;; early-init ends here
