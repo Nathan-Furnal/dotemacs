@@ -117,11 +117,6 @@
   :hook ((prog-mode-hook . electric-pair-local-mode)
 	 (text-mode-hook . nf-electric-pair-local-text-mode)))
 
-;;; https://github.com/purcell/inheritenv
-;;; Allows processes and child buffers to inherit environment variables
-(use-package inheritenv
-  :ensure t)
-
 ;;;========================================
 ;;; Themes
 ;;;========================================
@@ -651,7 +646,6 @@
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
 	 (java-mode-hook . lsp-deferred)
-	 (python-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
 	 (clojure-mode-hook . lsp-deferred)
@@ -835,14 +829,10 @@
   (cond
    ((executable-find "ipython")
     (progn
-      (setq python-shell-buffer-name "IPython")
-      (setq python-shell-interpreter "ipython")))
-   ((executable-find "python3")
-    (setq python-shell-interpreter "python3"))
-   ((executable-find "python2")
-    (setq python-shell-interpreter "python2"))
-   (t
-    (setq python-shell-interpreter "python"))))
+      (setq python-shell-buffer-name "IPython"
+	    python-shell-interpreter "ipython"
+	    python-shell-interpreter-args "-i --simple-prompt")))
+   ((setq python-shell-interpreter "python"))))
 
 ;; Hide the modeline for inferior python processes
 (use-package inferior-python-mode
@@ -858,29 +848,7 @@
   :ensure t
   :defer t
   :config
-  ;; Set the home for virtual environments
-  (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs")
-  ;; Set correct Python interpreter
-  (setq pyvenv-post-activate-hooks
-        (list (lambda ()
-                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
-  (setq pyvenv-post-deactivate-hooks
-        (list (lambda ()
-                (setq python-shell-interpreter "python3"))))
-  :hook ((python-mode-hook . poetry-tracking-mode)))
-
-(use-package direnv
-  :ensure t
-  :hook (after-init-hook . direnv-mode))
-
-;;; https://github.com/purcell/envrc
-;;; Allows using the proper environment variables when required
-(use-package envrc
-  :ensure t
-  :defer t
-  :commands (envrc-mode)
-  :hook ((python-mode-hook . envrc-mode)
-         (jupyter-org-interaction-mode-hook . envrc-mode)))
+  (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs"))
 
 (use-package lsp-pyright
   :ensure t
@@ -892,8 +860,11 @@
   (lsp-pyright-disable-organize-imports nil)
   (lsp-pyright-auto-import-completions t)
   (lsp-pyright-use-library-code-for-types t)
+  (lsp-pyright-venv-path "~/.cache/pypoetry/virtualenvs")
   :hook ((python-mode-hook . (lambda ()
-			       (require 'lsp-pyright) (lsp-deferred)))))
+			       (poetry-tracking-mode)
+			       (require 'lsp-pyright)
+			       (lsp-deferred)))))
 
 ;; Buffer formatting on save
 (use-package yapfify
@@ -1297,7 +1268,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(direnv envrc inheritenv jupyter scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(lsp-pyright jupyter scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
