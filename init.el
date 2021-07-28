@@ -253,6 +253,23 @@
   (treemacs-width 24)
   :bind ("C-c t" . treemacs))
 
+(use-package embark
+  :ensure t
+  :bind
+  (("C-ù" . embark-act)         ;; pick some comfortable binding
+   ("C-µ" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  :functions embark-prefix-help-command
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
 ;;;========================================
 ;;; Windows & movement
 ;;;========================================
@@ -903,25 +920,6 @@
 ;; First you need to add IJulia to the packages and run using IJulia
 ;; Then run either notebook() or jupyterlab()
 
-(use-package jupyter
-  :ensure t
-  :defer t
-  :defines (org-babel-default-header-args:jupyter-python
-	    org-babel-default-header-args:jupyter-julia
-	    org-babel-default-header-args:jupyter-R)
-  :after (ob)
-  :init
-  (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
-                                                       (:session . "py")))
-  
-  (setq org-babel-default-header-args:jupyter-julia '((:async . "yes")
-                                                      (:session . "jl")
-                                                      (:kernel . "julia-1.6")))
-  
-  (setq org-babel-default-header-args:jupyter-R '((:async . "yes")
-						  (:session . "R")
-						  (:kernel . "ir"))))
-
 (use-package ob
   :after org
   :defer nil
@@ -940,8 +938,7 @@
 	  (java . t)
 	  (ditaa . t)
 	  (plantuml . t)
-	  (gnuplot . t)
-	  (jupyter . t)))
+	  (gnuplot . t)))
   
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -1268,7 +1265,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(lsp-pyright jupyter scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
