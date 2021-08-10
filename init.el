@@ -179,6 +179,7 @@
   :demand
   :custom
   (centaur-tabs-set-bar 'under)         ; Display underline for selected tab
+  :config
   (centaur-tabs-mode t)
   :bind
   ("C-<prior>" . centaur-tabs-backward)
@@ -833,9 +834,9 @@
   :hook (julia-mode-hook . (lambda ()
 			     (require 'lsp-julia) (lsp-deferred))))
 
-;; ========================================
-;; Python
-;; ========================================
+;;;========================================
+;;; Python
+;;;========================================
 
 (use-package python
   :ensure t
@@ -893,6 +894,8 @@
 (use-package numpydoc
   :ensure t
   :defer t
+  :custom
+  (numpydoc-insert-examples-block nil)
   :bind (:map python-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
