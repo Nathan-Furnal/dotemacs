@@ -896,6 +896,7 @@
   :defer t
   :custom
   (numpydoc-insert-examples-block nil)
+  (numpydoc-template-long nil)
   :bind (:map python-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
