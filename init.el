@@ -345,21 +345,22 @@
 (use-package org
   :pin manual
   :ensure t
+  :custom
+  (org-imenu-depth 7)
+  (org-fontify-done-headline nil)
+  (org-fontify-quote-and-verse-blocks t)
+  (org-fontify-whole-heading-line nil)
+  (org-fontify-whole-block-delimiter-line t)
+  
+  (org-confirm-babel-evaluate nil)         ; Don't prompt before running code in org
+  (org-src-fontify-natively t)             ; Use syntax highlighting in source blocks while editing
+  (org-src-tab-acts-natively t)            ; Tabs act as 4 spaces in source blocks
+  (org-src-preserve-indentation t)         ; Preserving indentation in source blocks
+  (org-highlight-latex-and-related '(latex))    ; Coloring latex code in org mode
+  (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
   :config
-  (setq org-imenu-depth 7)
-  (setq org-fontify-done-headline nil
-	org-fontify-quote-and-verse-blocks t
-	org-fontify-whole-heading-line nil
-	org-fontify-whole-block-delimiter-line t)
-  (setq org-confirm-babel-evaluate nil                  ; Don't prompt before running code in org
-	org-src-fontify-natively t                      ; Use syntax highlighting in source blocks while editing
-	org-src-tab-acts-natively t                     ; Tabs act as 4 spaces in source blocks
-	org-src-preserve-indentation t                  ; Preserving indentation in source blocks
-	org-highlight-latex-and-related '(latex))       ; Coloring latex code in org mode
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
-  (setq org-latex-prefer-user-labels t)	                ; Prefer user names and labels for references
-
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
   (setq org-format-latex-options '(:foreground default
 					       :background default
 					       :scale 2.0
@@ -382,6 +383,7 @@
 
   :bind (:map org-mode-map
 	      ("C-x p" . nf-toggle-presentation)))
+
 
 ;; Custome LaTeX templates
 ;; Requires a full LaTeX install, usually called `texlive'.
@@ -787,16 +789,19 @@
     :ensure t
     :defer t))
 
-  (use-package racket-mode
-    :defer t
-    :ensure t
-    :mode ("\\.rkt\\'")
-    :defines racket-mode-map
-    :bind (:map racket-mode-map
-		("C-c C-c" . racket-run)
-		("M-<RET>" . racket-eval-last-sexp))
-    :hook ((racket-mode-hook .  racket-xp-mode)
-	   (racket-repl-mode-hook . hide-mode-line-mode)))
+(use-package racket-mode
+  :defer t
+  :ensure t
+  :mode ("\\.rkt\\'")
+  :defines racket-mode-map
+  :bind (:map racket-mode-map
+	      ("C-c C-c" . racket-run)
+	      ("M-<RET>" . racket-eval-last-sexp))
+  :hook ((racket-mode-hook .  racket-xp-mode)
+	 (racket-repl-mode-hook . hide-mode-line-mode)))
+
+(use-package lsp-racket
+  :after lsp)
 
 ;;;========================================
 ;;; Julia
@@ -981,7 +986,6 @@
 ;;;========================================
 ;;; Web development
 ;;;========================================
-
 
 ;; LSP requirements on the server
 ;; sudo pacman -Syu typescript
@@ -1260,6 +1264,14 @@
   :config
   (setq erc-server "irc.libera.chat"
 	erc-nick "Enom"))
+
+;;;========================================
+;;; QoL
+;;;========================================
+
+(use-package handy
+  :load-path "lisp/"
+  :bind ("C-c I" . handy-find-user-init-file))
 
 ;; init.el ends here
 (custom-set-variables
