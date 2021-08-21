@@ -1,4 +1,4 @@
-;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
+;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
 ;; Package-Requires : ((emacs "28.050"))
 
@@ -671,6 +671,7 @@
 	 (clojure-mode-hook . lsp-deferred)
 	 (clojurec-mode-hook . lsp-deferred)
 	 (clojurescript-mode-hook . lsp-deferred)
+	 (racket-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
@@ -680,6 +681,7 @@
 	       clojurescript-mode
 	       clojurex-mode))
     (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
+  (add-to-list 'lsp-client-packages 'lsp-racket)
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
