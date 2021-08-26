@@ -470,7 +470,7 @@
 	   :if-new (file+head "literature/${slug}.org"
 	   "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+las_modified: %U\n\n")
 	   :unnarrowed t)))
-  (org-roam-setup)
+  (org-roam-db-autosync-enable)
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -673,6 +673,7 @@
 	 (clojurescript-mode-hook . lsp-deferred)
 	 (racket-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
+  :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
   (setenv "PATH" (concat "/usr/local/bin" path-separator (getenv "PATH")))
   (dolist (m '(clojure-mode
@@ -685,16 +686,16 @@
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
 
-  (use-package lsp-ui
-    :ensure t
-    :defer t
-    :custom
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-doc-delay 2)
-    :defines lsp-ui-mode-map
-    :hook (lsp-mode-hook . lsp-ui-mode)
-    :bind (:map lsp-ui-mode-map
-		("C-c i" . lsp-ui-imenu)))
+(use-package lsp-ui
+  :ensure t
+  :defer t
+  :custom
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-doc-delay 2)
+  :defines lsp-ui-mode-map
+  :hook (lsp-mode-hook . lsp-ui-mode)
+  :bind (:map lsp-ui-mode-map
+	      ("C-c i" . lsp-ui-imenu)))
 
 ;; Debugger
 
