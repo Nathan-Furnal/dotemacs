@@ -1,10 +1,10 @@
-;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
+;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
 ;; Package-Requires : ((emacs "28.050"))
 
 ;;; Commentary:
 ;; This file aims to provide a lightweight Emacs experience, it's heavily
-;; inspired from Prot's config as explained in the README. I also try use Emacs
+;; inspired from Prot's config as explained in the README.  I also try use Emacs
 ;; internals as well as possible.
 
 ;;; Code:
@@ -673,7 +673,6 @@
 	 (clojurescript-mode-hook . lsp-deferred)
 	 (racket-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
-  :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
   (setenv "PATH" (concat "/usr/local/bin" path-separator (getenv "PATH")))
   (dolist (m '(clojure-mode
