@@ -57,7 +57,6 @@
   (set-face-attribute 'default nil :family "Roboto Mono" :height 95)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100)
-  
   :config
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8-unix)
@@ -78,11 +77,7 @@
 
   ;; Speed up startup High garbage collection at startup needs to be
   ;; reset at some point then we defer the work to `gcmh'.
-  (add-hook 'emacs-startup-hook
-	    (lambda ()
-	      (setq gc-cons-threshold 16777216 ; 16mb
-		    gc-cons-percentage 0.1)))
-
+  
   :bind (("C-z" . undo)
          ("C-x C-z" . nil)
          ("C-h h" . nil)
@@ -116,6 +111,12 @@
     (electric-pair-local-mode))
   :hook ((prog-mode-hook . electric-pair-local-mode)
 	 (text-mode-hook . nf-electric-pair-local-text-mode)))
+
+(use-package exec-path-from-shell
+  :ensure t
+  :defer t
+  :init
+  (exec-path-from-shell-initialize))
 
 ;;;========================================
 ;;; Themes
@@ -654,6 +655,7 @@
   :defines (lsp-keymap-prefix lsp-mode-map)
   :init
   (setq lsp-keymap-prefix "C-c l")
+  
   :custom
   (lsp-keep-workspace-alive nil)
   (lsp-auto-guess-root nil)
@@ -989,12 +991,9 @@
 ;;; Web development
 ;;;========================================
 
-;; LSP requirements on the server
-;; sudo pacman -Syu typescript
-;; yay -Syu typescript-language-server
-;; yay -Syu javascript-typescript-langserver
-;; sudo pacman -Syu prettier ; it's a linter/formatter
-;; -> checkout https://youtu.be/0zuYCEzrchk
+;; LSP requirements on the server Prefer management with `nvm'(yay -Syu nvm) and
+;; then add source /usr/share/nvm/init-nvm.sh to `.bashrc'.
+;; npm install -g typescript prettier typescript-languageserver javascript-typescript-langserver
 
 (use-package rjsx-mode
   :ensure t
@@ -1283,7 +1282,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
