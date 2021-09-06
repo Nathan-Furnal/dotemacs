@@ -185,6 +185,7 @@
 
 (use-package dashboard
   :ensure t
+  :delight "dashboard"
   :custom
   (dashboard-startup-banner 'logo)
   (dashboard-items '((recents  . 5)
@@ -278,7 +279,6 @@
 (use-package treemacs
   :ensure t
   :defer t
-  :delight "Τ"
   :custom
   (treemacs-no-png-images t)
   (treemacs-width 24)
@@ -678,7 +678,7 @@
 (use-package lsp-mode
   :ensure t
   :defer t
-  :delight "LSP"
+  :delight " LSP"
   :defines (lsp-keymap-prefix lsp-mode-map)
   :init
   (setq lsp-keymap-prefix "C-c l")
@@ -778,7 +778,7 @@
 
 (use-package paredit
   :diminish paredit-mode
-  :delight "π"
+  :delight " π"
   :ensure t
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
@@ -1253,7 +1253,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company ctrlf dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company ctrlf dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
