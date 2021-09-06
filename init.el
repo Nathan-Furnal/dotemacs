@@ -772,7 +772,6 @@
 (use-package sly
   :ensure t
   :defer t
-  :delight "Σ"
   :custom
   (inferior-lisp-program "sbcl"))
 
@@ -798,7 +797,8 @@
 
 (use-package flycheck-clj-kondo
   :ensure t
-  :defer t)
+  :defer t
+  :delight "")
 
 (use-package clojure-mode
   :ensure t
