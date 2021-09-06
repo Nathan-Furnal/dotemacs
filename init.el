@@ -252,7 +252,7 @@
 (use-package company
   :ensure t
   :defer t
-  :diminish
+  :diminish ""
   :custom
   (company-dabbrev-other-buffers t)
   (company-dabbrev-code-other-buffers t)
