@@ -133,6 +133,9 @@
 (use-package eldoc
   :diminish eldoc-mode)
 
+(use-package autorevert
+  :delight auto-revert-mode)
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
@@ -522,12 +525,6 @@
   (deft-use-filename-as-title t)
   :bind ("C-c d" . deft))
 
-;; Take screenshots
-
-(use-package org-download
-  :ensure t
-  :defer t)
-
 ;;;========================================
 ;;; Presentation
 ;;;========================================
@@ -697,7 +694,6 @@
 	 (js2-mode-hook . lsp-deferred)
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
-	 (java-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
 	 (clojure-mode-hook . lsp-deferred)
@@ -742,8 +738,10 @@
 ;;; (E)Lisp development
 ;;;========================================
 
-(use-package elisp-mode
-  :diminish "Λ")
+(use-package elisp-mode 
+  :config
+  (delight '((emacs-lisp-mode "EL" :major)
+	     (lisp-interaction-mode "λ"))))
 
 (use-package buttercup
   :ensure t
@@ -768,14 +766,19 @@
 ;;; (Common) Lisp
 ;;;========================================
 
+(use-package lisp-mode
+  :delight "CL")
+
 (use-package sly
   :ensure t
   :defer t
+  :delight "Σ"
   :custom
   (inferior-lisp-program "sbcl"))
 
 (use-package paredit
   :diminish paredit-mode
+  :delight "π"
   :ensure t
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
@@ -800,7 +803,7 @@
 (use-package clojure-mode
   :ensure t
   :defer t
-  :diminish "CLJ"
+  :delight "Κλο"
   :custom
   (lsp-completion-enable nil) ; use cider completion
   :config
@@ -831,6 +834,7 @@
 (use-package racket-mode
   :defer t
   :ensure t
+  :delight "RKT"
   :mode ("\\.rkt\\'")
   :defines racket-mode-map
   :bind (:map racket-mode-map
@@ -851,7 +855,7 @@
 (use-package julia-mode
   :ensure t
   :defer t
-  :diminish "J"
+  :diminish "Jl"
   :mode ("\\.jl\\'" . julia-mode)
   :defines inferior-julia-program
   :init
@@ -885,7 +889,7 @@
 
 (use-package python
   :ensure t
-  :delight "Π"
+  :delight "Py"
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
@@ -994,36 +998,6 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    org-babel-load-languages))
-
-;;;========================================
-;;; Java
-;;;========================================
-
-;; Requires lsp-mode
-
-(use-package lsp-java
-  :ensure t
-  :defer t
-  :defines (c-label-offset c-basic-offset)
-  :after lsp
-  :mode ("\\.java\\'")
-  :custom
-  (lsp-java-format-on-type-enabled nil)
-  :config
-  (defun nf-java-mode-hook ()
-    (setq c-basic-offset 2
-          c-label-offset 0
-          tab-width 2
-          indent-tabs-mode nil
-	  require-final-newline nil))
-  :hook (java-mode-hook . (lsp nf-java-mode-hook)))
-
-;; Requires dap-mode
-
-(use-package dap-java
-  :ensure nil
-  :defer t
-  :after (lsp-java))
 
 ;;;========================================
 ;;; Web development
@@ -1244,6 +1218,7 @@
   :mode ("\\.asm\\'" . nasm-mode)
   :ensure t
   :defer t
+  :delight "Νasm"
   :custom
   (nasm-basic-offset 4)
   :hook (nasm-mode-hook . flymake-mode))
