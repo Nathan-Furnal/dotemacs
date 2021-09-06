@@ -38,6 +38,7 @@
 ;; cursor color is concerned).
 (advice-add #'x-apply-session-resources :override #'ignore)
 
+(defvar native-comp-async-report-warnings-errors)
 (setq native-comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup
 
 ;;; early-init ends here

@@ -66,7 +66,7 @@
   (setq initial-scratch-message "")	        ; Make *scratch* buffer blank
   (setq-default frame-title-format '("%b"))     ; Make window title the buffer name
   (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
-  (fset 'yes-or-no-p 'y-or-n-p)                 ; y-or-n-p makes answering questions faster
+  (setq use-short-answers t)                    ; y-or-n-p makes answering questions faster
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
   (delete-selection-mode t)                     ; Start writing straight after deletion
   (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
@@ -98,7 +98,8 @@
   :custom
   (gcmh-mode 1)
   (gcmh-idle-delay 5)
-  (gcmh-high-cons-threshold (* 16 1024 1024)))
+  (gcmh-high-cons-threshold (* 16 1024 1024))
+  (gc-cons-percentage 0.1))
 
 (use-package elec-pair
   :ensure nil
@@ -117,6 +118,13 @@
   :defer t
   :init
   (exec-path-from-shell-initialize))
+
+(use-package moody
+  :ensure t
+  :config
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
 
 ;;;========================================
 ;;; Themes
@@ -165,9 +173,19 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-(use-package doom-modeline
+(use-package dashboard
   :ensure t
-  :hook (after-init-hook . doom-modeline-mode))
+  :custom
+  (dashboard-startup-banner 'logo)
+  (dashboard-items '((recents  . 5)
+                     (bookmarks . 5)
+                     (projects . 5)
+                     (agenda . 5)
+                     (registers . 5)))
+  (dashboard-set-heading-icons nil)
+  (dashboard-set-file-icons nil)
+  :config
+  (dashboard-setup-startup-hook))
 
 ;;;========================================
 ;;; Completion & Navigation
@@ -1282,7 +1300,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile doom-modeline all-the-icons ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
