@@ -95,7 +95,7 @@
 ;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
 (use-package gcmh
   :ensure t
-  :defer nil
+  :after modus-themes
   :diminish gcmh-mode
   :custom
   (gcmh-mode 1)
@@ -115,11 +115,17 @@
   :hook ((prog-mode-hook . electric-pair-local-mode)
 	 (text-mode-hook . nf-electric-pair-local-text-mode)))
 
+;; The README is very informative as to how to set paths and shells properly
+;; https://github.com/purcell/exec-path-from-shell
+
 (use-package exec-path-from-shell
   :ensure t
-  :defer t
-  :init
-  (exec-path-from-shell-initialize))
+  :defer 1
+  :custom
+  (exec-path-from-shell-arguments nil)
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (use-package moody
   :ensure t
@@ -135,6 +141,9 @@
 
 (use-package autorevert
   :delight auto-revert-mode)
+
+(use-package recentf
+  :defer 2)
 
 ;;;========================================
 ;;; Themes
@@ -459,6 +468,7 @@
 (use-package cdlatex
   :ensure t
   :defer t
+  :delight " cdlatex"
   :hook ((org-mode-hook . turn-on-org-cdlatex)    ; Enable cdlatex by default
 	 (LaTex-mode-hook . turn-on-cdlatex)
 	 (latex-mode-hook . turn-on-cdlatex))
@@ -889,6 +899,7 @@
 
 (use-package python
   :ensure t
+  :defer 1
   :delight "Py"
   :config
   ;; Remove guess indent python message
@@ -977,7 +988,7 @@
 
 (use-package ob
   :after org
-  :defer nil
+  :defer 3
   :defines (org-ditaa-jar-path org-plantuml-jar-path)
   :config
   (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar"
@@ -1233,6 +1244,7 @@
 ;;;========================================
 
 (use-package erc
+  :defer 3
   :config
   (setq erc-server "irc.libera.chat"
 	erc-nick "Enom"))

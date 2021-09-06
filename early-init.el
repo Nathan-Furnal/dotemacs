@@ -25,6 +25,7 @@
 (push '(mode-line-format . 0) default-frame-alist)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+(tooltip-mode -1)
 (menu-bar-mode 1)
 ;; Create a package-quickstart.el
 (setq package-quickstart t)
@@ -39,7 +40,6 @@
 ;; cursor color is concerned).
 (advice-add #'x-apply-session-resources :override #'ignore)
 
-(defvar native-comp-async-report-warnings-errors)
 (setq native-comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup
 
 ;;; early-init ends here
