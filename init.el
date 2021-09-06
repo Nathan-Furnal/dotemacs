@@ -47,6 +47,7 @@
 
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
+(use-package delight :ensure t :after use-package)  ;; Use delighting for modes
 
 ;;;========================================
 ;;; Useful defaults
@@ -95,6 +96,7 @@
 (use-package gcmh
   :ensure t
   :defer nil
+  :diminish gcmh-mode
   :custom
   (gcmh-mode 1)
   (gcmh-idle-delay 5)
@@ -121,10 +123,15 @@
 
 (use-package moody
   :ensure t
+  :custom
+  (mode-line-compact t)
   :config
   (setq x-underline-at-descent-line t)
   (moody-replace-mode-line-buffer-identification)
   (moody-replace-vc-mode))
+
+(use-package eldoc
+  :diminish eldoc-mode)
 
 ;;;========================================
 ;;; Themes
@@ -268,6 +275,7 @@
 (use-package treemacs
   :ensure t
   :defer t
+  :delight "Τ"
   :custom
   (treemacs-no-png-images t)
   (treemacs-width 24)
@@ -325,6 +333,7 @@
 (use-package flyspell
   :ensure t
   :defer t
+  :diminish flyspell-mode
   :hook ((text-mode-hook . flyspell-mode)
 	 (prog-mode-hook . flyspell-prog-mode))
   :custom
@@ -351,6 +360,7 @@
 ;; Syntax checking for GNU Emacs
 
 (use-package flycheck
+  :diminish flycheck-mode
   :ensure t
   :defer t
   :custom
@@ -364,6 +374,7 @@
 (use-package org
   :pin manual
   :ensure t
+  :delight "Οrg"
   :custom
   (org-imenu-depth 7)
   (org-fontify-done-headline nil)
@@ -670,6 +681,7 @@
 (use-package lsp-mode
   :ensure t
   :defer t
+  :delight "LSP"
   :defines (lsp-keymap-prefix lsp-mode-map)
   :init
   (setq lsp-keymap-prefix "C-c l")
@@ -730,6 +742,9 @@
 ;;; (E)Lisp development
 ;;;========================================
 
+(use-package elisp-mode
+  :diminish "Λ")
+
 (use-package buttercup
   :ensure t
   :defer t)
@@ -750,7 +765,7 @@
   :bind ("C-$" . vterm))
 
 ;;;========================================
-;;; Common Lisp
+;;; (Common) Lisp
 ;;;========================================
 
 (use-package sly
@@ -760,6 +775,7 @@
   (inferior-lisp-program "sbcl"))
 
 (use-package paredit
+  :diminish paredit-mode
   :ensure t
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
@@ -784,6 +800,7 @@
 (use-package clojure-mode
   :ensure t
   :defer t
+  :diminish "CLJ"
   :custom
   (lsp-completion-enable nil) ; use cider completion
   :config
@@ -834,6 +851,7 @@
 (use-package julia-mode
   :ensure t
   :defer t
+  :diminish "J"
   :mode ("\\.jl\\'" . julia-mode)
   :defines inferior-julia-program
   :init
@@ -867,6 +885,7 @@
 
 (use-package python
   :ensure t
+  :delight "Π"
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
@@ -913,6 +932,7 @@
 
 ;; Buffer formatting on save
 (use-package yapfify
+  :diminish yapf-mode
   :ensure t
   :defer t
   :hook (python-mode-hook . yapf-mode))
@@ -1161,55 +1181,13 @@
   :hook (rust-mode-hook . cargo-minor-mode))
 
 ;;;========================================
-;;; Stan
-;;;========================================
-
-(use-package stan-mode
-  :ensure t
-  :defer t
-  :mode ("\\.stan\\'" . stan-mode)
-  :hook (stan-mode-hook . stan-mode-setup)
-  :custom
-  (stan-indentation-offset 2))
-
-(use-package company-stan
-  :ensure t
-  :defer t
-  :after stan-mode
-  :hook (stan-mode-hook . company-stan-setup)
-  :custom
-  (company-stan-fuzzy nil))
-
-(use-package eldoc-stan
-  :ensure t
-  :defer t
-  :hook (stan-mode-hook . eldoc-stan-setup))
-
-(use-package flycheck-stan
-  :ensure t
-  :defer t
-  :hook ((stan-mode-hook . flycheck-stan-stanc2-setup)
-         (stan-mode-hook . flycheck-stan-stanc3-setup))
-  :custom
-  ;; A string containing the name or the path of the stanc2 executable
-  ;; If nil, defaults to `stanc2'
-  (flycheck-stanc-executable nil)
-  ;; A string containing the name or the path of the stanc3 executable
-  ;; If nil, defaults to `stanc3'
-  (flycheck-stanc3-executable "~/Code/cmdstan/bin/stanc"))
-
-(use-package stan-snippets
-  :ensure t
-  :defer t
-  :hook (stan-mode-hook . stan-snippets-initialize))
-
-;;;========================================
 ;;; Code snippets and skeletons
 ;;;========================================
 
 (use-package yasnippet
   :ensure t
   :defer 3
+  :diminish yas-minor-mode
   :config
   (yas-global-mode))
 
@@ -1300,7 +1278,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company company-stan ctrlf dap-mode deft eldoc-stan elisp-lint emmet-mode flycheck flycheck-clj-kondo flycheck-stan gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly stan-mode stan-snippets tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company ctrlf dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-java lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-download org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
