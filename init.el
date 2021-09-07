@@ -140,6 +140,7 @@
   :diminish eldoc-mode)
 
 (use-package autorevert
+  :defer 2
   :delight auto-revert-mode)
 
 (use-package recentf
@@ -981,34 +982,66 @@
   :defer t
   :mode ("\\.R\\'" . ess-r-mode))
 
-;; Julia support
-;; (For notebooks and jupyter support)
-;; First you need to add IJulia to the packages and run using IJulia
-;; Then run either notebook() or jupyterlab()
+;; Loading org babel languages one by one to defer them. 
 
-(use-package ob
-  :after org
-  :defer 3
-  :defines (org-ditaa-jar-path org-plantuml-jar-path)
-  :config
-  (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar"
-	org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-  (setq org-babel-load-languages
-	'((latex . t)
-	  (python . t)
-	  (R . t)
-	  (shell . t)
-	  (sql . t)
-	  (emacs-lisp . t)
-	  (maxima . t)
-	  (java . t)
-	  (ditaa . t)
-	  (plantuml . t)
-	  (gnuplot . t)))
-  
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   org-babel-load-languages))
+(use-package ob-latex
+  :defer t
+  :commands (org-babel-execute:latex))
+
+(use-package ob-python
+  :defer t
+  :commands (org-babel-execute:python))
+
+(use-package ob-R
+  :defer t
+  :commands (org-babel-execute:R))
+
+(use-package ob-shell
+  :defer t
+  :commands
+  (org-babel-execute:sh
+   org-babel-expand-body:sh
+
+   org-babel-execute:bash
+   org-babel-expand-body:bash))
+
+(use-package ob-sql
+  :defer t
+  :commands (org-babel-execute:sql))
+
+(use-package ob-emacs-lisp
+  :defer t
+  :commands (org-babel-execute:elisp
+	     org-babel-expand-body:elisp
+
+	     org-babel-execute:emacs-lisp
+	     org-babel-expand-body:emacs-lisp))
+
+(use-package ob-maxima
+  :defer t
+  :commands (org-babel-execute:maxima))
+
+(use-package ob-java
+  :defer t
+  :commands (org-babel-execute:java))
+
+(use-package ob-ditaa
+  :defer t
+  :custom
+  (org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
+  :commands (org-babel-execute:ditaa))
+
+(use-package ob-plantuml
+  :defer t
+  :custom
+  (org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
+  :commands (org-babel-execute:plantuml))
+
+(use-package ob-gnuplot
+  :defer t
+  :commands (org-babel-execute:gnuplot
+	     org-babel-expand-body:gnuplot))
+
 
 ;;;========================================
 ;;; Web development
