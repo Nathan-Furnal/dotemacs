@@ -749,7 +749,7 @@
 ;;; (E)Lisp development
 ;;;========================================
 
-(use-package elisp-mode 
+(use-package elisp-mode
   :config
   (delight '((emacs-lisp-mode "EL" :major)
 	     (lisp-interaction-mode "λ"))))
@@ -882,7 +882,7 @@
   :requires julia-mode
   :ensure t
   :defer t
-  :functions julia-repl-set-terminal-backend
+  :functions (julia-repl-set-terminal-backend)
   :config
   (julia-repl-set-terminal-backend 'vterm))
 
@@ -982,7 +982,7 @@
   :defer t
   :mode ("\\.R\\'" . ess-r-mode))
 
-;; Loading org babel languages one by one to defer them. 
+;; Loading org babel languages one by one to defer them.
 
 (use-package ob-latex
   :defer t
@@ -1206,8 +1206,15 @@
   :ensure t
   :defer 3
   :diminish yas-minor-mode
+  :functions (yas-reload-all yas-get-snippet-tables)
+  :defines (yas-root-directory)
   :config
-  (yas-global-mode))
+  (set-default 'yas-dont-activate
+             #'(lambda ()
+                 (and yas-root-directory
+                      (null (yas-get-snippet-tables)))))
+  (yas-reload-all nil)
+  :hook ((prog-mode-hook text-mode-hook) . yas-minor-mode))
 
 (use-package yasnippet-snippets
   :ensure t
@@ -1304,4 +1311,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+)
