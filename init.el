@@ -34,7 +34,7 @@
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
-  (setq use-package-compute-statistics t)
+  (setq use-package-compute-statistics nil)
   ;; The following is VERY IMPORTANT.  Write hooks using their real name
   ;; instead of a shorter version: after-init ==> `after-init-hook'.
   ;;
@@ -229,6 +229,7 @@
   :custom
   (completion-styles '(orderless))
   (completion-category-defaults nil)
+  (read-file-name-completion-ignore-case t)
   (completion-category-overrides '((file (styles partial-completion))
 				   (minibuffer (initials)))))
 
