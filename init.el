@@ -34,7 +34,7 @@
   (setq use-package-always-demand nil)
   (setq use-package-expand-minimally nil)
   (setq use-package-enable-imenu-support t)
-  (setq use-package-compute-statistics nil)
+  (setq use-package-compute-statistics t)
   ;; The following is VERY IMPORTANT.  Write hooks using their real name
   ;; instead of a shorter version: after-init ==> `after-init-hook'.
   ;;
@@ -94,7 +94,6 @@
 ;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
 (use-package gcmh
   :ensure t
-  :after modus-themes
   :diminish gcmh-mode
   :custom
   (gcmh-mode 1)
@@ -128,7 +127,6 @@
 
 (use-package moody
   :ensure t
-  :after modus-themes
   :custom
   (mode-line-compact t)
   :config
@@ -152,7 +150,6 @@
 
 (use-package modus-themes
   :ensure t
-  :after emacs
   :init
   (setq modus-themes-org-blocks 'gray-background
 	modus-themes-completions 'opinionated
@@ -223,7 +220,7 @@
 
 (use-package vertico
   :ensure t
-  :after (emacs modus-themes)
+  :after (emacs modus-themes moody)
   :config
   (vertico-mode))
 
@@ -473,8 +470,7 @@
 
 (use-package org-ref
   :ensure t
-  :defer 2
-  :after org)
+  :defer 3)
 
 (use-package shackle
   :ensure t
@@ -520,7 +516,6 @@
 ;; Source : https://jblevins.org/projects/deft/
 
 (use-package deft
-  :after org
   :ensure t
   :defer t
   :custom
