@@ -88,7 +88,6 @@
 	 ("C-x \"" . split-window-right)
 	 ("C-x à" . delete-window))
   :hook (text-mode-hook . auto-fill-mode))
-
 ;; Adopt a sneaky garbage collection strategy of waiting until idle
 ;; time to collect; staving off the collector while the user is
 ;; working.  Thanks Doom -
@@ -129,6 +128,7 @@
 
 (use-package moody
   :ensure t
+  :after modus-themes
   :custom
   (mode-line-compact t)
   :config
@@ -152,30 +152,26 @@
 
 (use-package modus-themes
   :ensure t
+  :after emacs
   :init
-  (setq modus-themes-org-blocks 'greyscale)
-  (setq modus-themes-completions 'opinionated)
-  (setq modus-themes-fringes 'subtle)
-  (setq modus-themes-scale-headings t
+  (setq modus-themes-org-blocks 'gray-background
+	modus-themes-completions 'opinionated
+	modus-themes-fringes 'subtle
+	modus-themes-scale-headings t
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-syntax 'alt-syntax
 	modus-themes-intense-hl-line nil
 	modus-themes-variable-pitch-headings t
 	modus-themes-paren-match 'intense
-	modus-themes-headings 'section)
-
-  (setq modus-themes-scale-1 1.05
-	modus-themes-scale-2 1.1
-	modus-themes-scale-3 1.15
-	modus-themes-scale-4 1.2
-	modus-themes-scale-title 1.3)
-
+	modus-themes-mode-line '(moody borderless))
+  (setq modus-themes-scale-1 1.1
+	modus-themes-scale-2 1.15
+	modus-themes-scale-3 1.21
+	modus-themes-scale-4 1.27
+	modus-themes-scale-title 1.33)
   (setq modus-themes-headings
-	'((1 . section)
-          (2 . section-no-bold)
-          (3 . rainbow-line)
-          (t . rainbow-line-no-bold))))
+	'((t . (background overline rainbow)))))
 
 ;; Running modus-themes depending on the time of the day.
 
@@ -225,18 +221,26 @@
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward))
 
-;; Selectrum for completion and prescient keys
-(use-package selectrum
+(use-package vertico
   :ensure t
-  :commands (selectrum-mode selectrum-prescient-mode prescient-persist-mode)
-  :init
-  (selectrum-mode)
-  (selectrum-prescient-mode)
-  (prescient-persist-mode))
+  :after (emacs modus-themes)
+  :config
+  (vertico-mode))
 
-(use-package selectrum-prescient
+(use-package orderless
   :ensure t
-  :after selectrum)
+  :custom
+  (completion-styles '(orderless))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion))
+				   (minibuffer (initials)))))
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :ensure t
+  :defer 2
+  :config
+  (savehist-mode))
 
 ;; Enable richer annotations using the Marginalia package
 (use-package marginalia
@@ -245,16 +249,6 @@
   :custom (marginalia-annotators '(marginalia-annotators-light))
   :config
   (marginalia-mode))
-
-(use-package ctrlf
-  :ensure t
-  :commands (ctrlf-mode ctrlf-local-mode)
-  :init (ctrlf-mode)
-  :config
-  (defun nf-ctrlf-hook ()
-    (if (eq major-mode 'pdf-view-mode)
-	(ctrlf-local-mode -1)))
-  :hook (pdf-view-mode-hook . nf-ctrlf-hook))
 
 (use-package which-key
   :ensure t
@@ -284,7 +278,7 @@
   ;; No company-mode in shell & eshell
   (company-global-modes '(not eshell-mode shell-mode))
     :hook ((text-mode-hook . company-mode)
-         (prog-mode-hook . company-mode)))
+           (prog-mode-hook . company-mode)))
 
 (use-package treemacs
   :ensure t
@@ -296,6 +290,7 @@
 
 (use-package embark
   :ensure t
+  :defer t
   :bind
   (("C-ù" . embark-act)         ;; pick some comfortable binding
    ("C-µ" . embark-dwim)        ;; good alternative: M-.
@@ -1304,11 +1299,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
+ '(custom-safe-themes
+   '("d6da24347c813d1635a217d396cf1e3be26484fd4d05be153f3bd2b293d2a0b5" "0568a5426239e65aab5e7c48fa1abde81130a87ddf7f942613bf5e13bf79686b" default))
  '(package-selected-packages
-   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company ctrlf dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic selectrum selectrum-prescient sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )
