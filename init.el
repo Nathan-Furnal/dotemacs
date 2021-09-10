@@ -231,7 +231,7 @@
   (completion-category-defaults nil)
   (read-file-name-completion-ignore-case t)
   (completion-category-overrides '((file (styles partial-completion))
-				   (minibuffer (initials)))))
+				   (minibuffer (initials orderless)))))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -1295,10 +1295,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
- '(custom-safe-themes
-   '("d6da24347c813d1635a217d396cf1e3be26484fd4d05be153f3bd2b293d2a0b5" "0568a5426239e65aab5e7c48fa1abde81130a87ddf7f942613bf5e13bf79686b" default))
  '(package-selected-packages
-   '(delight moody exec-path-from-shell embark lsp-pyright scribble-mode dashboard flymake-nasm org treemacs-projectile projectile ess buttercup cargo centaur-tabs cider clojure-mode company dap-mode deft elisp-lint emmet-mode flycheck flycheck-clj-kondo gcmh geiser geiser-mit gif-screencast gnuplot hide-mode-line iedit impatient-mode js2-mode js2-refactor json-mode json-reformat julia-mode julia-repl lsp-julia lsp-mode lsp-ui magit marginalia markdown-mode maxima modus-themes nasm-mode nodejs-repl numpydoc olivetti org-roam org-tree-slide package-lint pandoc-mode paredit plantuml-mode poetry prettier-js pyvenv racket-mode rainbow-delimiters rjsx-mode rust-mode rustic sly tide transpose-frame treemacs typescript-mode vterm web-mode which-key yaml-mode yapfify yasnippet yasnippet-snippets cdlatex auctex org-ref shackle async pdf-tools circadian circadina solar diminish use-package)))
+   '(yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight deft dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
