@@ -1271,16 +1271,6 @@
   :hook (nasm-mode-hook . flymake-nasm-setup))
 
 ;;;========================================
-;;; IRC setup
-;;;========================================
-
-(use-package erc
-  :defer 3
-  :config
-  (setq erc-server "irc.libera.chat"
-	erc-nick "Enom"))
-
-;;;========================================
 ;;; QoL
 ;;;========================================
 
