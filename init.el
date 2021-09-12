@@ -515,14 +515,12 @@
 
 ;; Adding Deft an easy way to go through files and create notes on the fly
 ;; Source : https://jblevins.org/projects/deft/
-
 (use-package deft
   :ensure t
   :defer t
   :custom
   (deft-default-extension "org")
   (deft-directory "~/projects/notes")
-  (deft-use-filter-string-for-filename t)
   (deft-recursive t)
   (deft-use-filename-as-title t)
   :bind ("C-c d" . deft))
