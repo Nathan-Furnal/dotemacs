@@ -525,17 +525,22 @@
   (deft-use-filename-as-title t)
   :bind ("C-c d" . deft))
 
-(use-package "xeft"
+(use-package xeft
   :load-path "site-lisp/xeft"
   :ensure nil
   :defer t
   :custom
   (xeft-directory (expand-file-name "~/projects/notes"))
   (xeft-ignore-extension
-   '("iimg" "~" "tex" "gls" "glg" "glo" "ist" "log"
-     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~" "tex" "tex~"))
+   '("iimg" "tex" "tex~" "gls" "glg" "glo" "ist" "log"
+     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~"))
   (xeft-default-file-extension ".org")
   :commands (xeft))
+
+(use-package imenu-list
+  :ensure t
+  :defer t
+  :bind ("C-é" . imenu-list-smart-toggle))
 
 ;;;========================================
 ;;; Presentation
@@ -1296,7 +1301,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight deft dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight deft dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
