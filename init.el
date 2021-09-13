@@ -525,6 +525,18 @@
   (deft-use-filename-as-title t)
   :bind ("C-c d" . deft))
 
+(use-package "xeft"
+  :load-path "site-lisp/xeft"
+  :ensure nil
+  :defer t
+  :custom
+  (xeft-directory (expand-file-name "~/projects/notes"))
+  (xeft-ignore-extension
+   '("iimg" "~" "tex" "gls" "glg" "glo" "ist" "log"
+     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~" "tex" "tex~"))
+  (xeft-default-file-extension ".org")
+  :commands (xeft))
+
 ;;;========================================
 ;;; Presentation
 ;;;========================================
