@@ -513,18 +513,8 @@
 	 ("C-c n i" . org-roam-node-insert)
 	 ("C-c n c" . org-roam-capture)))
 
-;; Adding Deft an easy way to go through files and create notes on the fly
-;; Source : https://jblevins.org/projects/deft/
-(use-package deft
-  :ensure t
-  :defer t
-  :custom
-  (deft-default-extension "org")
-  (deft-directory "~/projects/notes")
-  (deft-recursive t)
-  (deft-use-filename-as-title t)
-  :bind ("C-c d" . deft))
 
+;;; Replacing deft with the faster alternative : xeft.
 (use-package xeft
   :load-path "site-lisp/xeft"
   :ensure nil
@@ -533,8 +523,9 @@
   (xeft-directory (expand-file-name "~/projects/notes"))
   (xeft-ignore-extension
    '("iimg" "tex" "tex~" "gls" "glg" "glo" "ist" "log"
-     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~"))
-  (xeft-default-file-extension ".org")
+     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~" "bbl" "docx"
+     "qexams" "resums"))
+  (xeft-default-extension ".org")
   :commands (xeft))
 
 (use-package imenu-list
@@ -1301,7 +1292,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight deft dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
