@@ -445,7 +445,7 @@
 
 (use-package template
   :after org ox-latex
-  :load-path (lambda () (concat user-emacs-directory "latex")))
+  :load-path "latex")
 
 (use-package ox-latex
   :defer t
@@ -521,12 +521,11 @@
   :defer t
   :custom
   (xeft-directory (expand-file-name "~/projects/notes"))
-  (xeft-ignore-extension
-   '("iimg" "tex" "tex~" "gls" "glg" "glo" "ist" "log"
-     "defs" "pdf" "class" "java" "py" "odt" "org~" "md~" "bbl" "docx"
-     "qexams" "resums"))
-  (xeft-default-extension ".org")
-  :commands (xeft))
+  (xeft-default-extension "org")
+  (xeft-ignore-extension '("iimg" "md~" "tex" "tex~" "log" "gls" "glo" "glg" "org~"
+			   "odt" "bbl" "ist" "qexams" "resums" "pdf" "class" "java"
+			   "docx" "mw" "png" "jpg" "defs" ""))
+  :commands xeft)
 
 (use-package imenu-list
   :ensure t
