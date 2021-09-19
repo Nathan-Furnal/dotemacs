@@ -1176,6 +1176,38 @@
 	 (web-mode-hook . emmet-mode)))
 
 ;;;========================================
+;;; C/C++
+;;;========================================
+
+(use-package cc-mode
+  :ensure nil
+  :config
+  (defun nf-compile-current-c/c++-file ()
+    "Compiles a C/C++ file on the fly."
+    (interactive)
+    (let* ((clang-choices '(("c" . "clang") ("cpp" . "clang++")))
+	   (filename (file-name-nondirectory buffer-file-name))
+	   (file-ext (file-name-extension buffer-file-name))
+	   (compile-choice (cdr (assoc file-ext clang-choices))))
+      (compile (concat compile-choice " -Wall " filename " -o " (file-name-sans-extension filename)))))
+
+  (defun nf-run-exec-file ()
+    "Runs an executable file named after the buffer if it exists."
+    (interactive)
+    (if (file-executable-p (file-name-sans-extension buffer-file-name))
+	(async-shell-command
+	 (concat "./" (file-name-nondirectory (file-name-sans-extension buffer-file-name))))))
+
+  :bind ((:map c++-mode-map
+	       ("C-c C-c" . nf-compile-current-c/c++-file)
+	       ("C-c e" . nf-run-exec-file))
+	 (:map c-mode-map
+	       ("C-c C-c" . nf-compile-current-c/c++-file)
+	       ("C-c e" . nf-run-exec-file))
+	 (:map c-mode-base-map
+	       ("C-c C-r" . recompile))))
+
+;;;========================================
 ;;; Rust
 ;;;========================================
 
@@ -1224,6 +1256,15 @@
 (use-package gif-screencast
   :ensure t
   :defer t)
+
+;;;========================================
+;;; Blogging
+;;;========================================
+
+(use-package ox-hugo
+  :ensure t
+  :defer 4
+  :after ox)
 
 ;;;========================================
 ;;; Mathematics
@@ -1291,7 +1332,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
