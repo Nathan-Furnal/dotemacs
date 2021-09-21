@@ -1092,6 +1092,14 @@
 	     org-babel-execute:emacs-lisp
 	     org-babel-expand-body:emacs-lisp))
 
+(use-package ob-C
+  :defer t
+  :commands  (org-babel-execute:C
+	      org-babel-expand-body:C
+
+	      org-babel-execute:C++
+	      org-babel-expand-body:C++))
+
 (use-package ob-maxima
   :defer t
   :commands (org-babel-execute:maxima))
