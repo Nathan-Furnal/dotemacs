@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: c++-block
+# key: <cpp
+# group: c-family
+# --
+#+begin_src C++ :eval no-export
+$0
+#+end_src
