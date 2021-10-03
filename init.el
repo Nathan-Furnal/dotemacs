@@ -278,13 +278,13 @@
          ("M-s g" . consult-grep)
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
-         ("C-s" . consult-line)
+         ("M-s l" . consult-line)
          ("M-s L" . consult-line-multi)
          ("M-s m" . consult-multi-occur)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
          ;; Isearch integration
-         ("M-s e" . consult-isearch)
+         ("C-s" . consult-isearch)
          :map isearch-mode-map
          ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
@@ -457,7 +457,7 @@
 ;;;========================================
 
 (use-package org
-  :pin manual
+  :pin elpa
   :ensure t
   :delight "Οrg"
   :custom
@@ -603,13 +603,20 @@
   (xeft-default-extension "org")
   (xeft-ignore-extension '("iimg" "md~" "tex" "tex~" "log" "gls" "glo" "glg" "org~"
 			   "odt" "bbl" "ist" "qexams" "resums" "pdf" "class" "java"
-			   "docx" "mw" "png" "jpg" "defs" ""))
+			   "docx" "mw" "png" "jpg" "defs" "fls" "toc" "out" "fdb_latexmk"
+			   "aux" "" "#"))
   :commands xeft)
 
 (use-package imenu-list
   :ensure t
   :defer t
   :bind ("C-é" . imenu-list-smart-toggle))
+
+;;; Add presentation with Reveal.js
+
+(use-package ox-reveal
+  :ensure t
+  :defer 5)
 
 ;;;========================================
 ;;; Presentation
@@ -1426,8 +1433,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
+ '(custom-safe-themes
+   '("0801e4371836382f7b5910769b25c2d9e7a8f7dceecc3f5e145fd471fa9b7e1b" default))
+ '(frame-background-mode 'light)
  '(package-selected-packages
-   '(consult ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(geiser org ox-reveal consult ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
