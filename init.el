@@ -232,13 +232,12 @@
 (use-package orderless
   :ensure t
   :custom
-  (completion-styles '(orderless partial-completion flex))
+  (completion-styles '(partial-completion orderless flex))
   (completion-category-defaults nil)
   (read-file-name-completion-ignore-case t)
   (completion-category-overrides '((file (styles partial-completion))
 				   (minibuffer (initials orderless)))))
 
-;; Example configuration for Consult
 (use-package consult
   :ensure t
   :defer t
@@ -284,9 +283,9 @@
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
          ;; Isearch integration
-         ("C-s" . consult-isearch)
+         ("C-s" . consult-isearch-history)
          :map isearch-mode-map
-         ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
          ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
          ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
@@ -550,7 +549,12 @@
 
 (use-package org-ref
   :ensure t
-  :defer 3)
+  :defer t)
+
+(use-package citeproc
+  :ensure t
+  :defer 3
+  :after org-ref)
 
 (use-package shackle
   :ensure t
@@ -929,6 +933,8 @@
   :ensure t
   :delight "RKT"
   :mode ("\\.rkt\\'")
+  :custom
+  (racket-show-functions 'racket-show-echo-area)
   :defines racket-mode-map
   :bind (:map racket-mode-map
 	      ("C-c C-c" . racket-run)
@@ -1436,8 +1442,9 @@
  '(custom-safe-themes
    '("0801e4371836382f7b5910769b25c2d9e7a8f7dceecc3f5e145fd471fa9b7e1b" default))
  '(frame-background-mode 'light)
+ '(org-agenda-files '("/home/nathan/projects/notes/DEV3.org"))
  '(package-selected-packages
-   '(geiser org ox-reveal consult ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam org-ref orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(pdf-tools citeproc geiser org ox-reveal consult ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
