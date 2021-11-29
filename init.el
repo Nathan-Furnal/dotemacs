@@ -55,9 +55,9 @@
 
 (use-package emacs
   :init
-  (set-face-attribute 'default nil :family "Roboto Mono" :height 95)
-  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95)
-  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100)
+  (set-face-attribute 'default nil :family "Roboto Mono" :height 95 :weight 'medium)
+  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100 :weight 'medium)
   :config
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8-unix)
@@ -549,7 +549,9 @@
 
 (use-package org-ref
   :ensure t
-  :defer t)
+  :defer t
+  :custom (org-export-before-parsing-hook '(org-ref-glossary-before-parsing
+					    org-ref-acronyms-before-parsing)))
 
 (use-package citeproc
   :ensure t
@@ -608,7 +610,7 @@
   (xeft-ignore-extension '("iimg" "md~" "tex" "tex~" "log" "gls" "glo" "glg" "org~"
 			   "odt" "bbl" "ist" "qexams" "resums" "pdf" "class" "java"
 			   "docx" "mw" "png" "jpg" "defs" "fls" "toc" "out" "fdb_latexmk"
-			   "aux" "" "#"))
+			   "aux" "" "#" "pyg"))
   :commands xeft)
 
 (use-package imenu-list
@@ -796,7 +798,6 @@
 	 (clojure-mode-hook . lsp-deferred)
 	 (clojurec-mode-hook . lsp-deferred)
 	 (clojurescript-mode-hook . lsp-deferred)
-	 (racket-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
@@ -806,7 +807,6 @@
 	       clojurescript-mode
 	       clojurex-mode))
     (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
-  (add-to-list 'lsp-client-packages 'lsp-racket)
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
@@ -938,12 +938,10 @@
   :defines racket-mode-map
   :bind (:map racket-mode-map
 	      ("C-c C-c" . racket-run)
-	      ("M-<RET>" . racket-eval-last-sexp))
+	      ("M-<RET>" . racket-eval-last-sexp)
+	      ("M-l" . racket-insert-lambda))
   :hook ((racket-mode-hook .  racket-xp-mode)
 	 (racket-repl-mode-hook . hide-mode-line-mode)))
-
-(use-package lsp-racket
-  :after lsp)
 
 ;;;========================================
 ;;; Julia
@@ -956,9 +954,6 @@
   :defer t
   :diminish "Jl"
   :mode ("\\.jl\\'" . julia-mode)
-  :defines inferior-julia-program
-  :init
-  (setq inferior-julia-program "/usr/bin/julia")
   :custom
   ;; Use installed LanguageServer instead of the default
   (lsp-julia-package-dir nil)
@@ -1438,13 +1433,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-show-quick-access t nil nil "Customized with use-package company")
- '(custom-safe-themes
-   '("0801e4371836382f7b5910769b25c2d9e7a8f7dceecc3f5e145fd471fa9b7e1b" default))
- '(frame-background-mode 'light)
- '(org-agenda-files '("/home/nathan/projects/notes/DEV3.org"))
  '(package-selected-packages
-   '(pdf-tools citeproc geiser org ox-reveal consult ox-hugo imenu-list yasnippet-snippets yapfify yaml-mode which-key web-mode vterm vertico use-package treemacs-projectile transpose-frame tide sly shackle rustic rust-mode rjsx-mode rainbow-delimiters racket-mode prettier-js poetry plantuml-mode paredit pandoc-mode org-tree-slide org-roam orderless olivetti numpydoc nodejs-repl nasm-mode moody modus-themes maxima marginalia magit lsp-ui lsp-pyright lsp-julia julia-repl json-mode js2-refactor impatient-mode iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck-clj-kondo exec-path-from-shell ess emmet-mode embark elisp-lint diminish delight dashboard dap-mode company circadian cider centaur-tabs cdlatex cargo buttercup auctex)))
+   '(flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line lsp-julia julia-repl julia-mode racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
