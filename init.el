@@ -1016,13 +1016,12 @@
 (use-package lsp-pyright
   :ensure t
   :defer t
-  :defines (lsp-clients-python-library-directories
-	    lsp-pyright-disable-language-service)
   :custom
   (lsp-pyright-disable-language-service nil)
   (lsp-pyright-disable-organize-imports nil)
   (lsp-pyright-auto-import-completions t)
   (lsp-pyright-use-library-code-for-types t)
+  (lsp-completion-enable t)
   (lsp-pyright-venv-path "~/.cache/pypoetry/virtualenvs")
   :hook ((python-mode-hook . (lambda ()
 			       (poetry-tracking-mode)
@@ -1433,8 +1432,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line lsp-julia julia-repl julia-mode racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line lsp-julia julia-repl julia-mode racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
