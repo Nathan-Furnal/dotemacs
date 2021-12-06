@@ -144,6 +144,13 @@
 (use-package recentf
   :defer 2)
 
+;; Better shell
+
+(use-package vterm
+  :ensure t
+  :defer t
+  :bind ("C-$" . vterm))
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
@@ -785,9 +792,11 @@
   :custom
   (lsp-keep-workspace-alive nil)
   (lsp-auto-guess-root nil)
-  (lsp-signature-function 'lsp-signature-posframe)
+  (lsp-eldoc-enable-hover nil)
+  (lsp-signature-auto-activate nil)
   (lsp-clients-clangd-args '("--clang-tidy"))
   (lsp-sqls-server "~/go/bin/sqls")
+  (lsp-completion-enable t)
   :hook ((css-mode-hook . lsp-deferred)
 	 (web-mode-hook . lsp-deferred)
 	 (js2-mode-hook . lsp-deferred)
@@ -816,7 +825,7 @@
   :defer t
   :custom
   (lsp-ui-sideline-enable nil)
-  (lsp-ui-doc-delay 2)
+  (lsp-ui-doc-enable nil)
   :defines lsp-ui-mode-map
   :hook (lsp-mode-hook . lsp-ui-mode)
   :bind (:map lsp-ui-mode-map
@@ -851,13 +860,6 @@
 (use-package elisp-lint
   :ensure t
   :defer t)
-
-;; Better shell
-
-(use-package vterm
-  :ensure t
-  :defer t
-  :bind ("C-$" . vterm))
 
 ;;;========================================
 ;;; (Common) Lisp
@@ -943,39 +945,25 @@
   :hook ((racket-mode-hook .  racket-xp-mode)
 	 (racket-repl-mode-hook . hide-mode-line-mode)))
 
+
 ;;;========================================
 ;;; Julia
 ;;;========================================
 
-;; Requires a Julia install
-
 (use-package julia-mode
   :ensure t
   :defer t
-  :diminish "Jl"
-  :mode ("\\.jl\\'" . julia-mode)
-  :custom
-  ;; Use installed LanguageServer instead of the default
-  (lsp-julia-package-dir nil)
+  :delight "Jl"
   :config
   (setenv "JULIA_NUM_THREADS" "16")
-  :hook (julia-mode-hook . julia-repl-mode))
+  :hook (julia-mode-hook . julia-snail-mode))
 
-(use-package julia-repl
-  :requires julia-mode
-  :ensure t
+(use-package julia-snail
   :defer t
-  :functions (julia-repl-set-terminal-backend)
-  :config
-  (julia-repl-set-terminal-backend 'vterm))
-
-(use-package lsp-julia
   :ensure t
-  :defer t
+  :after vterm
   :custom
-  (lsp-julia-default-environment "~/.julia/environments/v1.6")
-  :hook (julia-mode-hook . (lambda ()
-			     (require 'lsp-julia) (lsp-deferred))))
+  (julia-snail-show-error-window nil))
 
 ;;;========================================
 ;;; Python
@@ -983,7 +971,7 @@
 
 (use-package python
   :ensure t
-  :defer 1
+  :defer t
   :delight "Py"
   :config
   ;; Remove guess indent python message
@@ -1021,8 +1009,8 @@
   (lsp-pyright-disable-organize-imports nil)
   (lsp-pyright-auto-import-completions t)
   (lsp-pyright-use-library-code-for-types t)
-  (lsp-completion-enable t)
   (lsp-pyright-venv-path "~/.cache/pypoetry/virtualenvs")
+  (lsp-completion-enable t)
   :hook ((python-mode-hook . (lambda ()
 			       (poetry-tracking-mode)
 			       (require 'lsp-pyright)
@@ -1434,7 +1422,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line lsp-julia julia-repl julia-mode racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
