@@ -129,8 +129,8 @@
   :ensure t
   :custom
   (mode-line-compact t)
+  (x-underline-at-descent-line t)
   :config
-  (setq x-underline-at-descent-line t)
   (moody-replace-mode-line-buffer-identification)
   (moody-replace-vc-mode))
 
@@ -165,7 +165,7 @@
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-syntax 'alt-syntax
-	modus-themes-intense-hl-line nil
+	modus-themes-hl-line 'intense
 	modus-themes-variable-pitch-headings t
 	modus-themes-paren-match 'intense
 	modus-themes-mode-line '(moody borderless))
@@ -945,6 +945,21 @@
   :hook ((racket-mode-hook .  racket-xp-mode)
 	 (racket-repl-mode-hook . hide-mode-line-mode)))
 
+;;;========================================
+;;; Smallish lisps
+;;;========================================
+
+;;; https://janet-lang.org/
+
+(use-package janet-mode
+  :ensure t
+  :defer t)
+
+;;; https://fennel-lang.org/
+
+(use-package fennel-mode
+  :ensure t
+  :defer t)
 
 ;;;========================================
 ;;; Julia
@@ -999,6 +1014,7 @@
   :ensure t
   :defer t
   :config
+  (setq poetry-tracking-strategy 'switch-buffer)
   (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs"))
 
 (use-package lsp-pyright
@@ -1114,6 +1130,10 @@
   :custom
   (org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
   :commands (org-babel-execute:plantuml))
+
+(use-package ob-dot
+  :defer t
+  :commands (org-babel-execute:dot))
 
 (use-package ob-gnuplot
   :defer t
@@ -1256,6 +1276,17 @@
   ;; Auto-start on any markup modes
   :hook ((sgml-mode-hook . emmet-mode)
 	 (web-mode-hook . emmet-mode)))
+
+;;;========================================
+;;; Lua
+;;;========================================
+
+(use-package lua-mode
+  :ensure t
+  :defer t
+  :bind (:map lua-mode-map
+	      ("C-c C-r" . lua-send-region)
+	      ("C-c C-e" . lua-send-current-line)))
 
 ;;;========================================
 ;;; C/C++
@@ -1422,7 +1453,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(lua-mode fennel-mode janet-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
