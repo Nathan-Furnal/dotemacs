@@ -807,6 +807,7 @@
 	 (clojure-mode-hook . lsp-deferred)
 	 (clojurec-mode-hook . lsp-deferred)
 	 (clojurescript-mode-hook . lsp-deferred)
+	 (lua-mode-hook . lsp-deferred)
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
@@ -1445,6 +1446,21 @@
   :load-path "lisp/"
   :bind ("C-c I" . handy-find-user-init-file))
 
+(use-package tree-sitter
+  :ensure t
+  :defer t
+  :delight " 🌳"
+  :hook ((c-mode-hook c++-mode-hook css-mode-hook html-mode-hook
+		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook
+		      typescript-mode-hook) . (lambda ()
+						(tree-sitter-mode)
+						(tree-sitter-hl-mode))))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :defer t
+  :after tree-sitter)
+
 ;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1453,7 +1469,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(lua-mode fennel-mode janet-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(tree-sitter-langs tree-sitter lua-mode fennel-mode janet-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
