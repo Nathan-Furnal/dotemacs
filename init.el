@@ -151,6 +151,11 @@
   :defer t
   :bind ("C-$" . vterm))
 
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
@@ -193,21 +198,6 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-(use-package dashboard
-  :ensure t
-  :delight "dashboard"
-  :custom
-  (dashboard-startup-banner 'logo)
-  (dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
-                     (projects . 5)
-                     (agenda . 5)
-                     (registers . 5)))
-  (dashboard-set-heading-icons nil)
-  (dashboard-set-file-icons nil)
-  :config
-  (dashboard-setup-startup-hook))
-
 ;;;========================================
 ;;; Completion & Navigation
 ;;;========================================
@@ -230,12 +220,6 @@
   :bind (:map isearch-mode-map
 	      ("<DEL>" . isearch-del-char)))
 
-(use-package vertico
-  :ensure t
-  :after (emacs modus-themes moody)
-  :config
-  (vertico-mode))
-
 (use-package orderless
   :ensure t
   :custom
@@ -244,78 +228,6 @@
   (read-file-name-completion-ignore-case t)
   (completion-category-overrides '((file (styles partial-completion))
 				   (minibuffer (initials orderless)))))
-
-(use-package consult
-  :ensure t
-  :defer t
-  :custom
-  (xref-show-xrefs-function #'consult-xref)
-  (xref-show-definitions-function #'consult-xref)
-  :bind (;; C-c bindings (mode-specific-map)
-         ("C-c h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c b" . consult-bookmark)
-         ("C-c k" . consult-kmacro)
-         ;; C-x bindings (ctl-x-map)
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ("<help> a" . consult-apropos)            ;; orig. apropos-command
-         ;; M-g bindings (goto-map)
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings (search-map)
-         ("M-s f" . consult-find)
-         ("M-s F" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s m" . consult-multi-occur)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("C-s" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
-
-  ;; The :init configuration is always executed (Not lazy)
-  :init
-  ;; Optionally replace `completing-read-multiple' with an enhanced version.
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
-  :config
-  (consult-customize
-   consult-theme
-   :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-file consult--source-project-file consult--source-bookmark
-   :preview-key (kbd "M-."))
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
-  (setq consult-project-root-function
-        (lambda ()
-          (when-let (project (project-current))
-            (car (project-roots project))))))
 
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
@@ -370,24 +282,6 @@
   (treemacs-no-png-images t)
   (treemacs-width 24)
   :bind ("C-c t" . treemacs))
-
-(use-package embark
-  :ensure t
-  :defer t
-  :bind
-  (("C-ù" . embark-act)         ;; pick some comfortable binding
-   ("C-µ" . embark-dwim)        ;; good alternative: M-.
-   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-  :functions embark-prefix-help-command
-  :init
-  ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
-  :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
 
 ;;;========================================
 ;;; Windows & movement
@@ -500,7 +394,11 @@
       (olivetti-mode 1))
     (if (bound-and-true-p org-tree-slide-mode)
 	(org-tree-slide-mode -1)
-      (org-tree-slide-mode 1)))
+      (org-tree-slide-mode 1))
+
+    (if (bound-and-true-p hide-mode-line-mode)
+	(hide-mode-line-mode -1)
+      (hide-mode-line-mode 1)))
 
   :bind (:map org-mode-map
 	      ("C-x p" . nf-toggle-presentation)))
@@ -761,23 +659,6 @@
   :bind ("C-x <SPC>" . rectangle-mark-mode))
 
 ;;;========================================
-;;; Project management
-;;;========================================
-
-(use-package projectile
-  :ensure t
-  :defer t
-  :defines projectile-mode-map
-  :bind ("M-p" . projectile-mode)
-  (:map projectile-mode-map
-	("C-c p" . projectile-command-map)))
-
-(use-package treemacs-projectile
-  :ensure t
-  :after treemacs projectile
-  :defer t)
-
-;;;========================================
 ;;; Development with LSP
 ;;;========================================
 
@@ -788,7 +669,6 @@
   :defines (lsp-keymap-prefix lsp-mode-map)
   :init
   (setq lsp-keymap-prefix "C-c l")
-  
   :custom
   (lsp-keep-workspace-alive nil)
   (lsp-auto-guess-root nil)
@@ -820,17 +700,6 @@
   :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
-
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :custom
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-doc-enable nil)
-  :defines lsp-ui-mode-map
-  :hook (lsp-mode-hook . lsp-ui-mode)
-  :bind (:map lsp-ui-mode-map
-	      ("C-c i" . lsp-ui-imenu)))
 
 ;; Debugger
 
@@ -945,22 +814,6 @@
 	      ("M-l" . racket-insert-lambda))
   :hook ((racket-mode-hook .  racket-xp-mode)
 	 (racket-repl-mode-hook . hide-mode-line-mode)))
-
-;;;========================================
-;;; Smallish lisps
-;;;========================================
-
-;;; https://janet-lang.org/
-
-(use-package janet-mode
-  :ensure t
-  :defer t)
-
-;;; https://fennel-lang.org/
-
-(use-package fennel-mode
-  :ensure t
-  :defer t)
 
 ;;;========================================
 ;;; Julia
@@ -1425,13 +1278,17 @@
 ;;;========================================
 
 (use-package nasm-mode
-  :mode ("\\.asm\\'" . nasm-mode)
   :ensure t
   :defer t
   :delight "Νasm"
   :custom
   (nasm-basic-offset 4)
   :hook (nasm-mode-hook . flymake-mode))
+
+(use-package masm-mode
+  :ensure t
+  :defer t
+  :delight "Masm")
 
 (use-package flymake-nasm
   :ensure t
@@ -1442,9 +1299,13 @@
 ;;; QoL
 ;;;========================================
 
+;;; Shortcuts
+
 (use-package handy
   :load-path "lisp/"
   :bind ("C-c I" . handy-find-user-init-file))
+
+;;; Language parsing
 
 (use-package tree-sitter
   :ensure t
@@ -1455,11 +1316,19 @@
 		      typescript-mode-hook) . (lambda ()
 						(tree-sitter-mode)
 						(tree-sitter-hl-mode))))
-
 (use-package tree-sitter-langs
   :ensure t
   :defer t
   :after tree-sitter)
+
+;;; Web browsing
+
+(use-package w3m
+  :ensure t
+  :defer t
+  :commands w3m
+  :custom
+  (w3m-use-cookies nil))
 
 ;; init.el ends here
 (custom-set-variables
@@ -1469,7 +1338,7 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(package-selected-packages
-   '(tree-sitter-langs tree-sitter lua-mode fennel-mode janet-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-ui lsp-mode treemacs-projectile projectile iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame embark treemacs company which-key marginalia consult orderless vertico centaur-tabs dashboard circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(w3m vertico masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key marginalia orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
