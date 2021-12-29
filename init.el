@@ -57,7 +57,7 @@
   :init
   (set-face-attribute 'default nil :family "Roboto Mono" :height 95 :weight 'medium)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 100 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 110 :weight 'medium)
   :config
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8-unix)
@@ -126,6 +126,7 @@
     (exec-path-from-shell-initialize)))
 
 (use-package moody
+  :if (window-system)
   :ensure t
   :custom
   (mode-line-compact t)
@@ -751,11 +752,6 @@
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
 
-(use-package rainbow-delimiters
-  :ensure t
-  :defer t
-  :hook (lisp-mode-hook . rainbow-delimiters-mode))
-
 ;;;========================================
 ;;; Clojure
 ;;;========================================
@@ -830,9 +826,11 @@
 (use-package julia-snail
   :defer t
   :ensure t
+  :delight " snail"
   :after vterm
   :custom
-  (julia-snail-show-error-window nil))
+  (julia-snail-show-error-window nil)
+  (julia-snail-use-emoji-snail-lighter nil))
 
 ;;;========================================
 ;;; Python
@@ -1310,7 +1308,7 @@
 (use-package tree-sitter
   :ensure t
   :defer t
-  :delight " 🌳"
+  :delight " tree"
   :hook ((c-mode-hook c++-mode-hook css-mode-hook html-mode-hook
 		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook
 		      typescript-mode-hook) . (lambda ()
@@ -1329,6 +1327,13 @@
   :commands w3m
   :custom
   (w3m-use-cookies nil))
+
+;;; Colors
+
+(use-package rainbow-delimiters
+  :ensure t
+  :defer t
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 ;; init.el ends here
 (custom-set-variables
