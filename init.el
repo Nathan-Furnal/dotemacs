@@ -55,7 +55,7 @@
 
 (use-package emacs
   :init
-  (set-face-attribute 'default nil :family "Roboto Mono" :height 95 :weight 'medium)
+  (set-face-attribute 'default nil :family "Roboto Mono" :height 95 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 95 :weight 'medium)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 110 :weight 'medium)
   :config
@@ -76,8 +76,8 @@
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
   (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
 
-  ;; Speed up startup High garbage collection at startup needs to be
-  ;; reset at some point then we defer the work to `gcmh'.
+  (setq backup-directory-alist
+	`(("." . ,(concat user-emacs-directory "backups"))))
   
   :bind (("C-z" . undo)
          ("C-x C-z" . nil)
@@ -167,21 +167,17 @@
   (setq modus-themes-org-blocks 'gray-background
 	modus-themes-completions 'opinionated
 	modus-themes-fringes 'subtle
-	modus-themes-scale-headings t
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-syntax 'alt-syntax
 	modus-themes-hl-line 'intense
-	modus-themes-variable-pitch-headings t
 	modus-themes-paren-match 'intense
 	modus-themes-mode-line '(moody borderless))
-  (setq modus-themes-scale-1 1.1
-	modus-themes-scale-2 1.15
-	modus-themes-scale-3 1.21
-	modus-themes-scale-4 1.27
-	modus-themes-scale-title 1.33)
   (setq modus-themes-headings
-	'((t . (background overline rainbow)))))
+        (quote ((1 . (background overline variable-pitch 1.4))
+                (2 . (overline rainbow variable-pitch 1.25))
+                (3 . (overline 1.1))
+                (t . (monochrome))))))
 
 ;; Running modus-themes depending on the time of the day.
 
@@ -474,9 +470,8 @@
 
 (use-package org-roam
   :ensure t
+  :defer t
   :diminish "-Ω-"
-  :init
-  (setq org-roam-v2-ack t)
   :defines (org-roam-capture-templates org-roam-mode-map)
   :hook
   (after-init-hook . org-roam-mode)
@@ -582,15 +577,10 @@
   :defines pdf-annot-activate-created-annotations
   :config
   (setq-default pdf-view-display-size 'fit-page)
-
   ;; more fine-grained zooming
-  
   (setq pdf-view-resize-factor 1.05)
-
   ;; create annotation on highlight
-  
   (setq pdf-annot-activate-created-annotations t)
-   
   (pdf-tools-install :no-query)
   (require 'pdf-occur)
   :bind (:map pdf-view-mode-map
@@ -1342,6 +1332,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
+ '(custom-safe-themes
+   '("bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
    '(w3m vertico masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key marginalia orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces

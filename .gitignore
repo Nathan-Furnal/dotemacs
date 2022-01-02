@@ -32,3 +32,4 @@ project*
 history
 site-lisp/*
 multisession
+backups
