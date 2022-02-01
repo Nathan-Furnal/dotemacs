@@ -162,6 +162,7 @@
 ;;;========================================
 
 (use-package modus-themes
+  :pin melpa
   :ensure t
   :init
   (setq modus-themes-org-blocks 'gray-background
@@ -169,9 +170,9 @@
 	modus-themes-fringes 'subtle
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
-	modus-themes-syntax 'alt-syntax
-	modus-themes-hl-line 'intense
-	modus-themes-paren-match 'intense
+	modus-themes-syntax '(alt-syntax)
+	modus-themes-hl-line '(intense)
+	modus-themes-paren-match '(intense)
 	modus-themes-mode-line '(moody borderless))
   (setq modus-themes-headings
         (quote ((1 . (background overline variable-pitch 1.4))
@@ -235,9 +236,11 @@
   (savehist-mode))
 
 ;; Enable richer annotations using the Marginalia package
+
 (use-package marginalia
+  :pin melpa
   :ensure t
-  :defer 2
+  :defer 3
   :custom (marginalia-annotators '(marginalia-annotators-light))
   :config
   (marginalia-mode))
@@ -265,8 +268,8 @@
   ;; Even if I write something with the wrong case,
   ;; provide the correct casing.
   (company-dabbrev-ignore-case t)
-  ;; Don't way before completion.
-  (company-idle-delay 0)
+  ;; company completion wait
+  (company-idle-delay 0.2)
   ;; No company-mode in shell & eshell
   (company-global-modes '(not eshell-mode shell-mode))
     :hook ((text-mode-hook . company-mode)
@@ -572,17 +575,19 @@
 
 (use-package pdf-tools
   :ensure t
-  :mode  ("\\.pdf\\'" . pdf-view-mode)
+  :defer t
+  :magic ("%PDF" . pdf-view-mode)
   :hook (TeX-after-compilation-finished-hook . TeX-revert-document-buffer)
   :defines pdf-annot-activate-created-annotations
-  :config
-  (setq-default pdf-view-display-size 'fit-page)
+  :custom
+  (pdf-view-display-size 'fit-page)
   ;; more fine-grained zooming
-  (setq pdf-view-resize-factor 1.05)
+  (pdf-view-resize-factor 1.05)
   ;; create annotation on highlight
-  (setq pdf-annot-activate-created-annotations t)
-  (pdf-tools-install :no-query)
+  (pdf-annot-activate-created-annotations t)
+  :config
   (require 'pdf-occur)
+  (pdf-tools-install :no-query)
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
 	      ("C-r" . isearch-backward)))
@@ -867,7 +872,6 @@
   (lsp-pyright-disable-organize-imports nil)
   (lsp-pyright-auto-import-completions t)
   (lsp-pyright-use-library-code-for-types t)
-  (lsp-pyright-venv-path "~/.cache/pypoetry/virtualenvs")
   (lsp-completion-enable t)
   :hook ((python-mode-hook . (lambda ()
 			       (poetry-tracking-mode)
@@ -1140,25 +1144,27 @@
   (defun nf-compile-current-c/c++-file ()
     "Compiles a C/C++ file on the fly."
     (interactive)
-    (let* ((clang-choices '(("c" . "clang") ("cpp" . "clang++")))
+    (let* ((clang-choices '(("c" . "clang --std=c11") ("cpp" . "clang++ --std=c++17")))
 	   (filename (file-name-nondirectory buffer-file-name))
 	   (file-ext (file-name-extension buffer-file-name))
 	   (compile-choice (cdr (assoc file-ext clang-choices))))
-      (compile (concat compile-choice " -Wall " filename " -o " (file-name-sans-extension filename)))))
+      (compile (concat compile-choice " -Wall -pedantic " filename " -o " (file-name-sans-extension filename) ".o"))))
 
   (defun nf-run-exec-file ()
     "Runs an executable file named after the buffer if it exists."
     (interactive)
-    (if (file-executable-p (file-name-sans-extension buffer-file-name))
+    (if (file-executable-p (concat (file-name-sans-extension buffer-file-name) ".o"))
 	(async-shell-command
-	 (concat "./" (file-name-nondirectory (file-name-sans-extension buffer-file-name))))))
+	 (concat "./" (file-name-nondirectory (file-name-sans-extension buffer-file-name)) ".o"))))
 
   (defun nf-compile-and-run ()
     (interactive)
     "Compiles a C/C++ file then runs it."
     (nf-compile-current-c/c++-file)
     (nf-run-exec-file))
-
+  :hook (c++-mode-hook . (lambda ()
+			   (setq comment-start "/*")
+			   (setq comment-end "*/")))
   :bind ((:map c++-mode-map
 	       ("C-c C-c" . nf-compile-current-c/c++-file)
 	       ("C-c e" . nf-run-exec-file)
@@ -1309,6 +1315,13 @@
   :defer t
   :after tree-sitter)
 
+(use-package docstr
+  :ensure t
+  :defer t
+  :custom
+  (docstr-c++-style 'qtstyle)
+  :hook ((c-mode-hook c++-mode-hook) . docstr-mode))
+
 ;;; Web browsing
 
 (use-package w3m
@@ -1333,9 +1346,9 @@
  ;; If there is more than one, they won't work right.
  '(company-show-quick-access t nil nil "Customized with use-package company")
  '(custom-safe-themes
-   '("bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
+   '("57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(w3m vertico masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key marginalia orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
