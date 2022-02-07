@@ -455,7 +455,8 @@
 (use-package org-ref
   :ensure t
   :defer t
-  :custom (org-export-before-parsing-hook '(org-ref-glossary-before-parsing
+  :init
+  (setq org-export-before-parsing-hook '(org-ref-glossary-before-parsing
 					    org-ref-acronyms-before-parsing)))
 
 (use-package citeproc
@@ -680,6 +681,8 @@
 	 (c-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
+	 (zig-mode-hook . lsp-deferred)
+	 (php-mode-hook . lsp-deferred)
 	 (clojure-mode-hook . lsp-deferred)
 	 (clojurec-mode-hook . lsp-deferred)
 	 (clojurescript-mode-hook . lsp-deferred)
@@ -851,7 +854,8 @@
 (use-package inferior-python-mode
   :ensure nil
   :hook ((inferior-python-mode-hook . hide-mode-line-mode)
-	 (inferior-ess-r-mode-hook . hide-mode-line-mode)))
+	 (inferior-ess-r-mode-hook . hide-mode-line-mode)
+	 (pdf-view-mode-hook . hide-mode-line-mode)))
 
 (use-package hide-mode-line
   :ensure t
@@ -986,6 +990,8 @@
   :commands (org-babel-execute:gnuplot
 	     org-babel-expand-body:gnuplot))
 
+(use-package ob-makefile
+  :defer t)
 
 ;;;========================================
 ;;; Web development
@@ -1123,6 +1129,10 @@
   :hook ((sgml-mode-hook . emmet-mode)
 	 (web-mode-hook . emmet-mode)))
 
+(use-package php-mode
+  :pin melpa
+  :ensure t
+  :defer t)
 ;;;========================================
 ;;; Lua
 ;;;========================================
@@ -1163,7 +1173,7 @@
     (nf-compile-current-c/c++-file)
     (nf-run-exec-file))
   :hook (c++-mode-hook . (lambda ()
-			   (setq comment-start "/*")
+			   (setq comment-start "/**")
 			   (setq comment-end "*/")))
   :bind ((:map c++-mode-map
 	       ("C-c C-c" . nf-compile-current-c/c++-file)
@@ -1194,6 +1204,14 @@
   :ensure t
   :defer t
   :hook (rust-mode-hook . cargo-minor-mode))
+
+;;;========================================
+;;; Zig
+;;;========================================
+
+(use-package zig-mode
+  :ensure t
+  :defer t)
 
 ;;;========================================
 ;;; Code snippets and skeletons
@@ -1319,7 +1337,7 @@
   :ensure t
   :defer t
   :custom
-  (docstr-c++-style 'qtstyle)
+  (docstr-c++-style 'javadoc)
   :hook ((c-mode-hook c++-mode-hook) . docstr-mode))
 
 ;;; Web browsing
@@ -1348,7 +1366,7 @@
  '(custom-safe-themes
    '("57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc yapfify lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

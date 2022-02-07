@@ -33,3 +33,4 @@ history
 site-lisp/*
 multisession
 backups
+*tramp*
