@@ -673,13 +673,14 @@
   (lsp-eldoc-enable-hover nil)
   (lsp-signature-auto-activate nil)
   (lsp-sqls-server "~/go/bin/sqls")
-  (lsp-clients-clangd-args '("--clang-tidy" "--header-insertion=never"))
+  (lsp-clients-clangd-args '("--clang-tidy" "--header-insertion=never" "-j=8"))
   (lsp-completion-enable t)
   :hook ((css-mode-hook . lsp-deferred)
 	 (web-mode-hook . lsp-deferred)
 	 (js2-mode-hook . lsp-deferred)
 	 (c++-mode-hook . lsp-deferred)
 	 (c-mode-hook . lsp-deferred)
+	 (csharp-mode-hook . lsp-deferred)
 	 (sql-mode-hook . lsp-deferred)
 	 (rust-mode-hook . lsp-deferred)
 	 (zig-mode-hook . lsp-deferred)
@@ -856,7 +857,8 @@
   :ensure nil
   :hook ((inferior-python-mode-hook . hide-mode-line-mode)
 	 (inferior-ess-r-mode-hook . hide-mode-line-mode)
-	 (pdf-view-mode-hook . hide-mode-line-mode)))
+	 (pdf-view-mode-hook . hide-mode-line-mode)
+	 (shell-mode-hook . hide-mode-line-mode)))
 
 (use-package hide-mode-line
   :ensure t
@@ -1158,7 +1160,7 @@
   (defun nf-compile-current-c/c++-file ()
     "Compiles a C/C++ file on the fly."
     (interactive)
-    (let* ((clang-choices '(("c" . "clang --std=c11") ("cpp" . "clang++ --std=c++17")))
+    (let* ((clang-choices '(("c" . "clang --std=c11") ("cpp" . "clang++ --std=c++20")))
 	   (filename (file-name-nondirectory buffer-file-name))
 	   (file-ext (file-name-extension buffer-file-name))
 	   (compile-choice (cdr (assoc file-ext clang-choices))))
@@ -1177,7 +1179,6 @@
     (nf-compile-current-c/c++-file)
     (nf-run-exec-file))
   :hook ((c++-mode-hook . (lambda ()
-			    (setq flycheck-clang-language-standard "c++17")
 			    (setq comment-start "/**")
 			    (setq comment-end "*/")))
 	 (c-mode-hook . (lambda ()
@@ -1196,6 +1197,15 @@
 ;;; build system
 
 (use-package meson-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
+;;; C#
+;;;========================================
+
+(use-package csharp-mode
+  :pin melpa
   :ensure t
   :defer t)
 
@@ -1373,7 +1383,7 @@
  '(custom-safe-themes
    '("57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
