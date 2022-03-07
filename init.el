@@ -54,6 +54,7 @@
 ;;;========================================
 
 (use-package emacs
+  :after modus-themes
   :init
   (set-face-attribute 'default nil :family "Roboto Mono" :height 120 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 120 :weight 'medium)
@@ -129,6 +130,7 @@
 (use-package moody
   :if (window-system)
   :ensure t
+  :after emacs
   :custom
   (mode-line-compact t)
   (x-underline-at-descent-line t)
@@ -155,6 +157,7 @@
 
 (use-package vertico
   :ensure t
+  :after emacs
   :init
   (vertico-mode))
 
@@ -1284,7 +1287,7 @@
 
 (use-package ox-hugo
   :ensure t
-  :defer 4
+  :defer 3
   :after ox)
 
 ;;;========================================
@@ -1396,10 +1399,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-show-quick-access t nil nil "Customized with use-package company")
  '(custom-safe-themes
-   '("57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
+   '("74a50f18c8c88eac44dc73d7a4c0bbe1f3e72ff5971aac38fcf354ddad0d4733" "aa72e5b41780bfff2ff55d0cc6fcd4b42153386088a4025fed606c1099c2d9b8" "57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian modus-themes moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(modus-themes lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
