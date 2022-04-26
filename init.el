@@ -203,19 +203,6 @@
 ;;; Completion & Navigation
 ;;;========================================
 
-;; Tabs navigation and groups
-
-(use-package centaur-tabs
-  :ensure t
-  :demand
-  :custom
-  (centaur-tabs-set-bar 'under)         ; Display underline for selected tab
-  :config
-  (centaur-tabs-mode t)
-  :bind
-  ("C-<prior>" . centaur-tabs-backward)
-  ("C-<next>" . centaur-tabs-forward))
-
 (use-package isearch
   ;; Delete char on <DEL> instead of going back searches
   :bind (:map isearch-mode-map
@@ -755,6 +742,14 @@
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
 
 ;;;========================================
+;;; Janet
+;;;========================================
+
+(use-package janet-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; Clojure
 ;;;========================================
 
@@ -1175,11 +1170,13 @@
 
 (use-package cc-mode
   :ensure nil
+  :custom
+  (c-basic-offset 4)
   :config
   (defun nf-compile-current-c/c++-file ()
     "Compiles a C/C++ file on the fly."
     (interactive)
-    (let* ((clang-choices '(("c" . "clang --std=c11") ("cpp" . "clang++ --std=c++20")))
+    (let* ((clang-choices '(("c" . "clang --std=c17") ("cpp" . "clang++ --std=c++20")))
 	   (filename (file-name-nondirectory buffer-file-name))
 	   (file-ext (file-name-extension buffer-file-name))
 	   (compile-choice (cdr (assoc file-ext clang-choices))))
@@ -1199,9 +1196,12 @@
     (nf-run-exec-file))
   :hook ((c++-mode-hook . (lambda ()
 			    (setq comment-start "/**")
-			    (setq comment-end "*/")))
+			    (setq comment-end "*/")
+			    (setq flycheck-clang-language-standard "c++20"
+				  flycheck-gcc-language-standard "c++20")))
 	 (c-mode-hook . (lambda ()
-			  (setq flycheck-clang-language-standard "c17"))))
+			  (setq flycheck-clang-language-standard "c17"
+				flycheck-gcc-language-standard "c17"))))
   :bind ((:map c++-mode-map
 	       ("C-c C-c" . nf-compile-current-c/c++-file)
 	       ("C-c e" . nf-run-exec-file)
@@ -1254,6 +1254,15 @@
 (use-package zig-mode
   :ensure t
   :defer t)
+
+;;;========================================
+;;; Haxe
+;;;========================================
+
+(use-package haxe-mode
+  :ensure t
+  :defer t
+  :mode ("\\.hx\\'" . haxe-mode))
 
 ;;;========================================
 ;;; Code snippets and skeletons
@@ -1403,7 +1412,7 @@
  '(custom-safe-themes
    '("0998a5646f4a322ba70ca51cf7db727cb75eec2cf1fca0a28442e72142b170ce" "74a50f18c8c88eac44dc73d7a4c0bbe1f3e72ff5971aac38fcf354ddad0d4733" "aa72e5b41780bfff2ff55d0cc6fcd4b42153386088a4025fed606c1099c2d9b8" "57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(modus-themes lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless centaur-tabs circadian moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(janet-mode haxe-mode modus-themes lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
