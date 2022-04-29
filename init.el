@@ -205,8 +205,131 @@
 
 (use-package isearch
   ;; Delete char on <DEL> instead of going back searches
-  :bind (:map isearch-mode-map
+  :bind (("C-c s" . isearch-forward-thing-at-point)
+	 :map isearch-mode-map
 	      ("<DEL>" . isearch-del-char)))
+
+
+(use-package consult
+  :ensure t
+  :defer t
+  ;; Replace bindings. Lazily loaded due by `use-package'.
+  :bind (;; C-c bindings (mode-specific-map)
+         ("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x bindings (ctl-x-map)
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ("<help> a" . consult-apropos)            ;; orig. apropos-command
+         ;; M-g bindings (goto-map)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings (search-map)
+         ("M-s d" . consult-find)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s m" . consult-multi-occur)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Optionally replace `completing-read-multiple' with an enhanced version.
+  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key (kbd "M-."))
+  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme
+   :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-recent-file
+   consult--source-project-recent-file
+   :preview-key (kbd "M-."))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+  ;; By default `consult-project-function' uses `project-root' from project.el.
+  ;; Optionally configure a different project root function.
+  ;; There are multiple reasonable alternatives to chose from.
+  ;;;; 1. project.el (the default)
+  ;; (setq consult-project-function #'consult--default-project--function)
+  ;;;; 2. projectile.el (projectile-project-root)
+  ;; (autoload 'projectile-project-root "projectile")
+  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+  ;;;; 3. vc.el (vc-root-dir)
+  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+  ;;;; 4. locate-dominating-file
+  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+)
 
 (use-package orderless
   :ensure t
@@ -1354,6 +1477,16 @@
   :hook (nasm-mode-hook . flymake-nasm-setup))
 
 ;;;========================================
+;;; Lobster
+;;;========================================
+
+(use-package lobster-mode
+  :ensure nil
+  :defer t
+  :mode ("\\.lobster\\'")
+  :load-path "~/Code/Elisp/lobster-mode/")
+
+;;;========================================
 ;;; QoL
 ;;;========================================
 
@@ -1412,7 +1545,7 @@
  '(custom-safe-themes
    '("0998a5646f4a322ba70ca51cf7db727cb75eec2cf1fca0a28442e72142b170ce" "74a50f18c8c88eac44dc73d7a4c0bbe1f3e72ff5971aac38fcf354ddad0d4733" "aa72e5b41780bfff2ff55d0cc6fcd4b42153386088a4025fed606c1099c2d9b8" "57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(janet-mode haxe-mode modus-themes lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(consult janet-mode haxe-mode modus-themes lsp-metals scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode org python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode lsp-mode iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide ox-reveal imenu-list org-roam shackle org-ref cdlatex auctex flycheck transpose-frame treemacs company which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
