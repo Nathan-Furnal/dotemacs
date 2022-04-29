@@ -34,3 +34,4 @@ site-lisp/*
 multisession
 backups
 *tramp*
+opam*
