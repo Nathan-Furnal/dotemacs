@@ -89,7 +89,9 @@
 	 ("C-x \"" . split-window-right)
 	 ("C-x à" . delete-window)
 	 ("M-ù" . xref-find-definitions)
-	 ("M-µ" . xref-find-references))
+	 ("M-µ" . xref-find-references)
+	 ("M-ç" . text-scale-increase)
+	 ("M-à" . text-scale-decrease))
   :hook (text-mode-hook . auto-fill-mode))
 ;; Adopt a sneaky garbage collection strategy of waiting until idle
 ;; time to collect; staving off the collector while the user is
