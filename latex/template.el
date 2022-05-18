@@ -11,7 +11,7 @@
 
   (add-to-list 'org-latex-classes
 	       '("notes"
-		 "\\documentclass[french]{article}
+		 "\\documentclass[french, 12pt]{article}
 \\usepackage{minted}
 \\usepackage[round]{natbib}
 \\usepackage{babel}
@@ -43,7 +43,7 @@
 
   (add-to-list 'org-latex-classes
 	       '("notes_en"
-		 "\\documentclass{article}
+		 "\\documentclass[12pt]{article}
 \\usepackage{minted}
 \\usepackage[round]{natbib}
 \\usepackage[utf8]{inputenc}
