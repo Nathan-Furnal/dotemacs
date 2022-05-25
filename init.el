@@ -1037,6 +1037,11 @@
   :defer t
   :commands (org-babel-execute:php))
 
+(use-package ob-js
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:js))
+
 ;;;========================================
 ;;; Web development
 ;;;========================================
@@ -1110,7 +1115,7 @@
   :ensure t
   :defer t
   :defines web-mode-map
-  :mode ("\\.html\\'" "\\.php\\'")
+  :mode ("\\.html\\'")
   :bind (:map web-mode-map
 	      ("C-c C-v" . browse-url-of-buffer))
   :custom
@@ -1165,8 +1170,7 @@
   (emmet-indentation 2)
   (emmet-move-cursor-between-quotes t)
   ;; Auto-start on any markup modes
-  :hook ((sgml-mode-hook . emmet-mode)
-	 (web-mode-hook . emmet-mode)))
+  :hook ((sgml-mode-hook web-mode-hook php-mode-hook) . emmet-mode))
 
 (use-package php-mode
   :pin melpa
