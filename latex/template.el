@@ -25,7 +25,7 @@
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{parskip}
 \\usepackage[many]{tcolorbox}
-\\usepackage{hyperref}
+\\usepackage[backref=page]{hyperref}
 \\usepackage[export]{adjustbox}
 \\usepackage{subcaption}
 \\hypersetup{
@@ -56,7 +56,7 @@
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{parskip}
 \\usepackage[many]{tcolorbox}
-\\usepackage{hyperref}
+\\usepackage[backref=page]{hyperref}
 \\hypersetup{
     colorlinks=true,
     linkcolor={PineGreen!30!black},
@@ -98,7 +98,7 @@
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
-\\usepackage{hyperref}
+\\usepackage[backref=page]{hyperref}
 \\hypersetup{
     colorlinks=true,
     linkcolor={RoyalPurple},
@@ -107,7 +107,48 @@
 \\usepackage[export]{adjustbox}
 \\usepackage{mparhack} % Fixes some margins issues
 \\usepackage{geometry}
-\\geometry{a4paper,left=1cm,top=2cm,right=5cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=4.5cm}"
+\\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
+	      ("\\section{%s}" . "\\section*{%s}")
+	      ("\\subsection{%s}" . "\\subsection*{%s}")
+	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+(add-to-list 'org-latex-classes
+	     '("el-book"
+	       "[NO-DEFAULT-PACKAGES]
+\\documentclass[11pt, leqno]{book}
+\\usepackage{csquotes}
+\\usepackage[round]{natbib}
+\\usepackage{minted}
+\\usepackage[p,osf]{ETbb} % osf in text, tabular lining figures in math
+\\usepackage[scaled=.95,type1]{cabin} % sans serif in style of Gill Sans
+\\usepackage[varqu,varl]{zi4}% inconsolata typewriter
+\\usepackage[T1]{fontenc} % LY1 also works
+\\usepackage[libertine,vvarbb]{newtxmath}
+% --- Align title, author and dates left
+\\usepackage{titling}
+\\pretitle{\\begin{flushleft}\\huge\\rmfamily\\itshape}
+\\posttitle{\\par\\end{flushleft}\\vskip 0.5em}
+\\preauthor{\\begin{flushleft}\\normalsize}
+\\postauthor{\\par\\end{flushleft}\\vskip 0.5em}
+\\predate{\\begin{flushleft}\\small}
+\\postdate{\\par\\end{flushleft}\\vskip 0.5em}
+% ---
+\\usepackage{sectsty}
+\\sectionfont{\\normalfont\\itshape} % Italic heading
+\\usepackage[usenames,dvipsnames,svgnames]{xcolor}
+\\usepackage{caption}
+\\captionsetup{font={small, sc, onehalfspacing}}
+\\usepackage[backref=page]{hyperref}
+\\hypersetup{
+    colorlinks=true,
+    linkcolor={RoyalPurple},
+    citecolor={Bittersweet!50!Sepia},
+    urlcolor={CornflowerBlue!50!Blue}}
+\\usepackage[export]{adjustbox}
+\\usepackage{mparhack} % Fixes some margins issues
+\\usepackage{geometry}
+\\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
+	      ("\\chapter{%s}" . "\\chapter*{%s}")
 	      ("\\section{%s}" . "\\section*{%s}")
 	      ("\\subsection{%s}" . "\\subsection*{%s}")
 	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
