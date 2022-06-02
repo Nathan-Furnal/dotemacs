@@ -99,6 +99,7 @@
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
 \\usepackage[backref=page]{hyperref}
+\\usepackage{fvextra}
 \\hypersetup{
     colorlinks=true,
     linkcolor={RoyalPurple},
@@ -138,6 +139,8 @@
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
+\\usepackage[many]{tcolorbox}
+\\usepackage{fvextra}
 \\usepackage[backref=page]{hyperref}
 \\hypersetup{
     colorlinks=true,
