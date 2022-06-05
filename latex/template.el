@@ -24,9 +24,8 @@
 \\usepackage{soul}
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{parskip}
-\\usepackage[many]{tcolorbox}
 \\usepackage[backref=page]{hyperref}
-\\usepackage[export]{adjustbox}
+\\usepackage{adjustbox}
 \\usepackage{subcaption}
 \\hypersetup{
     colorlinks=true,
@@ -55,14 +54,13 @@
 \\usepackage{soul}
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{parskip}
-\\usepackage[many]{tcolorbox}
 \\usepackage[backref=page]{hyperref}
 \\hypersetup{
     colorlinks=true,
     linkcolor={PineGreen!30!black},
     citecolor={Bittersweet!50!Sepia},
     urlcolor={blue!80!black}}
-\\usepackage[export]{adjustbox}
+\\usepackage{adjustbox}
 \\usepackage{subcaption}
 \\usepackage{geometry}
 \\geometry{a4paper,left=2.5cm,top=1.2cm,right=2.5cm,bottom=1.5cm,marginparsep=7pt, marginparwidth=.6in}"
@@ -99,13 +97,12 @@
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
 \\usepackage[backref=page]{hyperref}
-\\usepackage{fvextra}
 \\hypersetup{
     colorlinks=true,
     linkcolor={RoyalPurple},
     citecolor={Bittersweet!50!Sepia},
     urlcolor={CornflowerBlue!50!Blue}}
-\\usepackage[export]{adjustbox}
+\\usepackage{adjustbox}
 \\usepackage{mparhack} % Fixes some margins issues
 \\usepackage{geometry}
 \\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
@@ -139,15 +136,13 @@
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
-\\usepackage[many]{tcolorbox}
-\\usepackage{fvextra}
 \\usepackage[backref=page]{hyperref}
 \\hypersetup{
     colorlinks=true,
     linkcolor={RoyalPurple},
     citecolor={Bittersweet!50!Sepia},
     urlcolor={CornflowerBlue!50!Blue}}
-\\usepackage[export]{adjustbox}
+\\usepackage{adjustbox}
 \\usepackage{mparhack} % Fixes some margins issues
 \\usepackage{geometry}
 \\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
