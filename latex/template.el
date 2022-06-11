@@ -76,7 +76,9 @@
 \\documentclass[11pt, leqno]{article}
 \\usepackage{csquotes}
 \\usepackage[round]{natbib}
-\\usepackage{minted}
+\\usepackage{listings}
+\\usepackage{fvextra}
+\\usepackage{parskip}
 \\usepackage[p,osf]{ETbb} % osf in text, tabular lining figures in math
 \\usepackage[scaled=.95,type1]{cabin} % sans serif in style of Gill Sans
 \\usepackage[varqu,varl]{zi4}% inconsolata typewriter
@@ -113,10 +115,12 @@
 (add-to-list 'org-latex-classes
 	     '("el-book"
 	       "[NO-DEFAULT-PACKAGES]
-\\documentclass[11pt, leqno]{book}
+\\documentclass[11pt, leqno, oneside]{book}
 \\usepackage{csquotes}
 \\usepackage[round]{natbib}
-\\usepackage{minted}
+\\usepackage{listings}
+\\usepackage{fvextra}
+\\usepackage{parskip}
 \\usepackage[p,osf]{ETbb} % osf in text, tabular lining figures in math
 \\usepackage[scaled=.95,type1]{cabin} % sans serif in style of Gill Sans
 \\usepackage[varqu,varl]{zi4}% inconsolata typewriter
