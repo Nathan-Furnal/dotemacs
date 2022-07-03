@@ -94,7 +94,10 @@
 \\postdate{\\par\\end{flushleft}\\vskip 0.5em}
 % ---
 \\usepackage{sectsty}
-\\sectionfont{\\normalfont\\itshape} % Italic heading
+\\sectionfont{\\LARGE\\itshape} % Italic heading
+\\subsectionfont{\\Large}
+\\subsubsectionfont{\\large}
+\\paragraphfont{\\large}
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}
@@ -136,7 +139,10 @@
 \\postdate{\\par\\end{flushleft}\\vskip 0.5em}
 % ---
 \\usepackage{sectsty}
-\\sectionfont{\\normalfont\\itshape} % Italic heading
+\\sectionfont{\\LARGE\\itshape} % Italic heading
+\\subsectionfont{\\Large}
+\\subsubsectionfont{\\large}
+\\paragraphfont{\\large}
 \\usepackage[usenames,dvipsnames,svgnames]{xcolor}
 \\usepackage{caption}
 \\captionsetup{font={small, sc, onehalfspacing}}

@@ -185,7 +185,7 @@
 	modus-themes-mode-line '(moody borderless))
   (setq modus-themes-headings
         (quote ((1 . (overline variable-pitch 1.4))
-                (2 . (overline rainbow variable-pitch 1.25))
+                (2 . (overline variable-pitch 1.25))
                 (3 . (overline 1.1))
                 (t . (monochrome))))))
 
@@ -708,6 +708,7 @@
 	 (clojurec-mode-hook . lsp-deferred)
 	 (clojurescript-mode-hook . lsp-deferred)
 	 (lua-mode-hook . lsp-deferred)
+	 (ess-r-mode-hook . lsp-deferred)  ; requires install.package("languageserver")
 	 (lsp-mode-hook . lsp-enable-which-key-integration))
   :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
@@ -1200,8 +1201,6 @@
 
 (use-package cc-mode
   :ensure nil
-  :custom
-  (c-basic-offset 4)
   :config
   (defun nf-compile-current-c/c++-file ()
     "Compiles a C/C++ file on the fly."
@@ -1332,7 +1331,7 @@
   :functions yas-reload-all
   :config
   (yas-reload-all nil)
-  :hook ((pro-mode-hook org-mode-hook) . yas-minor-mode))
+  :hook ((prog-mode-hook org-mode-hook) . yas-minor-mode))
 
 (use-package yasnippet-snippets
   :ensure t
