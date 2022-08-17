@@ -370,6 +370,7 @@
   (org-src-preserve-indentation t)         ; Preserving indentation in source blocks
   (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
   (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
+  (org-cite-csl-styles-dir "~/Zotero/styles") ; Use Zotero styles for CSL exports (bibliography management)
   :config
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
@@ -692,6 +693,7 @@
   (lsp-sqls-server "~/go/bin/sqls")
   (lsp-clients-clangd-args '("--clang-tidy" "--header-insertion=never" "-j=8"))
   (lsp-completion-enable t)
+  (lsp-file-watch-threshold 2000)
   :hook ((css-mode-hook . lsp-deferred)
 	 (web-mode-hook . lsp-deferred)
 	 (c++-mode-hook . lsp-deferred)
@@ -909,8 +911,7 @@
   :ensure t
   :defer t
   :config
-  (setq poetry-tracking-strategy 'switch-buffer)
-  (setenv "WORKON_HOME" "~/.cache/pypoetry/virtualenvs"))
+  (setq poetry-tracking-strategy 'switch-buffer))
 
 (use-package lsp-pyright
   :ensure t
@@ -1436,7 +1437,7 @@
   :defer t
   :delight " tree"
   :hook ((c-mode-hook c++-mode-hook css-mode-hook html-mode-hook
-		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook
+		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook php-mode-hook
 		      typescript-mode-hook sh-mode-hook tuareg-mode-hook zig-mode-hook scala-mode-hook ruby-mode-hook) . (lambda ()
 						(tree-sitter-mode)
 						(tree-sitter-hl-mode))))
