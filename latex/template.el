@@ -160,6 +160,13 @@
 	      ("\\section{%s}" . "\\section*{%s}")
 	      ("\\subsection{%s}" . "\\subsection*{%s}")
 	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+(add-to-list 'org-latex-classes
+	     '("el-slides"
+	       "[NO-DEFAULT-PACKAGES]
+\\documentclass{beamer}
+\\usetheme[progressbar=frametitle]{metropolis}
+\\usepackage[T1]{fontenc}"))
 ;;; Footer
 (provide 'template)
 ;;; template.el ends here
