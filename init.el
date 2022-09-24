@@ -682,7 +682,7 @@
 
 (use-package lsp-mode
   :ensure t
-  :defer t
+  :commands (lsp lsp-deferred)
   :delight " LSP"
   :defines (lsp-keymap-prefix lsp-mode-map)
   :init
@@ -718,8 +718,8 @@
 	 (clojurescript-mode-hook . lsp-deferred)
 	 (lua-mode-hook . lsp-deferred)
 	 (ess-r-mode-hook . lsp-deferred)  ; requires install.package("languageserver")
-	 (lsp-mode-hook . lsp-enable-which-key-integration))
-  (lsp-completion-mode-hook . my/lsp-mode-setup-completion)
+	 (lsp-mode-hook . lsp-enable-which-key-integration)
+	 (lsp-completion-mode-hook . my/lsp-mode-setup-completion))
   :config
   ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
   (setenv "PATH" (concat "/usr/local/bin" path-separator (getenv "PATH")))
@@ -728,7 +728,6 @@
 	       clojurescript-mode
 	       clojurex-mode))
     (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
-  :commands (lsp lsp-deferred)
   :bind (:map lsp-mode-map
 	      ("M-<RET>" . lsp-execute-code-action)))
 
