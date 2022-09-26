@@ -105,8 +105,8 @@
   :custom
   (gcmh-mode 1)
   (gcmh-idle-delay 5)
-  (gcmh-high-cons-threshold (* 16 1024 1024))
-  (gc-cons-percentage 0.1))
+  (gcmh-high-cons-threshold (* 256 1024 1024))
+  (gc-cons-percentage 0.2))
 
 (use-package elec-pair
   :ensure nil
@@ -1438,8 +1438,7 @@
 						(tree-sitter-hl-mode))))
 (use-package tree-sitter-langs
   :ensure t
-  :defer t
-  :after tree-sitter)
+  :defer t)
 
 (use-package docstr
   :ensure t
