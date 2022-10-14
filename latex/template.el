@@ -74,10 +74,9 @@
 	     '("el-notes"
 	       "[NO-DEFAULT-PACKAGES]
 \\documentclass[11pt, leqno]{article}
-\\usepackage{csquotes}
 \\usepackage[round]{natbib}
-\\usepackage{listings}
 \\usepackage{fvextra}
+\\usepackage{csquotes}
 \\usepackage{parskip}
 \\usepackage[p,osf]{ETbb} % osf in text, tabular lining figures in math
 \\usepackage[scaled=.95,type1]{cabin} % sans serif in style of Gill Sans
@@ -119,10 +118,10 @@
 	     '("el-book"
 	       "[NO-DEFAULT-PACKAGES]
 \\documentclass[11pt, leqno, oneside]{book}
-\\usepackage{csquotes}
 \\usepackage[round]{natbib}
 \\usepackage{listings}
 \\usepackage{fvextra}
+\\usepackage{csquotes}
 \\usepackage{parskip}
 \\usepackage[p,osf]{ETbb} % osf in text, tabular lining figures in math
 \\usepackage[scaled=.95,type1]{cabin} % sans serif in style of Gill Sans
