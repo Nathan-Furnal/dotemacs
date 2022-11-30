@@ -57,8 +57,8 @@
 (use-package emacs
   :after modus-themes
   :init
-  (set-face-attribute 'default nil :family "Roboto Mono" :height 120 :weight 'regular)
-  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 120 :weight 'medium)
+  (set-face-attribute 'default nil :family "Roboto Mono" :height 130 :weight 'regular)
+  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 130 :weight 'medium)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 130 :weight 'medium)
   :config
   (set-language-environment "UTF-8")
@@ -104,9 +104,9 @@
   :diminish gcmh-mode
   :custom
   (gcmh-mode 1)
-  (gcmh-idle-delay 5)
-  (gcmh-high-cons-threshold (* 256 1024 1024))
-  (gc-cons-percentage 0.2))
+  (gcmh-idle-delay 10)
+  (gcmh-high-cons-threshold (* 100 1024 1024))
+  (gc-cons-percentage 0.8))
 
 (use-package elec-pair
   :ensure nil
@@ -271,7 +271,22 @@
   (global-corfu-mode))
 
 (use-package cape
-  :ensure t)
+  :ensure t
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line))
+  )
 
 (use-package treemacs
   :ensure t
@@ -399,6 +414,20 @@
 	(hide-mode-line-mode -1)
       (hide-mode-line-mode 1)))
 
+  (defun nf/parse-headline (x)
+    (plist-get (cadr x) :raw-value))
+
+  (defun nf/get-headlines ()
+    (org-element-map (org-element-parse-buffer) 'headline #'nf/parse-headline))
+
+  (defun nf/link-to-headline ()
+    "Insert an internal link to a headline."
+    (interactive)
+    (let* ((headlines (nf/get-headlines))
+	   (choice (completing-read "Headings: " headlines nil t))
+	   (desc (read-string "Description: " choice)))
+      (org-insert-link buffer-file-name (concat "*" choice) desc)))
+
   :bind (:map org-mode-map
 	      ("C-x p" . nf-toggle-presentation)))
 
@@ -465,8 +494,8 @@
   :ensure t
   :defer t
   :config
-  (setq org-export-before-parsing-hook '(org-ref-glossary-before-parsing
-					 org-ref-acronyms-before-parsing)))
+  (setq org-export-before-parsing-functions '(org-ref-glossary-before-parsing
+					      org-ref-acronyms-before-parsing)))
 
 (use-package citeproc
   :ensure t
@@ -698,6 +727,7 @@
   (lsp-eldoc-enable-hover nil)
   (lsp-signature-auto-activate nil)
   (lsp-sqls-server "~/go/bin/sqls")
+  (lsp-zig-zls-executable "~/pkgs/zls/bin/zls")
   (lsp-clients-clangd-args '("--clang-tidy" "--header-insertion=never" "-j=8"))
   (lsp-file-watch-threshold 2000)
   :hook ((css-mode-hook . lsp-deferred)
@@ -833,7 +863,7 @@
 (use-package geiser
   :ensure t
   :defer t
-  :commands (geiser run-geiser)
+  :commands (geiser)
   :config
   (use-package geiser-mit
     :ensure t
@@ -924,6 +954,8 @@
   :custom
   (blacken-allow-py36 t)
   (blacken-skip-string-normalization t)
+  (blacken-only-if-project-is-blackened t)
+  (black-fast-unsafe t)
   :hook (python-mode-hook . blacken-mode))
 
 ;; numpy docstring for python
@@ -1039,6 +1071,17 @@
   :ensure nil
   :defer t
   :commands (org-babel-execute:js))
+
+(use-package ob-scheme
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:scheme))
+
+(use-package ob-lisp
+  :ensure nil
+  :defer t
+  :custom (org-babel-lisp-eval-fn 'sly-eval)
+  :commands (org-babel-execute:lisp))
 
 ;;;========================================
 ;;; Web development
@@ -1208,8 +1251,8 @@
 	 (concat "./" (file-name-nondirectory (file-name-sans-extension buffer-file-name)) ".o"))))
 
   (defun nf-compile-and-run ()
-    (interactive)
     "Compiles a C/C++ file then runs it."
+    (interactive)
     (nf-compile-current-c/c++-file)
     (nf-run-exec-file))
   :hook ((c++-mode-hook . (lambda ()
@@ -1308,15 +1351,6 @@
   :hook (tuareg-mode-hook . utop-minor-mode))
 
 ;;;========================================
-;;; Haxe
-;;;========================================
-
-(use-package haxe-mode
-  :ensure t
-  :defer t
-  :mode ("\\.hx\\'" . haxe-mode))
-
-;;;========================================
 ;;; Code snippets and skeletons
 ;;;========================================
 
@@ -1406,16 +1440,6 @@
   :hook (nasm-mode-hook . flymake-nasm-setup))
 
 ;;;========================================
-;;; Lobster
-;;;========================================
-
-(use-package lobster-mode
-  :ensure nil
-  :defer t
-  :mode ("\\.lobster\\'")
-  :load-path "~/Code/Elisp/lobster-mode/")
-
-;;;========================================
 ;;; QoL
 ;;;========================================
 
@@ -1432,7 +1456,7 @@
   :defer t
   :delight " tree"
   :hook ((c-mode-hook c++-mode-hook css-mode-hook html-mode-hook
-		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook php-mode-hook
+		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook
 		      typescript-mode-hook sh-mode-hook tuareg-mode-hook zig-mode-hook scala-mode-hook ruby-mode-hook) . (lambda ()
 						(tree-sitter-mode)
 						(tree-sitter-hl-mode))))
@@ -1447,21 +1471,24 @@
   (docstr-c++-style 'javadoc)
   :hook ((c-mode-hook c++-mode-hook) . docstr-mode))
 
-;;; Web browsing
-
-(use-package w3m
-  :ensure t
-  :defer t
-  :commands w3m
-  :custom
-  (w3m-use-cookies nil))
-
 ;;; Colors
 
 (use-package rainbow-delimiters
   :ensure t
   :defer t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
+
+;;;========================================
+;;; Docker
+;;;========================================
+
+(use-package docker
+  :ensure t
+  :defer t)
+
+(use-package dockerfile-mode
+  :ensure t
+  :defer t)
 
 ;; init.el ends here
 (custom-set-variables
@@ -1473,7 +1500,7 @@
  '(custom-safe-themes
    '("0998a5646f4a322ba70ca51cf7db727cb75eec2cf1fca0a28442e72142b170ce" "74a50f18c8c88eac44dc73d7a4c0bbe1f3e72ff5971aac38fcf354ddad0d4733" "aa72e5b41780bfff2ff55d0cc6fcd4b42153386088a4025fed606c1099c2d9b8" "57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
  '(package-selected-packages
-   '(cape corfu org utop cmake-mode biblio biblio-core cfrs citeproc clojure-mode lsp-mode ox-hugo engrave-faces org-modern magit ob-php qt-pro-mode reason-mode merlin tuareg ocamlformat xr janet-mode haxe-mode modus-themes scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode iedit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide imenu-list shackle cdlatex auctex flycheck transpose-frame treemacs which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(dockerfile-mode docker cape corfu org utop cmake-mode biblio biblio-core cfrs citeproc clojure-mode lsp-mode ox-hugo engrave-faces org-modern magit ob-php qt-pro-mode reason-mode merlin tuareg ocamlformat xr janet-mode haxe-mode modus-themes scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode iedit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide imenu-list shackle cdlatex auctex flycheck transpose-frame treemacs which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
