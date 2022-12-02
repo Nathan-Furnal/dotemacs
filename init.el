@@ -13,8 +13,7 @@
 
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
-	("elpa" . "https://elpa.gnu.org/packages/")
-	("elpa-devel" . "https://elpa.gnu.org/devel/")))
+	("elpa" . "https://elpa.gnu.org/packages/")))
 
 ;; Initialize the packages, avoiding a re-initialization.
 
@@ -370,7 +369,6 @@
 ;;;========================================
 
 (use-package org
-  :pin elpa-devel
   :ensure nil
   :delight "Οrg"
   :custom
@@ -636,7 +634,6 @@
   ;; create annotation on highlight
   (pdf-annot-activate-created-annotations t)
   :config
-  (require 'pdf-occur)
   (pdf-tools-install :no-query)
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
@@ -689,6 +686,7 @@
 (use-package magit
   :ensure t
   :defer t
+  :pin melpa
   :bind ("C-x g" . magit-status))
 
 ;;;========================================
@@ -706,69 +704,22 @@
   :bind ("C-x <SPC>" . rectangle-mark-mode))
 
 ;;;========================================
-;;; Development with LSP
+;;; Development with Eglot
 ;;;========================================
 
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp lsp-deferred)
-  :delight " LSP"
-  :defines (lsp-keymap-prefix lsp-mode-map)
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  (defun my/lsp-mode-setup-completion ()
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(flex))) ;; Configure flex
-  :custom
-  (lsp-completion-enable t)
-  (lsp-completion-provider :none) ;; we use Corfu!
-  (lsp-keep-workspace-alive nil)
-  (lsp-auto-guess-root nil)
-  (lsp-eldoc-enable-hover nil)
-  (lsp-signature-auto-activate nil)
-  (lsp-sqls-server "~/go/bin/sqls")
-  (lsp-zig-zls-executable "~/pkgs/zls/bin/zls")
-  (lsp-clients-clangd-args '("--clang-tidy" "--header-insertion=never" "-j=8"))
-  (lsp-file-watch-threshold 2000)
-  :hook ((css-mode-hook . lsp-deferred)
-	 (web-mode-hook . lsp-deferred)
-	 (c++-mode-hook . lsp-deferred)
-	 (c-mode-hook . lsp-deferred)
-	 (js2-mode-hook . lsp-deferred)
-	 (c-mode-hook . lsp-deferred)
-	 (csharp-mode-hook . lsp-deferred)
-	 (sql-mode-hook . lsp-deferred)
-	 (rust-mode-hook . lsp-deferred)
-	 (zig-mode-hook . lsp-deferred)
-	 (php-mode-hook . lsp-deferred)
-	 (scala-mode-hook . lsp-deferred)
-	 (tuareg-mode-hook . lsp-deferred)
-	 (clojure-mode-hook . lsp-deferred)
-	 (clojurec-mode-hook . lsp-deferred)
-	 (clojurescript-mode-hook . lsp-deferred)
-	 (lua-mode-hook . lsp-deferred)
-	 (ess-r-mode-hook . lsp-deferred)  ; requires install.package("languageserver")
-	 (lsp-mode-hook . lsp-enable-which-key-integration)
-	 (lsp-completion-mode-hook . my/lsp-mode-setup-completion))
-  :config
-  ;; See https://clojure-lsp.github.io/clojure-lsp/clients/#emacs
-  (setenv "PATH" (concat "/usr/local/bin" path-separator (getenv "PATH")))
-  (dolist (m '(clojure-mode
-	       clojurec-mode
-	       clojurescript-mode
-	       clojurex-mode))
-    (add-to-list 'lsp-language-id-configuration `(,m . "clojure")))
-  :bind (:map lsp-mode-map
-	      ("M-<RET>" . lsp-execute-code-action)))
-
-;; Debugger
-
-(use-package dap-mode
+(use-package eglot
+  :pin elpa
   :ensure t
   :defer t
-  :after lsp-mode
-  :config
-  (dap-auto-configure-mode))
+  :custom
+  (read-process-output-max (* 1024 1024))
+  (eglot-autoshutdown t)
+  (eldoc-echo-area-use-multiline-p)
+  :hook ((python-mode-hook . eglot-ensure)
+	 (web-mode-hook . eglot-ensure)
+	 (c-mode-hook . eglot-ensure)
+	 (c++-mode-hook . eglot-ensure)
+	 (zig-mode-hook . eglot-ensure)))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -816,39 +767,6 @@
   :ensure t
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
-
-;;;========================================
-;;; Janet
-;;;========================================
-
-(use-package janet-mode
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; Clojure
-;;;========================================
-
-(use-package cider
-  :ensure t
-  :defer t)
-
-(use-package flycheck-clj-kondo
-  :ensure t
-  :defer t
-  :delight "")
-
-(use-package clojure-mode
-  :ensure t
-  :defer t
-  :delight "Κλο"
-  :custom
-  (lsp-completion-enable nil) ; use cider completion
-  :config
-  (require 'flycheck-clj-kondo)
-  :hook (clojure-mode-hook . (lambda ()
-			       (cider)
-			       (paredit-mode))))
 
 ;;;========================================
 ;;; Scheme & Racket
@@ -932,20 +850,6 @@
   :defer t
   :config
   (setq poetry-tracking-strategy 'switch-buffer))
-
-(use-package lsp-pyright
-  :ensure t
-  :defer t
-  :custom
-  (lsp-pyright-disable-language-service nil)
-  (lsp-pyright-disable-organize-imports nil)
-  (lsp-pyright-auto-import-completions t)
-  (lsp-pyright-use-library-code-for-types t)
-  (lsp-completion-enable t)
-  :hook ((python-mode-hook . (lambda ()
-			       (poetry-tracking-mode)
-			       (require 'lsp-pyright)
-			       (lsp-deferred)))))
 
 ;; Buffer formatting on save
 (use-package blacken
@@ -1490,27 +1394,22 @@
   :ensure t
   :defer t)
 
-;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(company-show-quick-access t nil nil "Customized with use-package company")
- '(custom-safe-themes
-   '("0998a5646f4a322ba70ca51cf7db727cb75eec2cf1fca0a28442e72142b170ce" "74a50f18c8c88eac44dc73d7a4c0bbe1f3e72ff5971aac38fcf354ddad0d4733" "aa72e5b41780bfff2ff55d0cc6fcd4b42153386088a4025fed606c1099c2d9b8" "57a29645c35ae5ce1660d5987d3da5869b048477a7801ce7ab57bfb25ce12d3e" "4c56af497ddf0e30f65a7232a8ee21b3d62a8c332c6b268c81e9ea99b11da0d3" "9f1d0627e756e58e0263fe3f00b16d8f7b2aca0882faacdc20ddd56a95acb7c2" "7397cc72938446348521d8061d3f2e288165f65a2dbb6366bb666224de2629bb" "bd3b9675010d472170c5d540dded5c3d37d83b7c5414462737b60f44351fb3ed" default))
- '(package-selected-packages
-   '(dockerfile-mode docker cape corfu org utop cmake-mode biblio biblio-core cfrs citeproc clojure-mode lsp-mode ox-hugo engrave-faces org-modern magit ob-php qt-pro-mode reason-mode merlin tuareg ocamlformat xr janet-mode haxe-mode modus-themes scala-mode csharp-mode meson-mode blacken php-mode zig-mode vertico marginalia docstr w3m masm-mode tree-sitter-langs tree-sitter lua-mode julia-snail julia-mode python flymake-nasm nasm-mode gnuplot plantuml-mode yaml-mode maxima gif-screencast yasnippet-snippets cargo rustic rust-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide prettier-js rjsx-mode ess numpydoc lsp-pyright poetry hide-mode-line racket-mode geiser-mit geiser flycheck-clj-kondo cider rainbow-delimiters paredit sly vterm elisp-lint package-lint buttercup dap-mode iedit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide imenu-list shackle cdlatex auctex flycheck transpose-frame treemacs which-key orderless circadian moody exec-path-from-shell gcmh delight diminish use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 ;;; init.el ends here
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(dockerfile-mode docker rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish use-package)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
