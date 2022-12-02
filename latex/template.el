@@ -161,11 +161,25 @@
 	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
 (add-to-list 'org-latex-classes
-	     '("el-slides"
-	       "[NO-DEFAULT-PACKAGES]
-\\documentclass{beamer}
-\\usetheme[progressbar=frametitle]{metropolis}
-\\usepackage[T1]{fontenc}"))
+  ;; beamer class, for presentations
+  '("el-presentation"
+     "\\documentclass[11pt]{beamer}
+      \\usetheme[progressbar=frametitle]{metropolis}
+      \\setbeameroption{show notes}
+      \\setbeamertemplate{section in toc}[sections numbered]
+      \\usepackage[utf8]{inputenc}
+      \\usepackage{appendixnumberbeamer}
+      \\usepackage[T1]{fontenc}
+      \\usepackage{hyperref}
+      \\usepackage{color}
+      \\usepackage{verbatim}"
+     
+     ("\\section{%s}" . "\\section*{%s}")
+     
+     ("\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}"
+       "\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}")))
 ;;; Footer
 (provide 'template)
 ;;; template.el ends here
