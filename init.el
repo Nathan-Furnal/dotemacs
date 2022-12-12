@@ -1,6 +1,6 @@
 ;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
 
-;; Package-Requires : ((emacs "28.050"))
+;; Package-Requires : ((emacs "29.060"))
 
 ;;; Commentary:
 ;; This file aims to provide a lightweight Emacs experience, it's heavily
@@ -104,7 +104,7 @@
   :custom
   (gcmh-mode 1)
   (gcmh-idle-delay 10)
-  (gcmh-high-cons-threshold (* 100 1024 1024))
+  (gcmh-high-cons-threshold (* 32 1024 1024))
   (gc-cons-percentage 0.8))
 
 (use-package elec-pair
@@ -713,13 +713,18 @@
   :defer t
   :custom
   (read-process-output-max (* 1024 1024))
-  (eglot-autoshutdown t)
   (eldoc-echo-area-use-multiline-p)
-  :hook ((python-mode-hook . eglot-ensure)
-	 (web-mode-hook . eglot-ensure)
+  (eglot-autoshutdown t)
+  :config
+  (setq-default eglot-workspace-configuration
+    '((:pyright .
+        ((useLibraryCodeForTypes . t)))))
+  :hook ((zig-mode-hook . eglot-ensure)
+	 (python-mode-hook . (lambda ()
+			       (poetry-tracking-mode)
+			       (eglot-ensure)))
 	 (c-mode-hook . eglot-ensure)
-	 (c++-mode-hook . eglot-ensure)
-	 (zig-mode-hook . eglot-ensure)))
+	 (c++-mode-hook . eglot-ensure)))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -821,7 +826,8 @@
   :after vterm
   :custom
   (julia-snail-show-error-window nil)
-  (julia-snail-use-emoji-snail-lighter nil))
+  (julia-snail-use-emoji-snail-lighter nil)
+  :hook (julia-mode-hook . julia-snail-mode))
 
 ;;;========================================
 ;;; Python
@@ -848,6 +854,7 @@
 (use-package poetry
   :ensure t
   :defer t
+  :commands poetry-tracking-mode
   :config
   (setq poetry-tracking-strategy 'switch-buffer))
 
@@ -1185,15 +1192,6 @@
   :defer t)
 
 (use-package cmake-mode
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; C#
-;;;========================================
-
-(use-package csharp-mode
-  :pin melpa
   :ensure t
   :defer t)
 
