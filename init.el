@@ -449,6 +449,7 @@
 ;; LaTeX config and use PDF-tools to view PDF files
 (use-package tex
   :ensure nil
+  :defer t
   :custom
   (TeX-view-program-selection
    '(((output-dvi has-no-display-manager)  "dvi2tty")
@@ -513,8 +514,6 @@
   :defer t
   :diminish "-Ω-"
   :defines (org-roam-capture-templates org-roam-mode-map)
-  :hook
-  (after-init-hook . org-roam-mode)
   :custom
   (org-roam-directory (file-truename (expand-file-name "~/org-roam")))
   (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
@@ -716,9 +715,10 @@
   (eldoc-echo-area-use-multiline-p)
   (eglot-autoshutdown t)
   :config
+  ;; Python specific
   (setq-default eglot-workspace-configuration
-    '((:pyright .
-        ((useLibraryCodeForTypes . t)))))
+		'((:pyright .
+			    ((useLibraryCodeForTypes . t)))))
   :hook ((zig-mode-hook . eglot-ensure)
 	 (python-mode-hook . (lambda ()
 			       (poetry-tracking-mode)
@@ -880,14 +880,13 @@
               ("C-c C-n" . numpydoc-generate)))
 
 ;;;========================================
-;;; Jupyter & notebooks
+;;; Org-mode Babel
 ;;;========================================
 
 ;; Org babel allows to evaluate code block in org-mode
-;; jupyter HAS to be last to work, per : https://github.com/nnicandro/emacs-jupyter#org-mode-source-blocks
 
 ;; R support
-;; To install the R Kernel once R is installed, go in the R console and :
+;; To install the R Kernel once R is installed, go in the R console and:
 ;; install.packages('IRkernel')
 ;; IRkernel::installspec()
 ;; To add linting, one has to install the "lintr" package and
@@ -1065,7 +1064,7 @@
   :ensure t
   :defer t
   :defines web-mode-map
-  :mode ("\\.html\\'")
+  :mode ("\\.html\\'" "\\.blade.php\\'")
   :bind (:map web-mode-map
 	      ("C-c C-v" . browse-url-of-buffer))
   :custom
@@ -1404,7 +1403,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(dockerfile-mode docker rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish use-package)))
+   '(use-package dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
