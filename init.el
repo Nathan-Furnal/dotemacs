@@ -9,41 +9,18 @@
 
 ;;; Code:
 
-(require 'package)
+(require 'use-package)
+
+(use-package use-package
+  :custom
+  (use-package-hook-name-suffix nil))
 
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
 	("elpa" . "https://elpa.gnu.org/packages/")))
 
-;; Initialize the packages, avoiding a re-initialization.
-
 (unless (bound-and-true-p package--initialized)
   (package-initialize))
-
-;; Make sure `use-package' is available.
-
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-;; Configure `use-package' prior to loading it.
-
-(eval-and-compile
-  (setq use-package-always-ensure nil)
-  (setq use-package-always-defer nil)
-  (setq use-package-always-demand nil)
-  (setq use-package-expand-minimally nil)
-  (setq use-package-enable-imenu-support t)
-  (setq use-package-compute-statistics nil)
-  ;; The following is VERY IMPORTANT.  Write hooks using their real name
-  ;; instead of a shorter version: after-init ==> `after-init-hook'.
-  ;;
-  ;; This is to empower help commands with their contextual awareness,
-  ;; such as `describe-symbol'.
-  (setq use-package-hook-name-suffix nil))
-
-(eval-when-compile
-  (require 'use-package))
 
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
@@ -54,7 +31,6 @@
 ;;;========================================
 
 (use-package emacs
-  :after modus-themes
   :init
   (set-face-attribute 'default nil :family "Roboto Mono" :height 130 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 130 :weight 'medium)
@@ -707,8 +683,7 @@
 ;;;========================================
 
 (use-package eglot
-  :pin elpa
-  :ensure t
+  :ensure nil
   :defer t
   :custom
   (read-process-output-max (* 1024 1024))
@@ -1379,6 +1354,13 @@
   :defer t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
 
+
+;;; CSV
+
+(use-package csv-mode
+  :ensure t
+  :defer t)
+
 ;;;========================================
 ;;; Docker
 ;;;========================================
@@ -1403,7 +1385,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(use-package dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
