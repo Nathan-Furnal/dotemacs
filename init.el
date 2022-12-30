@@ -150,14 +150,14 @@
   :pin melpa
   :ensure t
   :init
-  (setq modus-themes-org-blocks 'gray-background
-	modus-themes-fringes 'subtle
+  (setq modus-themes-org-blocks 'tinted-background
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
-	modus-themes-syntax '(alt-syntax)
-	modus-themes-hl-line '(intense)
-	modus-themes-paren-match '(intense)
-	modus-themes-mode-line '(moody borderless))
+	modus-themes-mixed-fonts t
+	modus-themes-common-palette-overrides '((border-mode-line-active unspecified)
+						(border-mode-line-inactive unspecified)
+						(fringe subtle)
+						(bg-paren-match bg-yellow-intense)))
   (setq modus-themes-headings
         (quote ((1 . (overline variable-pitch 1.4))
                 (2 . (overline variable-pitch 1.25))
@@ -1384,6 +1384,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("3459d238cbac96e5d9bdfbd985165f12d3ffcaac944b61ca71bc6378912194ce" default))
  '(package-selected-packages
    '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
