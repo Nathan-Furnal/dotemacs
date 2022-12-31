@@ -212,7 +212,7 @@
 (use-package marginalia
   :pin melpa
   :ensure t
-  :defer 3
+  :defer 1
   :custom (marginalia-annotators '(marginalia-annotators-light))
   :config
   (marginalia-mode))
@@ -783,28 +783,6 @@
 	 (racket-repl-mode-hook . hide-mode-line-mode)))
 
 ;;;========================================
-;;; Julia
-;;;========================================
-
-(use-package julia-mode
-  :ensure t
-  :defer t
-  :delight "Jl"
-  :config
-  (setenv "JULIA_NUM_THREADS" "16")
-  :hook (julia-mode-hook . julia-snail-mode))
-
-(use-package julia-snail
-  :defer t
-  :ensure t
-  :delight " snail"
-  :after vterm
-  :custom
-  (julia-snail-show-error-window nil)
-  (julia-snail-use-emoji-snail-lighter nil)
-  :hook (julia-mode-hook . julia-snail-mode))
-
-;;;========================================
 ;;; Python
 ;;;========================================
 
@@ -1340,6 +1318,39 @@
   :ensure t
   :defer t)
 
+(use-package treesit
+  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
+  :init
+  (setq treesit-language-source-alist
+   '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+     (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+     (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+     (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+     (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+     (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+     (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+     (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+     (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
+     (make . ("https://github.com/alemuller/tree-sitter-make"))
+     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "ocaml/src" "ocaml"))
+     (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+     (php . ("https://github.com/tree-sitter/tree-sitter-php"))
+     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "typescript/src" "typescript"))
+     (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+     (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+     (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
+     (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+     (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
+  :config
+  (defun nf/treesit-install-all-languages ()
+    "Install all languages specified by `treesit-language-source-alist'."
+    (interactive)
+    (let ((languages (mapcar 'car treesit-language-source-alist)))
+      (dolist (lang languages)
+	      (treesit-install-language-grammar lang)
+	      (message "`%s' parser was installed." lang)
+	      (sit-for 0.75)))))
+
 (use-package docstr
   :ensure t
   :defer t
@@ -1387,7 +1398,7 @@
  '(custom-safe-themes
    '("3459d238cbac96e5d9bdfbd985165f12d3ffcaac944b61ca71bc6378912194ce" default))
  '(package-selected-packages
-   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line julia-snail julia-mode racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
