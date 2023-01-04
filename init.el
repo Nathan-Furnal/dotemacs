@@ -139,6 +139,7 @@
 (use-package vertico
   :ensure t
   :after emacs
+  :pin elpa
   :init
   (vertico-mode))
 
@@ -212,9 +213,8 @@
 (use-package marginalia
   :pin melpa
   :ensure t
-  :defer 1
   :custom (marginalia-annotators '(marginalia-annotators-light))
-  :config
+  :init
   (marginalia-mode))
 
 (use-package which-key
@@ -225,6 +225,7 @@
   (which-key-mode 1))
 
 (use-package corfu
+  :pin elpa
   :ensure t
   ;; Optional customizations
   :custom
@@ -1139,10 +1140,6 @@
 
 ;;; build systems
 
-(use-package meson-mode
-  :ensure t
-  :defer t)
-
 (use-package cmake-mode
   :ensure t
   :defer t)
@@ -1398,7 +1395,7 @@
  '(custom-safe-themes
    '("3459d238cbac96e5d9bdfbd985165f12d3ffcaac944b61ca71bc6378912194ce" default))
  '(package-selected-packages
-   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode meson-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
