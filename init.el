@@ -501,11 +501,11 @@
            :unnarrowed t)
 	  ("c" "concept" plain "%?"
 	   :if-new (file+head "concepts/${slug}.org"
-	   "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+last_modified: %U\n\n")
+	   "#+latex_class: el-notes\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+last_modified: %U\n\n")
 	   :unnarrowed t)
 	  ("l" "literature" plain "%?"
 	   :if-new (file+head "literature/${slug}.org"
-	   "#+latex_class: notes_en\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+las_modified: %U\n\n")
+	   "#+latex_class: el-notes\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+las_modified: %U\n\n")
 	   :unnarrowed t)))
   (org-roam-db-autosync-enable)
   :bind (("C-c n l" . org-roam-buffer-toggle)
