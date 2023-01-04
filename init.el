@@ -36,14 +36,14 @@
   (set-face-attribute 'default nil :family "Roboto Mono" :height 130 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 130 :weight 'medium)
   (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 130 :weight 'medium)
-  :config
-  (set-language-environment "UTF-8")
-  (set-default-coding-systems 'utf-8-unix)
-  
+  (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
-  (setq inhibit-startup-screen t)               ; Disable startup screen
   (setq initial-scratch-message "")	        ; Make *scratch* buffer blank
   (setq-default frame-title-format '("%b"))     ; Make window title the buffer name
+  (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
+  (setq inhibit-startup-screen t)               ; Disable startup screen
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8-unix)
   (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
   (setq use-short-answers t)                    ; y-or-n-p makes answering questions faster
   (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
@@ -52,7 +52,6 @@
   (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
   (global-hl-line-mode 1)			; Highlight the current line to make it more visible
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
-  (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
   (pixel-scroll-precision-mode 1)	        ; Precision scrolling
 
   (setq backup-directory-alist
@@ -442,8 +441,9 @@
      (output-html "xdg-open"))))
 
 (use-package template
-  :after org ox-latex
-  :load-path "latex")
+  :defer t
+  :hook (org-mode-hook . (lambda ()
+			   (load-file (expand-file-name (concat user-emacs-directory "latex/template.el"))))))
 
 (use-package ox-latex
   :after org
@@ -1215,9 +1215,6 @@
   :ensure t
   :defer t
   :diminish yas-minor-mode
-  :functions yas-reload-all
-  :config
-  (yas-reload-all nil)
   :hook ((prog-mode-hook org-mode-hook) . yas-minor-mode))
 
 (use-package yasnippet-snippets

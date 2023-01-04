@@ -11,8 +11,12 @@
 ;;; Code:
 
 ;; Defer garbage collection further back in the startup process
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
+(setq gc-cons-threshold most-positive-fixnum)
+
+;; [From DOOM] PERF: Don't use precious startup time checking mtime on elisp bytecode.
+;;   Ensuring correctness is 'doom sync's job, not the interactive session's.
+;;   Still, stale byte-code will cause *heavy* losses in startup efficiency.
+(setq load-prefer-newer noninteractive)
 
 ;; In Emacs 27+, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'. We want to keep from loading at startup.
