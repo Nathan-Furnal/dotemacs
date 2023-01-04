@@ -13,7 +13,8 @@
 
 (use-package use-package
   :custom
-  (use-package-hook-name-suffix nil))
+  (use-package-hook-name-suffix nil)
+  (use-package-compute-statistics t))
 
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
@@ -181,6 +182,11 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
 ;;;========================================
 ;;; Completion & Navigation
 ;;;========================================
@@ -189,7 +195,7 @@
   ;; Delete char on <DEL> instead of going back searches
   :bind (("C-c s" . isearch-forward-thing-at-point)
 	 :map isearch-mode-map
-	      ("<DEL>" . isearch-del-char)))
+	 ("<DEL>" . isearch-del-char)))
 
 (use-package orderless
   :ensure t
@@ -1395,7 +1401,7 @@
  '(custom-safe-themes
    '("3459d238cbac96e5d9bdfbd985165f12d3ffcaac944b61ca71bc6378912194ce" default))
  '(package-selected-packages
-   '(csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(dashboard csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
