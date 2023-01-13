@@ -706,7 +706,8 @@
 			       (poetry-tracking-mode)
 			       (eglot-ensure)))
 	 (c-mode-hook . eglot-ensure)
-	 (c++-mode-hook . eglot-ensure)))
+	 (c++-mode-hook . eglot-ensure)
+	 (kotlin-mode . eglot-ensure)))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -1098,6 +1099,14 @@
 	      ("C-c C-e" . lua-send-current-line)))
 
 ;;;========================================
+;;; Kotlin
+;;;========================================
+
+(use-package kotlin-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; C/C++
 ;;;========================================
 
@@ -1332,10 +1341,10 @@
      (json . ("https://github.com/tree-sitter/tree-sitter-json"))
      (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
      (make . ("https://github.com/alemuller/tree-sitter-make"))
-     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "ocaml/src" "ocaml"))
+     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
      (php . ("https://github.com/tree-sitter/tree-sitter-php"))
-     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "typescript/src" "typescript"))
+     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
      (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
      (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
      (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
@@ -1389,19 +1398,16 @@
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("3459d238cbac96e5d9bdfbd985165f12d3ffcaac944b61ca71bc6378912194ce" default))
- '(package-selected-packages
-   '(dashboard csv-mode rainbow-delimiters dockerfile-mode docker docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless dashboard circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
