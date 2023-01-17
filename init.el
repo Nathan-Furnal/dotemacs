@@ -33,12 +33,13 @@
 
 (use-package emacs
   :init
-  (set-face-attribute 'default nil :family "Roboto Mono" :height 130 :weight 'regular)
-  (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 130 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 130 :weight 'medium)
+  (set-face-attribute 'default nil :family "Iosevka Term" :height 135 :weight 'regular)
+  (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 135 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 130 :weight 'medium)
   (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
-  (setq initial-scratch-message "")	        ; Make *scratch* buffer blank
+  (setq initial-scratch-message
+	"Welcome to Emacs!")	                ; Make *scratch* buffer have a welcome message
   (setq-default frame-title-format '("%b"))     ; Make window title the buffer name
   (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
   (setq inhibit-startup-screen t)               ; Disable startup screen
@@ -155,6 +156,7 @@
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-mixed-fonts t
+	modus-themes-variable-pitch-ui t
 	modus-themes-common-palette-overrides '((border-mode-line-active unspecified)
 						(border-mode-line-inactive unspecified)
 						(fringe subtle)
@@ -181,10 +183,32 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-(use-package dashboard
+
+(use-package ligature
   :ensure t
   :config
-  (dashboard-setup-startup-hook))
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
 
 ;;;========================================
 ;;; Completion & Navigation
@@ -409,7 +433,9 @@
       (org-insert-link buffer-file-name (concat "*" choice) desc)))
 
   :bind (:map org-mode-map
-	      ("C-x p" . nf-toggle-presentation)))
+	      ("C-x p" . nf-toggle-presentation))
+  :hook
+  (org-mode-hook . variable-pitch-mode))
 
 ;;; Add magnificent margins and custom blocks
 
@@ -524,8 +550,8 @@
 
 ;;; Replacing deft with the faster alternative : xeft.
 (use-package xeft
-  :load-path "site-lisp/xeft"
-  :ensure nil
+  :pin elpa
+  :ensure t
   :defer t
   :custom
   (xeft-directory (expand-file-name "~/projects/notes"))
@@ -1410,4 +1436,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless dashboard circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
