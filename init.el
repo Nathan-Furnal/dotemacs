@@ -435,7 +435,9 @@
   :bind (:map org-mode-map
 	      ("C-x p" . nf-toggle-presentation))
   :hook
-  (org-mode-hook . variable-pitch-mode))
+  (org-mode-hook . (lambda ()
+		     (variable-pitch-mode)
+		     (setq-default fill-column 100))))
 
 ;;; Add magnificent margins and custom blocks
 
@@ -865,6 +867,19 @@
   (numpydoc-template-long nil)
   :bind (:map python-mode-map
               ("C-c C-n" . numpydoc-generate)))
+
+;;;========================================
+;;; Julia
+;;;========================================
+
+(use-package julia-mode
+  :ensure t
+  :defer t)
+
+(use-package julia-vterm
+  :ensure t
+  :defer t
+  :hook (julia-mode-hook . julia-vterm-mode))
 
 ;;;========================================
 ;;; Org-mode Babel
@@ -1365,6 +1380,7 @@
      (html . ("https://github.com/tree-sitter/tree-sitter-html"))
      (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
      (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+     (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
      (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
      (make . ("https://github.com/alemuller/tree-sitter-make"))
      (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
@@ -1435,5 +1451,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(julia-vterm julia-mode ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
