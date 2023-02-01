@@ -57,19 +57,32 @@
 
   (setq backup-directory-alist
 	`(("." . ,(concat user-emacs-directory "backups"))))
+
+  (dolist  (mapping '((python-mode . python-ts-mode)
+		      (ruby-mode . ruby-ts-mode)
+		      (c-mode . c-ts-mode)
+		      (c++-mode . c++-ts-mode)
+		      (c-or-c++-mode . c-or-c++-ts-mode)
+		      (css-mode . css-ts-mode)
+		      (js-mode . js-ts-mode)
+		      (javascript-mode . js-ts-mode)
+		      (typescript-mode . tsx-ts-mode)
+		      (js-json-mode . json-ts-mode)
+		      (sh-mode . bash-ts-mode)))
+    (add-to-list 'major-mode-remap-alist mapping))
   
-  :bind (("C-z" . undo)
-         ("C-x C-z" . nil)
-         ("C-h h" . nil)
-	 ;; AZERTY bindings
-	 ("C-x &" . delete-other-windows)
-	 ("C-x é" . split-window-below)
-	 ("C-x \"" . split-window-right)
-	 ("C-x à" . delete-window)
-	 ("M-ù" . xref-find-definitions)
-	 ("M-µ" . xref-find-references)
-	 ("M-ç" . text-scale-increase)
-	 ("M-à" . text-scale-decrease))
+    :bind (("C-z" . undo)
+           ("C-x C-z" . nil)
+           ("C-h h" . nil)
+	   ;; AZERTY bindings
+	   ("C-x &" . delete-other-windows)
+	   ("C-x é" . split-window-below)
+	   ("C-x \"" . split-window-right)
+	   ("C-x à" . delete-window)
+	   ("M-ù" . xref-find-definitions)
+	   ("M-µ" . xref-find-references)
+	   ("M-ç" . text-scale-increase)
+	   ("M-à" . text-scale-decrease))
   :hook (text-mode-hook . auto-fill-mode))
 ;; Adopt a sneaky garbage collection strategy of waiting until idle
 ;; time to collect; staving off the collector while the user is
@@ -139,7 +152,6 @@
 
 (use-package vertico
   :ensure t
-  :after emacs
   :pin elpa
   :init
   (vertico-mode))
@@ -177,7 +189,6 @@
 
 (use-package circadian
   :ensure t
-  :after solar
   :config
   (setq circadian-themes '((:sunrise . modus-operandi)
                            (:sunset  . modus-vivendi)))
@@ -718,7 +729,8 @@
 ;;;========================================
 
 (use-package eglot
-  :ensure nil
+  :pin elpa
+  :ensure t
   :defer t
   :custom
   (read-process-output-max (* 1024 1024))
@@ -730,15 +742,25 @@
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
   :hook ((zig-mode-hook . eglot-ensure)
-	 (python-mode-hook . (lambda ()
-			       (poetry-tracking-mode)
-			       (eglot-ensure)))
-	 (c-mode-hook . eglot-ensure)
-	 (c++-mode-hook . eglot-ensure)
+	 (python-base-mode-hook . (lambda ()
+				    (poetry-tracking-mode)
+				    (eglot-ensure)))
+	 (c-ts-mode-hook . eglot-ensure)
+	 (c++-ts-mode-hook . eglot-ensure)
 	 (kotlin-mode-hook . eglot-ensure)
-	 (julia-mode-hook . (lambda ()
-			      (eglot-jl-init)
-			      (eglot-ensure)))))
+	 (rust-ts-mode-hook . eglot-ensure)
+	 (css-ts-mode-hook . eglot-ensure)
+	 (html-mode-hook . eglot-ensure)
+	 (js-base-mode-hook . eglot-ensure)
+	 (tsx-ts-mode-hook . eglot-ensure)
+	 (php-mode-hook . eglot-ensure)
+	 (julia-ts-mode-hook . (lambda ()
+				 (eglot-jl-init)
+				 (eglot-ensure))))
+  :bind (("C-c l b" . eglot-format-buffer)
+	 ("C-c l a" . eglot-code-actions)
+	 ("C-c l e" . eglot-reconnect)
+	 ("C-c l r" . eglot-rename)))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -825,14 +847,6 @@
 ;;; Python
 ;;;========================================
 
-(use-package python
-  :ensure t
-  :defer t
-  :delight "Py"
-  :config
-  ;; Remove guess indent python message
-  (setq python-indent-guess-indent-offset-verbose nil))
-
 ;; Hide the modeline for inferior python processes
 
 (use-package hide-mode-line
@@ -859,7 +873,7 @@
   (blacken-skip-string-normalization t)
   (blacken-only-if-project-is-blackened t)
   (black-fast-unsafe t)
-  :hook (python-mode-hook . blacken-mode))
+  :hook (python-base-mode-hook . blacken-mode))
 
 ;; numpy docstring for python
 (use-package numpydoc
@@ -868,43 +882,38 @@
   :custom
   (numpydoc-insert-examples-block nil)
   (numpydoc-template-long nil)
-  :bind (:map python-mode-map
+  :bind (:map python-base-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
 ;;;========================================
 ;;; Julia
 ;;;========================================
 
-(use-package julia-mode
+(use-package julia-ts-mode
   :ensure t
   :defer t)
 
 (use-package julia-vterm
   :ensure t
   :defer t
-  :hook (julia-mode-hook . julia-vterm-mode))
+  :hook (julia-ts-mode-hook . julia-vterm-mode))
 
 (use-package eglot-jl
   :ensure t
   :defer t)
 
 ;;;========================================
-;;; Org-mode Babel
+;;; PHP
 ;;;========================================
 
-;; Org babel allows to evaluate code block in org-mode
-
-;; R support
-;; To install the R Kernel once R is installed, go in the R console and:
-;; install.packages('IRkernel')
-;; IRkernel::installspec()
-;; To add linting, one has to install the "lintr" package and
-;; Create a ~/.R/lintr_cache/ directory
-
-(use-package ess
+(use-package php-mode
+  :pin elpa
   :ensure t
-  :defer t
-  :mode ("\\.R\\'" . ess-r-mode))
+  :defer t)
+
+;;;========================================
+;;; Org-mode Babel
+;;;========================================
 
 ;; Loading org babel languages one by one to defer them.
 
@@ -1003,139 +1012,6 @@
   :commands (org-babel-execute:lisp))
 
 ;;;========================================
-;;; Web development
-;;;========================================
-
-;; LSP requirements on the server Prefer management with `nvm'(yay -Syu nvm) and
-;; then add source /usr/share/nvm/init-nvm.sh to `.bashrc'.
-;; npm install -g typescript prettier typescript-languageserver javascript-typescript-langserver
-
-(use-package rjsx-mode
-  :ensure t
-  :defer t
-  :mode ("\\.js\\'" . rjsx-mode)
-  :hook (rjsx-mode-hook . prettier-js-mode))
-
-;; Importantly, I have to setup a jsconfig.json in the root folder of the project, see https://github.com/ananthakumaran/tide#javascript
-;; Here is a template :
-;; {
-;;   "compilerOptions": {
-;;     "target": "es2017",
-;;     "allowSyntheticDefaultImports": true,
-;;     "noEmit": true,
-;;     "checkJs": true,
-;;     "jsx": "react",
-;;     "lib": [ "dom", "es2017" ]
-;;   }
-;; }
-
-(use-package tide
-  :ensure t
-  :defer t
-  :commands flycheck-add-next-checker
-  :after (rjsx-mode flycheck)
-  :defines (tide-mode-map flycheck-check-syntax-automatically)
-  :config
-  (defun setup-tide-mode ()
-    (interactive)
-    (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    (tide-hl-identifier-mode +1))
-
-  ;; configure javascript-tide checker to run after your default javascript checker
-  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
-  :hook
-  ((rjsx-mode-hook . setup-tide-mode)
-   (typescript-mode-hook . tide-setup)
-   (typescript-mode-hook . tide-hl-identifier-mode)
-   (before-save-hook . tide-format-before-save))
-
-  :bind (:map tide-mode-map
-	      ("M-j" . tide-jsdoc-template)))
-
-(use-package js2-refactor
-  :ensure t
-  :defer t
-  :after js2-mode
-  :config
-  (js2r-add-keybindings-with-prefix "C-c C-m")
-  :hook (js2-mode-hook . js2-refactor-mode))
-
-(use-package json-mode
-  :ensure t
-  :defer t)
-
-;; Requires node : sudo apt install nodejs
-
-(use-package web-mode
-  :ensure t
-  :defer t
-  :defines web-mode-map
-  :mode ("\\.html\\'" "\\.blade.php\\'")
-  :bind (:map web-mode-map
-	      ("C-c C-v" . browse-url-of-buffer))
-  :custom
-  (web-mode-enable-current-column-highlight t)
-  (web-mode-enable-current-element-highlight t)
-  (web-mode-markup-indent-offset 2)
-  (web-mode-code-indent-offset 2)
-  (web-mode-css-indent-offset 2)
-  (js-indent-level 2)
-  (web-mode-enable-auto-pairing t)
-  (web-mode-enable-auto-expanding t)
-  (web-mode-enable-css-colorization t)
-  (browse-url-browser-function 'browse-url-chrome)
-  :hook (web-mode-hook . electric-pair-mode))
-
-(use-package css-mode
-  :ensure nil
-  :defer t
-  :mode "\\.css\\'"
-  :hook (css-mode-hook . emmet-mode))
-
-;; Useful tool to have live html documents update
-;; To use : M-x httpd-start
-;; One has to visit http://localhost:8080/imp/ (which I bookmarked) to display the file in browser
-
-(use-package impatient-mode
-  :ensure t
-  :defer t
-  :hook (web-mode-hook . impatient-mode))
-
-;; Evaluate JS from a REPL
-
-(use-package nodejs-repl
-  :ensure t
-  :defer t
-  :defines js2-mode-map
-  :commands nodejs-repl
-  :bind (:map js2-mode-map
-	      ("C-x C-e" . nodejs-repl-send-last-expression)
-	      ("C-c C-j" . nodejs-repl-send-line)
-	      ("C-c C-r" . nodejs-repl-send-region)
-	      ("C-c C-c" . nodejs-repl-send-buffer)
-	      ("C-c C-l" . nodejs-repl-load-file)
-	      ("C-c C-z" . nodejs-repl-switch-to-repl)))
-
-;; Useful cheat-sheet https://docs.emmet.io/cheat-sheet/
-
-(use-package emmet-mode
-  :ensure t
-  :defer t
-  :custom
-  (emmet-indentation 2)
-  (emmet-move-cursor-between-quotes t)
-  ;; Auto-start on any markup modes
-  :hook ((sgml-mode-hook web-mode-hook php-mode-hook) . emmet-mode))
-
-(use-package php-mode
-  :pin melpa
-  :ensure t
-  :defer t)
-
-;;;========================================
 ;;; Lua
 ;;;========================================
 
@@ -1155,76 +1031,13 @@
   :defer t)
 
 ;;;========================================
-;;; C/C++
-;;;========================================
-
-(use-package cc-mode
-  :ensure nil
-  :config
-  (defun nf-compile-current-c/c++-file ()
-    "Compiles a C/C++ file on the fly."
-    (interactive)
-    (let* ((clang-choices '(("c" . "clang --std=c17") ("cpp" . "clang++ --std=c++20")))
-	   (filename (file-name-nondirectory buffer-file-name))
-	   (file-ext (file-name-extension buffer-file-name))
-	   (compile-choice (cdr (assoc file-ext clang-choices))))
-      (compile (concat compile-choice " -Wall -pedantic " filename " -o " (file-name-sans-extension filename) ".o"))))
-
-  (defun nf-run-exec-file ()
-    "Runs an executable file named after the buffer if it exists."
-    (interactive)
-    (if (file-executable-p (concat (file-name-sans-extension buffer-file-name) ".o"))
-	(async-shell-command
-	 (concat "./" (file-name-nondirectory (file-name-sans-extension buffer-file-name)) ".o"))))
-
-  (defun nf-compile-and-run ()
-    "Compiles a C/C++ file then runs it."
-    (interactive)
-    (nf-compile-current-c/c++-file)
-    (nf-run-exec-file))
-  :hook ((c++-mode-hook . (lambda ()
-			    (setq comment-start "/**")
-			    (setq comment-end "*/")
-			    (setq flycheck-clang-language-standard "c++20"
-				  flycheck-gcc-language-standard "c++20")))
-	 (c-mode-hook . (lambda ()
-			  (setq flycheck-clang-language-standard "c17"
-				flycheck-gcc-language-standard "c17"))))
-  :bind ((:map c++-mode-map
-	       ("C-c C-c" . nf-compile-current-c/c++-file)
-	       ("C-c e" . nf-run-exec-file)
-	       ("C-c o" . nf-compile-and-run))
-	 (:map c-mode-map
-	       ("C-c C-c" . nf-compile-current-c/c++-file)
-	       ("C-c e" . nf-run-exec-file)
-	       ("C-c o" . nf-compile-and-run))
-	 (:map c-mode-base-map
-	       ("C-c C-r" . recompile))))
-
-;;; build systems
-
-(use-package cmake-mode
-  :ensure t
-  :defer t)
-
-;;;========================================
 ;;; Rust
 ;;;========================================
-
-(use-package rust-mode
-  :ensure t
-  :defer t)
-
-(use-package rustic
-  :ensure t
-  :defer t
-  :custom
-  (rustic-cargo-bin (expand-file-name "~/.cargo/bin/cargo")))
 
 (use-package cargo
   :ensure t
   :defer t
-  :hook (rust-mode-hook . cargo-minor-mode))
+  :hook (rust-ts-mode-hook . cargo-minor-mode))
 
 ;;;========================================
 ;;; Zig
@@ -1252,10 +1065,6 @@
   :defer t
   :custom (ocamlformat-enable 'enable-outside-detected-project)
   :hook (before-save-hook . ocamlformat-before-save))
-
-(use-package reason-mode
-  :ensure t
-  :defer t)
 
 ;; utop configuration
 (use-package utop
@@ -1303,15 +1112,6 @@
 (use-package maxima
   :ensure t
   :defer t)
-
-;;;========================================
-;;; Diverse text formats editing
-;;;========================================
-
-(use-package yaml-mode
-  :ensure t
-  :defer t
-  :mode ("\\.yml\\'"))
 
 ;;;========================================
 ;;; Diagrams & Graphs
@@ -1366,11 +1166,9 @@
   :ensure t
   :defer t
   :delight " tree"
-  :hook ((c-mode-hook c++-mode-hook css-mode-hook html-mode-hook
-		      js2-mode-hook julia-mode-hook python-mode-hook rust-mode-hook
-		      typescript-mode-hook sh-mode-hook tuareg-mode-hook zig-mode-hook scala-mode-hook ruby-mode-hook) . (lambda ()
-						(tree-sitter-mode)
-						(tree-sitter-hl-mode))))
+  :hook ((tuareg-mode-hook zig-mode-hook) . (lambda ()
+					      (tree-sitter-mode)
+					      (tree-sitter-hl-mode))))
 (use-package tree-sitter-langs
   :ensure t
   :defer t)
@@ -1394,6 +1192,7 @@
      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
      (php . ("https://github.com/tree-sitter/tree-sitter-php"))
      (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
      (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
      (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
      (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
@@ -1419,20 +1218,12 @@
          (typescript-ts-mode-hook . combobulate-mode)
          (tsx-ts-mode-hook . combobulate-mode)))
 
-(use-package docstr
-  :ensure t
-  :defer t
-  :custom
-  (docstr-c++-style 'javadoc)
-  :hook ((c-mode-hook c++-mode-hook) . docstr-mode))
-
 ;;; Colors
 
 (use-package rainbow-delimiters
   :ensure t
   :defer t
   :hook (prog-mode-hook . rainbow-delimiters-mode))
-
 
 ;;; CSV
 
@@ -1445,10 +1236,6 @@
 ;;;========================================
 
 (use-package docker
-  :ensure t
-  :defer t)
-
-(use-package dockerfile-mode
   :ensure t
   :defer t)
 
@@ -1471,4 +1258,4 @@
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(eglot-jl julia-vterm julia-mode ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft kotlin-mode docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody gcmh delight diminish)))
