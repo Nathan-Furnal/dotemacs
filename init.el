@@ -735,7 +735,10 @@
 			       (eglot-ensure)))
 	 (c-mode-hook . eglot-ensure)
 	 (c++-mode-hook . eglot-ensure)
-	 (kotlin-mode . eglot-ensure)))
+	 (kotlin-mode-hook . eglot-ensure)
+	 (julia-mode-hook . (lambda ()
+			      (eglot-jl-init)
+			      (eglot-ensure)))))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -880,6 +883,10 @@
   :ensure t
   :defer t
   :hook (julia-mode-hook . julia-vterm-mode))
+
+(use-package eglot-jl
+  :ensure t
+  :defer t)
 
 ;;;========================================
 ;;; Org-mode Babel
@@ -1402,6 +1409,16 @@
 	      (message "`%s' parser was installed." lang)
 	      (sit-for 0.75)))))
 
+(use-package combobulate
+  :load-path "site-lisp/combobulate"
+  :defer t
+  :hook ((python-ts-mode-hook . combobulate-mode)
+         (js-ts-mode-hook . combobulate-mode)
+         (css-ts-mode-hook . combobulate-mode)
+         (yaml-ts-mode-hook . combobulate-mode)
+         (typescript-ts-mode-hook . combobulate-mode)
+         (tsx-ts-mode-hook . combobulate-mode)))
+
 (use-package docstr
   :ensure t
   :defer t
@@ -1454,4 +1471,4 @@
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(julia-vterm julia-mode ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
+   '(eglot-jl julia-vterm julia-mode ligature xeft kotlin-mode dockerfile-mode docker csv-mode rainbow-delimiters docstr tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode yaml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop reason-mode ocamlformat merlin tuareg zig-mode cargo rustic rust-mode cmake-mode lua-mode php-mode emmet-mode nodejs-repl impatient-mode web-mode json-mode js2-refactor tide rjsx-mode ob-php ess numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody exec-path-from-shell gcmh delight diminish)))
