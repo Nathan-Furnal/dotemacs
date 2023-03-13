@@ -747,13 +747,14 @@
 				    (eglot-ensure)))
 	 (c-ts-mode-hook . eglot-ensure)
 	 (c++-ts-mode-hook . eglot-ensure)
-	 (kotlin-mode-hook . eglot-ensure)
+	 (kotlin-ts-mode-hook . eglot-ensure)
 	 (rust-ts-mode-hook . eglot-ensure)
 	 (css-ts-mode-hook . eglot-ensure)
 	 (html-mode-hook . eglot-ensure)
 	 (js-base-mode-hook . eglot-ensure)
 	 (tsx-ts-mode-hook . eglot-ensure)
 	 (php-mode-hook . eglot-ensure)
+	 (latex-mode-hook . eglot-ensure)
 	 (julia-ts-mode-hook . (lambda ()
 				 (eglot-jl-init)
 				 (eglot-ensure))))
@@ -1026,7 +1027,7 @@
 ;;; Kotlin
 ;;;========================================
 
-(use-package kotlin-mode
+(use-package kotlin-ts-mode
   :ensure t
   :defer t)
 
@@ -1258,4 +1259,4 @@
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft kotlin-mode docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody gcmh delight diminish)))
+   '(emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody gcmh delight diminish)))
