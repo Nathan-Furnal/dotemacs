@@ -33,9 +33,9 @@
 
 (use-package emacs
   :init
-  (set-face-attribute 'default nil :family "Iosevka Term" :height 135 :weight 'regular)
-  (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 135 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 130 :weight 'medium)
+  (set-face-attribute 'default nil :family "Iosevka Term" :height 110 :weight 'regular)
+  (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 110 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 100 :weight 'medium)
   (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
   (setq initial-scratch-message
@@ -122,17 +122,6 @@
   (when (daemonp)
   (exec-path-from-shell-initialize)))
 
-(use-package moody
-  :if (window-system)
-  :ensure t
-  :after emacs
-  :custom
-  (mode-line-compact t)
-  (x-underline-at-descent-line t)
-  :config
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
-
 (use-package eldoc
   :diminish eldoc-mode)
 
@@ -168,11 +157,14 @@
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
 	modus-themes-mixed-fonts t
-	modus-themes-variable-pitch-ui t
-	modus-themes-common-palette-overrides '((border-mode-line-active unspecified)
-						(border-mode-line-inactive unspecified)
+	modus-themes-variable-pitch-ui nil
+	modus-themes-common-palette-overrides '((bg-mode-line-active bg-lavender)
+						(bg-mode-line-inactive bg-dim)
+						(border-mode-line-inactive bg-inactive)
 						(fringe subtle)
-						(bg-paren-match bg-yellow-intense)))
+						(bg-paren-match bg-yellow-intense)
+						(custom-set-faces
+						 '(mode-line ((t :family "Iosevka Etoile" :height 100 :weight 'regular))))))
   (setq modus-themes-headings
         (quote ((1 . (overline variable-pitch 1.4))
                 (2 . (overline variable-pitch 1.25))
@@ -193,7 +185,6 @@
   (setq circadian-themes '((:sunrise . modus-operandi)
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
-
 
 (use-package ligature
   :ensure t
@@ -523,6 +514,13 @@
   :defer t
   :after org-ref)
 
+(use-package citar
+  :ensure t
+  :defer t
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup))
+
 (use-package shackle
   :ensure t
   :defer t
@@ -748,7 +746,7 @@
 	 (c-ts-mode-hook . eglot-ensure)
 	 (c++-ts-mode-hook . eglot-ensure)
 	 (kotlin-ts-mode-hook . eglot-ensure)
-	 (rust-ts-mode-hook . eglot-ensure)
+	 (rustic-mode-hook . eglot-ensure)
 	 (css-ts-mode-hook . eglot-ensure)
 	 (html-mode-hook . eglot-ensure)
 	 (js-base-mode-hook . eglot-ensure)
@@ -803,12 +801,11 @@
   :custom
   (inferior-lisp-program "sbcl"))
 
-(use-package paredit
-  :diminish paredit-mode
-  :delight " π"
+(use-package puni
+  :diminish puni-mode
   :ensure t
   :defer t
-  :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . paredit-mode))
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . puni-mode))
 
 ;;;========================================
 ;;; Scheme & Racket
@@ -818,7 +815,7 @@
   :defer t
   :ensure nil
   :mode ("\\.scm$\\'")
-  :hook (scheme-mode-hook . paredit-mode))
+  :hook (scheme-mode-hook . puni-mode))
 
 (use-package geiser
   :ensure t
@@ -991,11 +988,6 @@
 (use-package ob-makefile
   :defer t)
 
-(use-package ob-php
-  :ensure t
-  :defer t
-  :commands (org-babel-execute:php))
-
 (use-package ob-js
   :ensure nil
   :defer t
@@ -1034,6 +1026,12 @@
 ;;;========================================
 ;;; Rust
 ;;;========================================
+
+(use-package rustic
+  :custom
+  (rustic-lsp-client 'eglot)
+  :ensure t
+  :defer t)
 
 (use-package cargo
   :ensure t
@@ -1078,16 +1076,45 @@
 ;;; Code snippets and skeletons
 ;;;========================================
 
-(use-package yasnippet
+;; Configure Tempel
+(use-package tempel
   :ensure t
   :defer t
-  :diminish yas-minor-mode
-  :hook ((prog-mode-hook org-mode-hook) . yas-minor-mode))
+  ;; Require trigger prefix before template name when completing.
+  ;; :custom
+  ;; (tempel-trigger-prefix "<")
 
-(use-package yasnippet-snippets
-  :ensure t
-  :defer t
-  :after yasnippet)
+  :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
+         ("M-*" . tempel-insert))
+
+  :init
+
+  ;; Setup completion at point
+  (defun tempel-setup-capf ()
+    ;; Add the Tempel Capf to `completion-at-point-functions'.
+    ;; `tempel-expand' only triggers on exact matches. Alternatively use
+    ;; `tempel-complete' if you want to see all matches, but then you
+    ;; should also configure `tempel-trigger-prefix', such that Tempel
+    ;; does not trigger too often when you don't expect it. NOTE: We add
+    ;; `tempel-expand' *before* the main programming mode Capf, such
+    ;; that it will be tried first.
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+
+  ;; Optionally make the Tempel templates available to Abbrev,
+  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
+  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
+  ;; (global-tempel-abbrev-mode)
+)
+
+;; Optional: Add tempel-collection.
+;; The package is young and doesn't have comprehensive coverage.
+(use-package tempel-collection
+  :ensure t)
 
 ;;;========================================
 ;;; Sharing
@@ -1160,6 +1187,12 @@
 (use-package handy
   :load-path "lisp/"
   :bind ("C-c I" . handy-find-user-init-file))
+
+;;; Multiple cursors
+
+(use-package multiple-cursors
+  :ensure t
+  :defer t)
 
 ;;; Language parsing
 
@@ -1256,7 +1289,87 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(connection-local-criteria-alist
+   '(((:application tramp)
+      tramp-connection-local-default-system-profile tramp-connection-local-default-shell-profile)
+     ((:application eshell)
+      eshell-connection-default-profile)))
+ '(connection-local-profile-alist
+   '((tramp-connection-local-darwin-ps-profile
+      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,uid,user,gid,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state=abcde" "-o" "ppid,pgid,sess,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etime,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (euid . number)
+       (user . string)
+       (egid . number)
+       (comm . 52)
+       (state . 5)
+       (ppid . number)
+       (pgrp . number)
+       (sess . number)
+       (ttname . string)
+       (tpgid . number)
+       (minflt . number)
+       (majflt . number)
+       (time . tramp-ps-time)
+       (pri . number)
+       (nice . number)
+       (vsize . number)
+       (rss . number)
+       (etime . tramp-ps-time)
+       (pcpu . number)
+       (pmem . number)
+       (args)))
+     (tramp-connection-local-busybox-ps-profile
+      (tramp-process-attributes-ps-args "-o" "pid,user,group,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "stat=abcde" "-o" "ppid,pgid,tty,time,nice,etime,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (user . string)
+       (group . string)
+       (comm . 52)
+       (state . 5)
+       (ppid . number)
+       (pgrp . number)
+       (ttname . string)
+       (time . tramp-ps-time)
+       (nice . number)
+       (etime . tramp-ps-time)
+       (args)))
+     (tramp-connection-local-bsd-ps-profile
+      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,euid,user,egid,egroup,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state,ppid,pgid,sid,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etimes,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format
+       (pid . number)
+       (euid . number)
+       (user . string)
+       (egid . number)
+       (group . string)
+       (comm . 52)
+       (state . string)
+       (ppid . number)
+       (pgrp . number)
+       (sess . number)
+       (ttname . string)
+       (tpgid . number)
+       (minflt . number)
+       (majflt . number)
+       (time . tramp-ps-time)
+       (pri . number)
+       (nice . number)
+       (vsize . number)
+       (rss . number)
+       (etime . number)
+       (pcpu . number)
+       (pmem . number)
+       (args)))
+     (tramp-connection-local-default-shell-profile
+      (shell-file-name . "/bin/sh")
+      (shell-command-switch . "-c"))
+     (tramp-connection-local-default-system-profile
+      (path-separator . ":")
+      (null-device . "/dev/null"))
+     (eshell-connection-default-profile
+      (eshell-path-env-list))))
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast yasnippet-snippets utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser paredit sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm moody gcmh delight diminish)))
+   '(citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh delight diminish)))
