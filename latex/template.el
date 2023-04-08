@@ -180,6 +180,15 @@
        "\\end{frame}"
        "\\begin{frame}[fragile]\\frametitle{%s}"
        "\\end{frame}")))
+
+(add-to-list 'org-latex-classes
+	    '("book"
+	      "\\documentclass[a4paper,twoside,openany,11pt]{book}"
+	      
+	      ("\\chapter{%s}" . "\\chapter*{%s}")
+	      ("\\section{%s}" . "\\section*{%s}")
+	      ("\\subsection{%s}" . "\\subsection*{%s}")
+	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 ;;; Footer
 (provide 'template)
 ;;; template.el ends here
