@@ -114,13 +114,8 @@
 
 (use-package exec-path-from-shell
   :ensure t
-  :defer nil
-  :config
-  (exec-path-from-shell-copy-env "PATH")
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize))
-  (when (daemonp)
-  (exec-path-from-shell-initialize)))
+  :defer t
+  :hook (after-init-hook . exec-path-from-shell-initialize))
 
 (use-package eldoc
   :diminish eldoc-mode)
@@ -1047,32 +1042,6 @@
   :defer t)
 
 ;;;========================================
-;;; OCaml
-;;;========================================
-
-(use-package tuareg 			; OCaml-mode
-  :ensure t
-  :defer t)
-
-(use-package merlin
-  :ensure t
-  :defer t
-  :hook ((tuareg-mode-hook ocaml-mode-hook) . merlin-mode))
-
-(use-package ocamlformat
-  :ensure t
-  :defer t
-  :custom (ocamlformat-enable 'enable-outside-detected-project)
-  :hook (before-save-hook . ocamlformat-before-save))
-
-;; utop configuration
-(use-package utop
-  :ensure t
-  :defer t
-  :config
-  :hook (tuareg-mode-hook . utop-minor-mode))
-
-;;;========================================
 ;;; Code snippets and skeletons
 ;;;========================================
 
@@ -1274,9 +1243,6 @@
   :defer t)
 
 ;;; init.el ends here
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1372,4 +1338,4 @@
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast utop ocamlformat merlin tuareg zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh delight diminish)))
+   '(citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh delight diminish)))
