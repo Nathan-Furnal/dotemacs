@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex-block
-# key: <l
-# group: latex 
-# --
-#+begin_latex
-$0
-#+end_latex

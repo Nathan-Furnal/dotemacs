@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: php
-# key: <php
-# --
-#+begin_src php :eval never-export
-<?php
-$0
-?>
-#+end_src

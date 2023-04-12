@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: section-data
-# key: .sd
-# group: nasm-mode
-# --
-
-section .data 

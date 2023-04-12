@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: html-block
-# key: <h
-# --
-#+begin_src html :eval no
-$0
-#+end_src

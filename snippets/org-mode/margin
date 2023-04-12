@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: margin
-# key: <margin
-# --
-#+begin_margin :color black!80
-$0
-#+end_margin

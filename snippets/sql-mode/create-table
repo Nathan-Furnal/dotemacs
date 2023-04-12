@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: create table
-# key: ct
-# --
-
-create table $0

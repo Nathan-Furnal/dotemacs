@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: left-arrow
-# key: <-
-# group: latex
-# --
-
-\leftarrow $0

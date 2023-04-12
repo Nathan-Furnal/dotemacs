@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: ld
-# key: ld
-# --
-
-ld -o ${1:filename} -e main $1.o $0

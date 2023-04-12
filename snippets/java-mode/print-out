@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: print out
-# key: sout
-# --
-
-System.out.println("$0");

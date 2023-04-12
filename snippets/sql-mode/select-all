@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: select all
-# key: s*
-# --
-
-select * from
