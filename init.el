@@ -25,13 +25,16 @@
 
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
-(use-package delight :ensure t :after use-package)  ;; Use delighting for modes
 
 ;;;========================================
 ;;; Useful defaults
 ;;;========================================
 
 (use-package emacs
+  :custom
+  (browse-url-browser-function 'browse-url-firefox)
+  (browse-url-new-window-flag  t)
+  (browse-url-firefox-new-window-is-tab t)
   :init
   (set-face-attribute 'default nil :family "Iosevka Term" :height 110 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 110 :weight 'medium)
@@ -122,7 +125,7 @@
 
 (use-package autorevert
   :defer 2
-  :delight auto-revert-mode)
+  :diminish auto-revert-mode)
 
 (use-package recentf
   :defer 2)
@@ -169,7 +172,6 @@
 ;; Running modus-themes depending on the time of the day.
 
 (use-package solar
-  :ensure nil
   :custom
   (calendar-latitude 50.85)
   (calendar-longitude 4.35))
@@ -298,6 +300,11 @@
   (treemacs-width 24)
   :bind ("C-c t" . treemacs))
 
+(use-package deadgrep
+  :ensure t
+  :defer t
+  :bind ("M-s o" . deadgrep))
+
 ;;;========================================
 ;;; Windows & movement
 ;;;========================================
@@ -367,13 +374,17 @@
   (flycheck-check-syntax-automatically '(mode-enabled save)) ; Check on save instead of running constantly
   :hook ((prog-mode-hook text-mode-hook) . flycheck-mode))
 
+(use-package flymake
+  :ensure t
+  :defer t)
+
 ;;;========================================
 ;;; Org-mode
 ;;;========================================
 
 (use-package org
   :ensure nil
-  :delight "Οrg"
+  :diminish "Οrg"
   :custom
   (org-imenu-depth 7)
   (org-fontify-done-headline nil)
@@ -490,7 +501,7 @@
 (use-package cdlatex
   :ensure t
   :defer t
-  :delight " cdlatex"
+  :diminish " cdlatex"
   :hook ((org-mode-hook . turn-on-org-cdlatex)    ; Enable cdlatex by default
 	 (LaTex-mode-hook . turn-on-cdlatex)
 	 (latex-mode-hook . turn-on-cdlatex))
@@ -731,6 +742,7 @@
   (eglot-autoshutdown t)
   :config
   ;; Python specific
+  (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
   (setq-default eglot-workspace-configuration
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
@@ -762,8 +774,7 @@
 
 (use-package elisp-mode
   :config
-  (delight '((emacs-lisp-mode "EL" :major)
-	     (lisp-interaction-mode "λ"))))
+  :diminish "EL")
 
 (use-package buttercup
   :ensure t
@@ -788,7 +799,7 @@
 ;;;========================================
 
 (use-package lisp-mode
-  :delight "CL")
+  :diminish "CL")
 
 (use-package sly
   :ensure t
@@ -824,7 +835,7 @@
 (use-package racket-mode
   :defer t
   :ensure t
-  :delight "RKT"
+  :diminish "RKT"
   :mode ("\\.rkt\\'")
   :custom
   (racket-show-functions 'racket-show-echo-area)
@@ -1055,9 +1066,7 @@
 
   :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
          ("M-*" . tempel-insert))
-
   :init
-
   ;; Setup completion at point
   (defun tempel-setup-capf ()
     ;; Add the Tempel Capf to `completion-at-point-functions'.
@@ -1070,9 +1079,9 @@
     (setq-local completion-at-point-functions
                 (cons #'tempel-expand
                       completion-at-point-functions)))
-
-  (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf)
+  :hook
+  (prog-mode-hook . tempel-setup-capf)
+  (text-mode-hook . tempel-setup-capf)
 
   ;; Optionally make the Tempel templates available to Abbrev,
   ;; either locally or globally. `expand-abbrev' is bound to C-x '.
@@ -1083,7 +1092,8 @@
 ;; Optional: Add tempel-collection.
 ;; The package is young and doesn't have comprehensive coverage.
 (use-package tempel-collection
-  :ensure t)
+  :ensure t
+  :after tempel)
 
 ;;;========================================
 ;;; Sharing
@@ -1132,7 +1142,7 @@
 (use-package nasm-mode
   :ensure t
   :defer t
-  :delight "Νasm"
+  :diminish "Νasm"
   :custom
   (nasm-basic-offset 4)
   :hook (nasm-mode-hook . flymake-mode))
@@ -1140,7 +1150,7 @@
 (use-package masm-mode
   :ensure t
   :defer t
-  :delight "Masm")
+  :diminish "Masm")
 
 (use-package flymake-nasm
   :ensure t
@@ -1168,10 +1178,10 @@
 (use-package tree-sitter
   :ensure t
   :defer t
-  :delight " tree"
-  :hook ((tuareg-mode-hook zig-mode-hook) . (lambda ()
-					      (tree-sitter-mode)
-					      (tree-sitter-hl-mode))))
+  :diminish " tree"
+  :hook ((zig-mode-hook) . (lambda ()
+			     (tree-sitter-mode)
+			     (tree-sitter-hl-mode))))
 (use-package tree-sitter-langs
   :ensure t
   :defer t)
@@ -1184,6 +1194,7 @@
      (c . ("https://github.com/tree-sitter/tree-sitter-c"))
      (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
      (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+     (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
      (go . ("https://github.com/tree-sitter/tree-sitter-go"))
      (html . ("https://github.com/tree-sitter/tree-sitter-html"))
      (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
@@ -1210,6 +1221,10 @@
 	      (treesit-install-language-grammar lang)
 	      (message "`%s' parser was installed." lang)
 	      (sit-for 0.75)))))
+
+(use-package cmake-ts-mode
+  :ensure t
+  :defer t)
 
 (use-package combobulate
   :load-path "site-lisp/combobulate"
@@ -1239,6 +1254,10 @@
 ;;;========================================
 
 (use-package docker
+  :ensure t
+  :defer t)
+
+(use-package dockerfile-mode
   :ensure t
   :defer t)
 
@@ -1338,4 +1357,4 @@
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
  '(package-selected-packages
-   '(citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh delight diminish)))
+   '(dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))

@@ -109,7 +109,7 @@
 \\usepackage{adjustbox}
 \\usepackage{mparhack} % Fixes some margins issues
 \\usepackage{geometry}
-\\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
+\\geometry{a4paper,left=2cm,top=2cm,right=2cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
 	      ("\\section{%s}" . "\\section*{%s}")
 	      ("\\subsection{%s}" . "\\subsection*{%s}")
 	      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
@@ -154,7 +154,7 @@
 \\usepackage{adjustbox}
 \\usepackage{mparhack} % Fixes some margins issues
 \\usepackage{geometry}
-\\geometry{a4paper,left=1cm,top=2cm,right=4cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
+\\geometry{a4paper,left=2cm,top=2cm,right=2cm,bottom=2cm,marginparsep=0.5cm, marginparwidth=3.5cm}"
 	      ("\\chapter{%s}" . "\\chapter*{%s}")
 	      ("\\section{%s}" . "\\section*{%s}")
 	      ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -182,8 +182,9 @@
        "\\end{frame}")))
 
 (add-to-list 'org-latex-classes
-	    '("book"
-	      "\\documentclass[a4paper,twoside,openany,11pt]{book}"
+	     '("book"
+	       "[NO-DEFAULT-PACKAGES]
+\\documentclass[a4paper,twoside,openany,11pt]{book}"
 	      
 	      ("\\chapter{%s}" . "\\chapter*{%s}")
 	      ("\\section{%s}" . "\\section*{%s}")
