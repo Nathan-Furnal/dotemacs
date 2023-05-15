@@ -378,6 +378,20 @@
   :ensure t
   :defer t)
 
+;; Grammar checking
+
+(use-package langtool
+  :ensure t
+  :defer t
+  :custom
+  (langtool-language-tool-jar "/usr/share/java/languagetool/languagetool-commandline.jar")
+  (langtool-java-classpath "/usr/share/languagetool:/usr/share/java/languagetool/*")
+  :commands
+  (langtool-check
+   langtool-correct-buffer
+   langtool-show-message-at-point
+   langtool-check-done))
+
 ;;;========================================
 ;;; Org-mode
 ;;;========================================
@@ -399,16 +413,11 @@
   (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
   (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
   (org-cite-csl-styles-dir "~/Zotero/styles") ; Use Zotero styles for CSL exports (bibliography management)
+  (citar-citeproc-csl-styles-dir (expand-file-name "~/Zotero/styles"))
+  (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
   :config
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
-  (setq org-format-latex-options '(:foreground default
-					       :background default
-					       :scale 2.0
-					       :html-foreground "Black"
-					       :html-background "Transparent"
-					       :html-scale 1.0
-					       :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
 
   (defun nf-toggle-presentation ()
     "Toggle between presentation and regular `org-mode'.
@@ -447,6 +456,16 @@
 		     (variable-pitch-mode)
 		     (setq-default fill-column 100))))
 
+(use-package ox-latex
+  :after org
+  :config
+  (use-package engrave-faces
+    :ensure t
+    :custom
+    (org-latex-src-block-backend 'engraved)
+    :config
+    (add-to-list 'org-latex-engraved-options '("numbers" . "left"))))
+
 ;;; Add magnificent margins and custom blocks
 
 (use-package org-special-block-extras
@@ -480,23 +499,6 @@
   :defer t
   :hook (org-mode-hook . (lambda ()
 			   (load-file (expand-file-name (concat user-emacs-directory "latex/template.el"))))))
-
-(use-package ox-latex
-  :after org
-  :config
-  (add-to-list 'org-latex-packages-alist
-	       '("AUTO" "polyglossia" t ("xelatex" "lualatex")))
-  
-  (setq org-latex-minted-options '(("linenos=true") ("bgcolor=Periwinkle!5!white") ("breaklines=true")))
-
-  (use-package engrave-faces
-    :ensure t
-    :custom
-    (org-latex-src-block-backend 'engraved)
-    :config
-    (add-to-list 'org-latex-engraved-options '("numbers" . "left")))
-
-  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
 (use-package cdlatex
   :ensure t
@@ -883,9 +885,9 @@
 (use-package numpydoc
   :ensure t
   :defer t
-  :custom
-  (numpydoc-insert-examples-block nil)
-  (numpydoc-template-long nil)
+  :config
+  (setq numpydoc-insert-examples-block nil
+	numpydoc-template-long nil)
   :bind (:map python-base-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
@@ -1356,5 +1358,7 @@
       (eshell-path-env-list))))
  '(custom-safe-themes
    '("53585ce64a33d02c31284cd7c2a624f379d232b27c4c56c6d822eff5d3ba7625" default))
+ '(org-agenda-files
+   '("/home/nathan/Drive/ESI/bloc-2022-23/ETE6/report/content.org"))
  '(package-selected-packages
-   '(dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode pdf-tools olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
+   '(langtool yaml-mode pdf-tools bibtex-capf dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
