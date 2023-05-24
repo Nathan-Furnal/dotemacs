@@ -141,7 +141,11 @@
   :ensure t
   :pin elpa
   :init
-  (vertico-mode))
+  (vertico-mode)
+  :config
+  (vertico-multiform-mode 1)
+  (add-to-list 'vertico-multiform-categories
+             '(jinx grid (vertico-grid-annotate . 20))))
 
 ;;;========================================
 ;;; Themes
@@ -337,32 +341,13 @@
 
 ;; Requires aspell, aspell-en & aspell-fr to work
 
-(use-package flyspell
+(use-package jinx
   :ensure t
   :defer t
-  :diminish flyspell-mode
-  :hook ((text-mode-hook . flyspell-mode)
-	 (prog-mode-hook . flyspell-prog-mode))
-  :custom
-  (flyspell-issue-message-flag nil)
-  (flyspell-issue-welcome-flag nil)
-  (ispell-program-name "aspell")
-  (ispell-dictionary "en_US")
-  :config
-  (defvar nf-ispell-dicts
-    '(("English" . "en_US")
-      ("Français" . "fr"))
-    "Alist of languages dictionaries")
-
-  (defun nf-ispell-dictionaries-complete ()
-    "Select an item from `nf-ispell-dicts'."
-    (interactive)
-    (let* ((dicts (mapcar #'car nf-ispell-dicts))
-           (choice (completing-read "Select dictionary: " dicts nil t))
-           (key (cdr (assoc `,choice nf-ispell-dicts))))
-      (ispell-change-dictionary key)
-      (message "Switched to %s" key)))
-  :bind ("C-x C-;" . nf-ispell-dictionaries-complete))
+  :hook ((text-mode-hook prog-mode-hook) . jinx-mode)
+  :bind
+  (("C-x C-;" . jinx-languages)
+   ("M-$" . jinx-correct)))
 
 ;; Syntax checking for GNU Emacs
 
@@ -1361,4 +1346,4 @@
  '(org-agenda-files
    '("/home/nathan/Drive/ESI/bloc-2022-23/ETE6/report/content.org"))
  '(package-selected-packages
-   '(langtool yaml-mode pdf-tools bibtex-capf dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
+   '(jinx langtool yaml-mode pdf-tools bibtex-capf dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
