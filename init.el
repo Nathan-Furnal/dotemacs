@@ -85,7 +85,8 @@
 	   ("M-ù" . xref-find-definitions)
 	   ("M-µ" . xref-find-references)
 	   ("M-ç" . text-scale-increase)
-	   ("M-à" . text-scale-decrease))
+	   ("M-à" . text-scale-decrease)
+	   ("C-l" . duplicate-dwim))
   :hook (text-mode-hook . auto-fill-mode))
 ;; Adopt a sneaky garbage collection strategy of waiting until idle
 ;; time to collect; staving off the collector while the user is
@@ -187,31 +188,6 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-(use-package ligature
-  :ensure t
-  :config
-  ;; Enable the "www" ligature in every possible major mode
-  (ligature-set-ligatures 't '("www"))
-  ;; Enable traditional ligature support in eww-mode, if the
-  ;; `variable-pitch' face supports it
-  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-  ;; Enable all Cascadia Code ligatures in programming modes
-  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
-                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
-                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
-                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
-                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
-                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
-                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
-                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
-                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
-                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
-                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
-                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-                                       "\\\\" "://"))
-  ;; Enables ligature checks globally in all buffers. You can also do it
-  ;; per mode with `ligature-mode'.
-  (global-ligature-mode t))
 
 ;;;========================================
 ;;; Completion & Navigation
@@ -1029,7 +1005,7 @@
 (use-package cargo
   :ensure t
   :defer t
-  :hook (rust-ts-mode-hook . cargo-minor-mode))
+  :hook ((rust-ts-mode-hook rustic-mode-hook) . cargo-minor-mode))
 
 ;;;========================================
 ;;; Zig
@@ -1346,4 +1322,4 @@
  '(org-agenda-files
    '("/home/nathan/Drive/ESI/bloc-2022-23/ETE6/report/content.org"))
  '(package-selected-packages
-   '(jinx langtool yaml-mode pdf-tools bibtex-capf dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm ligature xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
+   '(eglot bqn-mode jinx langtool yaml-mode pdf-tools bibtex-capf dockerfile-mode graphviz-dot-mode flymake deadgrep citar rustic tempel-collection tempel puni multiple-cursors emmet-mode kotlin-ts-mode php-mode exec-path-from-shell julia-ts-mode eglot-jl julia-vterm xeft docker csv-mode rainbow-delimiters tree-sitter-langs tree-sitter flymake-nasm masm-mode nasm-mode gnuplot plantuml-mode maxima ox-hugo gif-screencast zig-mode cargo lua-mode numpydoc blacken poetry hide-mode-line racket-mode geiser-mit geiser sly xr elisp-lint package-lint buttercup iedit magit pandoc-mode markdown-mode olivetti org-tree-slide org-modern ox-reveal imenu-list org-roam shackle org-ref cdlatex engrave-faces auctex org-special-block-extras flycheck transpose-frame treemacs cape corfu which-key marginalia orderless circadian modus-themes vertico vterm gcmh diminish)))
