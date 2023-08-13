@@ -38,7 +38,7 @@
   :init
   (set-face-attribute 'default nil :family "Iosevka Term" :height 110 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 110 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 100 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Etoile" :height 100 :weight 'medium)
   (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
   (setq initial-scratch-message
@@ -87,7 +87,7 @@
 	   ("M-ç" . text-scale-increase)
 	   ("M-à" . text-scale-decrease)
 	   ("C-l" . duplicate-dwim))
-  :hook (text-mode-hook . auto-fill-mode))
+    :hook (text-mode-hook . auto-fill-mode))
 ;; Adopt a sneaky garbage collection strategy of waiting until idle
 ;; time to collect; staving off the collector while the user is
 ;; working.  Thanks Doom -
@@ -412,10 +412,9 @@
 
   :bind (:map org-mode-map
 	      ("C-x p" . nf-toggle-presentation))
-  :hook
-  (org-mode-hook . (lambda ()
-		     (variable-pitch-mode)
-		     (setq-default fill-column 100))))
+  :hook (org-mode-hook . (lambda ()
+			   (variable-pitch-mode t)
+			   (setq-default fill-column 100))))
 
 (use-package ox-latex
   :after org
@@ -1134,7 +1133,10 @@
 
 (use-package multiple-cursors
   :ensure t
-  :defer t)
+  :defer t
+  :bind
+  (("C-<" . mc/mark-all-like-this-dwim)
+   ("C->" . mc/mark-all-dwim)))
 
 ;;; Language parsing
 
