@@ -117,10 +117,10 @@
 ;; The README is very informative as to how to set paths and shells properly
 ;; https://github.com/purcell/exec-path-from-shell
 
-(use-package exec-path-from-shell
-  :ensure t
-  :defer t
-  :hook (after-init-hook . exec-path-from-shell-initialize))
+;; (use-package exec-path-from-shell
+;;   :ensure t
+;;   :defer t
+;;   :hook (after-init-hook . exec-path-from-shell-initialize))
 
 (use-package eldoc
   :diminish eldoc-mode)
@@ -1234,7 +1234,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(zig-mode yaml-mode xr xeft which-key vertico verilog-mode use-package-ensure-system-package treemacs tree-sitter-langs transpose-frame tramp tempel-collection soap-client sly shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode php-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia magit lua-mode langtool kotlin-ts-mode julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line graphviz-dot-mode gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck faceup exec-path-from-shell engrave-faces emacsql-sqlite-builtin elisp-lint eglot-jl dockerfile-mode docker diminish deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup bqn-mode blacken bibtex-capf auctex)))
+   '(project seq ef-themes zig-mode yaml-mode xr xeft which-key vertico verilog-mode use-package-ensure-system-package treemacs tree-sitter-langs transpose-frame tramp tempel-collection soap-client sly shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode php-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia magit lua-mode langtool kotlin-ts-mode julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line graphviz-dot-mode gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck faceup exec-path-from-shell engrave-faces emacsql-sqlite-builtin elisp-lint eglot-jl dockerfile-mode docker diminish deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup bqn-mode blacken bibtex-capf auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
