@@ -677,6 +677,15 @@
   :pin melpa
   :bind ("C-x g" . magit-status))
 
+(use-package difftastic
+  :ensure t
+  :defer t
+  :after magit-diff
+  :config
+  (transient-append-suffix 'magit-diff '(-1 -1)
+       [("D" "Difftastic diff (dwim)" difftastic-magit-diff)
+        ("S" "Difftastic show" difftastic-magit-show)]))
+
 ;;;========================================
 ;;; Editing
 ;;;========================================
@@ -1234,7 +1243,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(project seq ef-themes zig-mode yaml-mode xr xeft which-key vertico verilog-mode use-package-ensure-system-package treemacs tree-sitter-langs transpose-frame tramp tempel-collection soap-client sly shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode php-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia magit lua-mode langtool kotlin-ts-mode julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line graphviz-dot-mode gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck faceup exec-path-from-shell engrave-faces emacsql-sqlite-builtin elisp-lint eglot-jl dockerfile-mode docker diminish deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup bqn-mode blacken bibtex-capf auctex)))
+   '(difftastic zig-mode yaml-mode xr xeft which-key vertico verilog-mode use-package-ensure-system-package treemacs tree-sitter-langs transpose-frame tramp tempel-collection soap-client sly shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode php-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia magit lua-mode langtool kotlin-ts-mode julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line graphviz-dot-mode gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck faceup exec-path-from-shell engrave-faces emacsql-sqlite-builtin elisp-lint eglot-jl ef-themes dockerfile-mode docker diminish deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup bqn-mode blacken bibtex-capf auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
