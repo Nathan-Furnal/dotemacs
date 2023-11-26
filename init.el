@@ -35,7 +35,7 @@
   (browse-url-browser-function 'browse-url-firefox)
   (browse-url-new-window-flag  t)
   (browse-url-firefox-new-window-is-tab t)
-  (package-install-upgrade-built-in t)
+  ;; (package-install-upgrade-built-in t)
   :init
   (set-face-attribute 'default nil :family "Iosevka Term" :height 110 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 110 :weight 'medium)
@@ -177,13 +177,11 @@
 
 ;; Running modus-themes depending on the time of the day.
 
-(use-package solar
-  :custom
-  (calendar-latitude 50.85)
-  (calendar-longitude 4.35))
-
 (use-package circadian
   :ensure t
+  :custom
+  (calendar-latitude 50.85)
+  (calendar-longitude 4.35)
   :config
   (setq circadian-themes '((:sunrise . modus-operandi)
                            (:sunset  . modus-vivendi)))
@@ -724,7 +722,6 @@
 				    (eglot-ensure)))
 	 (c-ts-mode-hook . eglot-ensure)
 	 (c++-ts-mode-hook . eglot-ensure)
-	 (kotlin-ts-mode-hook . eglot-ensure)
 	 (rustic-mode-hook . eglot-ensure)
 	 (css-ts-mode-hook . eglot-ensure)
 	 (html-mode-hook . eglot-ensure)
@@ -773,11 +770,11 @@
 (use-package lisp-mode
   :diminish "CL")
 
-(use-package sly
+(use-package slime
   :ensure t
   :defer t
-  :custom
-  (inferior-lisp-program "sbcl"))
+  :config
+  (setq inferior-lisp-program "sbcl"))
 
 (use-package puni
   :diminish puni-mode
@@ -875,15 +872,6 @@
   :hook (julia-ts-mode-hook . julia-vterm-mode))
 
 (use-package eglot-jl
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; PHP
-;;;========================================
-
-(use-package php-mode
-  :pin elpa
   :ensure t
   :defer t)
 
@@ -994,14 +982,6 @@
 	      ("C-c C-e" . lua-send-current-line)))
 
 ;;;========================================
-;;; Kotlin
-;;;========================================
-
-(use-package kotlin-ts-mode
-  :ensure t
-  :defer t)
-
-;;;========================================
 ;;; Rust
 ;;;========================================
 
@@ -1104,6 +1084,14 @@
   (plantuml-default-exec-mode 'jar))
 
 (use-package gnuplot
+  :ensure t
+  :defer t)
+
+;;;========================================
+;;; Array languages
+;;;========================================
+
+(use-package bqn-mode
   :ensure t
   :defer t)
 
@@ -1243,7 +1231,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(difftastic zig-mode yaml-mode xr xeft which-key vertico verilog-mode use-package-ensure-system-package treemacs tree-sitter-langs transpose-frame tramp tempel-collection soap-client sly shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode php-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia magit lua-mode langtool kotlin-ts-mode julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line graphviz-dot-mode gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck faceup exec-path-from-shell engrave-faces emacsql-sqlite-builtin elisp-lint eglot-jl ef-themes dockerfile-mode docker diminish deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup bqn-mode blacken bibtex-capf auctex)))
+   '(eglot bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

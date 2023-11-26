@@ -46,4 +46,11 @@
 
 (setq native-comp-async-report-warnings-errors nil) 	; Stop showing compilation warnings on startup
 
+
+;; Separate elpa dir for each Emacs version
+(setq package-user-dir (locate-user-emacs-file
+                        (concat
+                         (file-name-as-directory "elpa")
+                         emacs-version)))
+
 ;;; early-init ends here
