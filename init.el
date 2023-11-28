@@ -137,7 +137,10 @@
 (use-package vterm
   :ensure t
   :defer t
-  :bind ("C-$" . vterm))
+  :custom
+  (buffer-face-mode-face '(:family "Fira Code Nerd Font"))
+  :bind ("C-$" . vterm)
+  :hook (vterm-mode-hook . buffer-face-mode))
 
 (use-package vertico
   :ensure t
