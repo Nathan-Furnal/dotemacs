@@ -137,10 +137,8 @@
 (use-package vterm
   :ensure t
   :defer t
-  :custom
-  (buffer-face-mode-face '(:family "Fira Code Nerd Font"))
-  :bind ("C-$" . vterm)
-  :hook (vterm-mode-hook . buffer-face-mode))
+  :custom-face (vterm-face ((t (:family "Iosevka Nerd Font"))))
+  :bind ("C-$" . vterm))
 
 (use-package vertico
   :ensure t
@@ -719,10 +717,7 @@
   (setq-default eglot-workspace-configuration
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
-  :hook ((zig-mode-hook . eglot-ensure)
-	 (python-base-mode-hook . (lambda ()
-				    (poetry-tracking-mode)
-				    (eglot-ensure)))
+  :hook ((zig-mode-hook . eglot-ensure)	 
 	 (c-ts-mode-hook . eglot-ensure)
 	 (c++-ts-mode-hook . eglot-ensure)
 	 (rustic-mode-hook . eglot-ensure)
@@ -840,16 +835,10 @@
   :config
   (setq poetry-tracking-strategy 'switch-buffer))
 
-;; Buffer formatting on save
-(use-package blacken
+(use-package pyenv-mode
   :ensure t
   :defer t
-  :custom
-  (blacken-allow-py36 t)
-  (blacken-skip-string-normalization t)
-  (blacken-only-if-project-is-blackened t)
-  (black-fast-unsafe t)
-  :hook (python-base-mode-hook . blacken-mode))
+  :hook (python-base-mode-hook . pyenv-mode))
 
 ;; numpy docstring for python
 (use-package numpydoc
@@ -1192,15 +1181,23 @@
   :ensure t
   :defer t)
 
-(use-package combobulate
-  :load-path "site-lisp/combobulate"
+
+(use-package fortran-mode
+  :mode ("\\.f90\\'" "\\.f03\\'" "\\.f08\\'" "\\.f18\\'"))
+
+(use-package disaster
+  :ensure t
   :defer t
-  :hook ((python-ts-mode-hook . combobulate-mode)
-         (js-ts-mode-hook . combobulate-mode)
-         (css-ts-mode-hook . combobulate-mode)
-         (yaml-ts-mode-hook . combobulate-mode)
-         (typescript-ts-mode-hook . combobulate-mode)
-         (tsx-ts-mode-hook . combobulate-mode)))
+  :bind (:map c-ts-base-mode-map
+	("C-c d" . disaster)
+	:map c++-ts-mode-map
+	("C-c d" . disaster)
+	:map fortran-mode-map
+	("C-c d" . disaster)
+	:map c-mode-map
+	("C-c d" . disaster)
+	:map c++-mode-map
+	("C-c d" . disaster)))
 
 ;;; Colors
 
@@ -1234,7 +1231,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(eglot bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
+   '(disaster pyenv-mode eglot bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
