@@ -485,6 +485,7 @@
 (use-package citar
   :ensure t
   :defer t
+  :custom (citar-library-paths '("~/Drive/KLB/"))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -790,14 +791,13 @@
   :mode ("\\.scm$\\'")
   :hook (scheme-mode-hook . puni-mode))
 
-(use-package geiser
+(use-package geiser-guile
   :ensure t
-  :defer t
-  :commands (geiser)
-  :config
-  (use-package geiser-mit
-    :ensure t
-    :defer t))
+  :defer t)
+
+(use-package geiser-chez
+  :ensure t
+  :defer t)
 
 (use-package racket-mode
   :defer t
@@ -1231,7 +1231,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(disaster pyenv-mode eglot bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-mit gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
+   '(geiser-chez geiser-guile eglot disaster pyenv-mode bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
