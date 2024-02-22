@@ -718,7 +718,7 @@
   (setq-default eglot-workspace-configuration
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
-  :hook ((zig-mode-hook . eglot-ensure)	 
+  :hook ((zig-mode-hook . eglot-ensure)
 	 (c-ts-mode-hook . eglot-ensure)
 	 (c++-ts-mode-hook . eglot-ensure)
 	 (rustic-mode-hook . eglot-ensure)
@@ -727,10 +727,8 @@
 	 (js-base-mode-hook . eglot-ensure)
 	 (tsx-ts-mode-hook . eglot-ensure)
 	 (php-mode-hook . eglot-ensure)
-	 (latex-mode-hook . eglot-ensure)
-	 (julia-ts-mode-hook . (lambda ()
-				 (eglot-jl-init)
-				 (eglot-ensure))))
+	 (python-ts-mode-hook . eglot-ensure)
+	 (latex-mode-hook . eglot-ensure))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -795,10 +793,6 @@
   :ensure t
   :defer t)
 
-(use-package geiser-chez
-  :ensure t
-  :defer t)
-
 (use-package racket-mode
   :defer t
   :ensure t
@@ -828,18 +822,6 @@
 	 (pdf-view-mode-hook . hide-mode-line-mode)
 	 (shell-mode-hook . hide-mode-line-mode)))
 
-(use-package poetry
-  :ensure t
-  :defer t
-  :commands poetry-tracking-mode
-  :config
-  (setq poetry-tracking-strategy 'switch-buffer))
-
-(use-package pyenv-mode
-  :ensure t
-  :defer t
-  :hook (python-base-mode-hook . pyenv-mode))
-
 ;; numpy docstring for python
 (use-package numpydoc
   :ensure t
@@ -849,23 +831,6 @@
 	numpydoc-template-long nil)
   :bind (:map python-base-mode-map
               ("C-c C-n" . numpydoc-generate)))
-
-;;;========================================
-;;; Julia
-;;;========================================
-
-(use-package julia-ts-mode
-  :ensure t
-  :defer t)
-
-(use-package julia-vterm
-  :ensure t
-  :defer t
-  :hook (julia-ts-mode-hook . julia-vterm-mode))
-
-(use-package eglot-jl
-  :ensure t
-  :defer t)
 
 ;;;========================================
 ;;; Org-mode Babel
@@ -1048,15 +1013,6 @@
   :defer t)
 
 ;;;========================================
-;;; Blogging
-;;;========================================
-
-(use-package ox-hugo
-  :ensure t
-  :defer 3
-  :after ox)
-
-;;;========================================
 ;;; Mathematics
 ;;;========================================
 
@@ -1076,14 +1032,6 @@
   (plantuml-default-exec-mode 'jar))
 
 (use-package gnuplot
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; Array languages
-;;;========================================
-
-(use-package bqn-mode
   :ensure t
   :defer t)
 
@@ -1224,6 +1172,16 @@
   :ensure t
   :defer t)
 
+;;;========================================
+;;; Env stuff - must come late
+;;;========================================
+
+(use-package envrc
+  :ensure t
+  :defer nil
+  :config
+  (envrc-global-mode))
+
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1231,7 +1189,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(geiser-chez geiser-guile eglot disaster pyenv-mode bqn-mode bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni poetry plantuml-mode pdf-tools pandoc-mode ox-reveal ox-hugo org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool julia-vterm julia-ts-mode jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint eglot-jl dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup blacken auctex)))
+   '(envrc vterm geiser-guile eglot disaster bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
