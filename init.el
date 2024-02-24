@@ -1173,6 +1173,14 @@
   :defer t)
 
 ;;;========================================
+;;; Accounting
+;;;========================================
+
+(use-package ledger-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; Env stuff - must come late
 ;;;========================================
 
@@ -1189,7 +1197,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(envrc vterm geiser-guile eglot disaster bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex)))
+   '(ledger-mode envrc vterm geiser-guile eglot disaster bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
