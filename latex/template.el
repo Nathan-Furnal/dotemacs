@@ -73,7 +73,7 @@
 (add-to-list 'org-latex-classes
 	     '("el-notes"
 	       "[NO-DEFAULT-PACKAGES]
-\\documentclass[11pt, leqno]{article}
+\\documentclass[12pt, leqno]{article}
 \\usepackage[round]{natbib}
 \\usepackage{fvextra}
 \\usepackage{csquotes}
