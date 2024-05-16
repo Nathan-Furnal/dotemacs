@@ -37,9 +37,9 @@
   (browse-url-firefox-new-window-is-tab t)
   ;; (package-install-upgrade-built-in t)
   :init
-  (set-face-attribute 'default nil :family "Iosevka Term" :height 110 :weight 'regular)
-  (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 110 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Etoile" :height 100 :weight 'medium)
+  (set-face-attribute 'default nil :family "Iosevka Term" :height 140 :weight 'regular)
+  (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 140 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 120 :weight 'medium)
   (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
   (setq initial-scratch-message
@@ -272,14 +272,6 @@
   ;;(add-to-list 'completion-at-point-functions #'cape-line))
   )
 
-(use-package treemacs
-  :ensure t
-  :defer t
-  :custom
-  (treemacs-no-png-images t)
-  (treemacs-width 24)
-  :bind ("C-c t" . treemacs))
-
 (use-package deadgrep
   :ensure t
   :defer t
@@ -326,14 +318,6 @@
    ("M-$" . jinx-correct)))
 
 ;; Syntax checking for GNU Emacs
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :ensure t
-  :defer t
-  :custom
-  (flycheck-check-syntax-automatically '(mode-enabled save)) ; Check on save instead of running constantly
-  :hook ((prog-mode-hook text-mode-hook) . flycheck-mode))
 
 (use-package flymake
   :ensure t
@@ -714,21 +698,10 @@
   (eglot-autoshutdown t)
   :config
   ;; Python specific
-  (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs '((python-base-mode) . ("pyright-langserver" "--stdio")))
   (setq-default eglot-workspace-configuration
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
-  :hook ((zig-mode-hook . eglot-ensure)
-	 (c-ts-mode-hook . eglot-ensure)
-	 (c++-ts-mode-hook . eglot-ensure)
-	 (rustic-mode-hook . eglot-ensure)
-	 (css-ts-mode-hook . eglot-ensure)
-	 (html-mode-hook . eglot-ensure)
-	 (js-base-mode-hook . eglot-ensure)
-	 (tsx-ts-mode-hook . eglot-ensure)
-	 (php-mode-hook . eglot-ensure)
-	 (python-ts-mode-hook . eglot-ensure)
-	 (latex-mode-hook . eglot-ensure))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -777,7 +750,7 @@
   :diminish puni-mode
   :ensure t
   :defer t
-  :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook) . puni-mode))
+  :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook scheme-mode-hook) . puni-mode))
 
 ;;;========================================
 ;;; Scheme & Racket
@@ -786,8 +759,7 @@
 (use-package scheme
   :defer t
   :ensure nil
-  :mode ("\\.scm$\\'")
-  :hook (scheme-mode-hook . puni-mode))
+  :mode ("\\.scm$\\'"))
 
 (use-package geiser-guile
   :ensure t
@@ -831,6 +803,12 @@
 	numpydoc-template-long nil)
   :bind (:map python-base-mode-map
               ("C-c C-n" . numpydoc-generate)))
+
+
+(use-package pet
+  :ensure t
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
 
 ;;;========================================
 ;;; Org-mode Babel
@@ -1078,17 +1056,6 @@
 
 ;;; Language parsing
 
-(use-package tree-sitter
-  :ensure t
-  :defer t
-  :diminish " tree"
-  :hook ((zig-mode-hook) . (lambda ()
-			     (tree-sitter-mode)
-			     (tree-sitter-hl-mode))))
-(use-package tree-sitter-langs
-  :ensure t
-  :defer t)
-
 (use-package treesit
   :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
   :init
@@ -1173,22 +1140,20 @@
   :defer t)
 
 ;;;========================================
+;;; Ada
+;;;========================================
+
+(use-package ada-ts-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; Accounting
 ;;;========================================
 
 (use-package ledger-mode
   :ensure t
   :defer t)
-
-;;;========================================
-;;; Env stuff - must come late
-;;;========================================
-
-(use-package envrc
-  :ensure t
-  :defer nil
-  :config
-  (envrc-global-mode))
 
 ;;; init.el ends here
 (custom-set-variables
@@ -1197,7 +1162,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ledger-mode envrc vterm geiser-guile eglot disaster bind-key eldoc faceup flymake jsonrpc org project soap-client tramp use-package use-package-ensure-system-package verilog-mode zig-mode xr xeft which-key vertico treemacs tree-sitter-langs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes maxima masm-mode marginalia lua-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast gcmh flymake-nasm flycheck engrave-faces elisp-lint dockerfile-mode docker diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex)))
+   '(zig-mode xr xeft which-key vterm vertico treemacs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pet pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes mise maxima masm-mode marginalia lua-mode ledger-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-guile gcmh flymake-nasm engrave-faces elisp-lint eglot dockerfile-mode docker disaster diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex ada-ts-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
