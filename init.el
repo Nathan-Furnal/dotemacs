@@ -37,9 +37,9 @@
   (browse-url-firefox-new-window-is-tab t)
   ;; (package-install-upgrade-built-in t)
   :init
-  (set-face-attribute 'default nil :family "Iosevka Term" :height 140 :weight 'regular)
+  (set-face-attribute 'default nil :family "Iosevka Term Curly" :height 140 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 140 :weight 'medium)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 120 :weight 'medium)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 135 :weight 'medium)
   (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
   (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
   (setq initial-scratch-message
@@ -59,21 +59,14 @@
   (setq create-lockfiles nil)                   ; lock files kill `npm start'
   (pixel-scroll-precision-mode 1)	        ; Precision scrolling
 
+  ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+  ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+  ;; setting is useful beyond Corfu.
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  (setq tab-always-indent 'complete)
+
   (setq backup-directory-alist
 	`(("." . ,(concat user-emacs-directory "backups"))))
-
-  (dolist  (mapping '((python-mode . python-ts-mode)
-		      (ruby-mode . ruby-ts-mode)
-		      (c-mode . c-ts-mode)
-		      (c++-mode . c++-ts-mode)
-		      (c-or-c++-mode . c-or-c++-ts-mode)
-		      (css-mode . css-ts-mode)
-		      (js-mode . js-ts-mode)
-		      (javascript-mode . js-ts-mode)
-		      (typescript-mode . tsx-ts-mode)
-		      (js-json-mode . json-ts-mode)
-		      (sh-mode . bash-ts-mode)))
-    (add-to-list 'major-mode-remap-alist mapping))
   
     :bind (("C-z" . undo)
            ("C-x C-z" . nil)
@@ -101,6 +94,27 @@
   (gcmh-idle-delay 10)
   (gcmh-high-cons-threshold (* 32 1024 1024))
   (gc-cons-percentage 0.8))
+
+(use-package corfu
+  :pin elpa
+  :ensure t
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-separator ?\s)          ;; Orderless field separator
+  (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
+  (corfu-quit-no-match t)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  (corfu-scroll-margin 5)        ;; Use scroll margin
+
+  ;; Recommended: Enable Corfu globally.
+  ;; This is recommended since Dabbrev can be used globally (M-/).
+  ;; See also `corfu-excluded-modes'.
+  :init
+  (global-corfu-mode))
 
 (use-package elec-pair
   :ensure nil
@@ -148,7 +162,18 @@
   :config
   (vertico-multiform-mode 1)
   (add-to-list 'vertico-multiform-categories
-             '(jinx grid (vertico-grid-annotate . 20))))
+               '(jinx grid (vertico-grid-annotate . 20))))
+
+
+;; Language parsing with tree-sitter
+
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 ;;;========================================
 ;;; Themes
@@ -184,8 +209,8 @@
   (calendar-latitude 50.85)
   (calendar-longitude 4.35)
   :config
-  (setq circadian-themes '((:sunrise . modus-operandi)
-                           (:sunset  . modus-vivendi)))
+  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
+                           (:sunset  . modus-vivendi-tinted)))
   (circadian-setup))
 
 
@@ -232,45 +257,29 @@
   :config
   (which-key-mode 1))
 
-(use-package corfu
-  :pin elpa
-  :ensure t
-  ;; Optional customizations
-  :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  (corfu-separator ?\s)          ;; Orderless field separator
-  (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
-  (corfu-quit-no-match t)      ;; Never quit, even if there is no match
-  (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-preselect-first nil)    ;; Disable candidate preselection
-  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  (corfu-echo-documentation nil) ;; Disable documentation in the echo area
-  (corfu-scroll-margin 5)        ;; Use scroll margin
-
-  ;; Recommended: Enable Corfu globally.
-  ;; This is recommended since Dabbrev can be used globally (M-/).
-  ;; See also `corfu-excluded-modes'.
-  :init
-  (global-corfu-mode))
-
+;; Add extensions
 (use-package cape
   :ensure t
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :init
-  ;; Add `completion-at-point-functions', used by `completion-at-point'.
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
-  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-  ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line))
-  )
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  ;; (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-history)
+  ;; (add-hook 'completion-at-point-functions #'cape-keyword)
+  ;; (add-hook 'completion-at-point-functions #'cape-tex)
+  ;; (add-hook 'completion-at-point-functions #'cape-sgml)
+  ;; (add-hook 'completion-at-point-functions #'cape-rfc1345)
+  (add-hook 'completion-at-point-functions #'cape-abbrev)
+  (add-hook 'completion-at-point-functions #'cape-dict)
+  ;; (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+  ;; (add-hook 'completion-at-point-functions #'cape-line)
+)
 
 (use-package deadgrep
   :ensure t
@@ -312,7 +321,7 @@
 (use-package jinx
   :ensure t
   :defer t
-  :hook ((text-mode-hook prog-mode-hook) . jinx-mode)
+  :hook (emacs-startup . global-jinx-mode)
   :bind
   (("C-x C-;" . jinx-languages)
    ("M-$" . jinx-correct)))
@@ -545,6 +554,8 @@
   :pin melpa
   :custom
   (org-modern-table nil)
+  :config
+  (set-face-attribute 'org-modern-symbol nil :family "Iosevka")  
   :hook ((org-mode-hook . org-modern-mode)
 	 (org-agenda-finalize-hook . org-modern-agenda)))
 
@@ -706,6 +717,34 @@
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
 	 ("C-c l r" . eglot-rename)))
+
+;; Debugger
+
+(use-package dape
+  :ensure t
+  :defer t
+
+  :custom
+  (dape-buffer-window-arrangement 'gud)
+
+  :config
+  ;; Global bindings for setting breakpoints with mouse
+  (dape-breakpoint-global-mode)
+
+  ;; To not display info and/or buffers on startup
+  ;; (remove-hook 'dape-on-start-hooks 'dape-info)
+  ;; (remove-hook 'dape-on-start-hooks 'dape-repl)
+
+  ;; To display info and/or repl buffers on stopped
+  ;; (add-hook 'dape-on-stopped-hooks 'dape-info)
+  ;; (add-hook 'dape-on-stopped-hooks 'dape-repl)
+
+  ;; Kill compile buffer on build success
+  (add-hook 'dape-compile-compile-hooks 'kill-buffer)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  ;; (add-hook 'dape-on-start-hooks (lambda () (save-some-buffers t t)))
+  )
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -916,20 +955,14 @@
 	      ("C-c C-r" . lua-send-region)
 	      ("C-c C-e" . lua-send-current-line)))
 
+
 ;;;========================================
-;;; Rust
+;;; Golang
 ;;;========================================
 
-(use-package rustic
+(use-package go-ts-mode
   :custom
-  (rustic-lsp-client 'eglot)
-  :ensure t
-  :defer t)
-
-(use-package cargo
-  :ensure t
-  :defer t
-  :hook ((rust-ts-mode-hook rustic-mode-hook) . cargo-minor-mode))
+  (go-ts-mode-indent-offset 4))
 
 ;;;========================================
 ;;; Zig
@@ -938,6 +971,35 @@
 (use-package zig-mode
   :ensure t
   :defer t)
+
+;;;========================================
+;;; Elixir
+;;;========================================
+
+;; Major tree-sitter mode
+(use-package elixir-ts-mode
+  :ensure t
+  :defer t)
+
+;; Build tool
+(use-package mix
+  :ensure t
+  :defer t
+  :hook (elixir-ts-mode-hook . mix-minor-mode))
+
+;; Static code analysis
+(use-package flycheck-credo
+  :ensure t
+  :defer t  
+  :custom
+  (flycheck-elixir-credo-strict t)
+  :hook (elixir-ts-mode-hook . flycheck-mode))
+
+;; Commands for exUnit
+(use-package exunit
+  :ensure t
+  :defer t
+  :hook (elixir-ts-mode-hook . exunit-mode))
 
 ;;;========================================
 ;;; Code snippets and skeletons
@@ -1054,51 +1116,10 @@
   (("C-<" . mc/mark-all-like-this-dwim)
    ("C->" . mc/mark-all-dwim)))
 
-;;; Language parsing
-
-(use-package treesit
-  :commands (treesit-install-language-grammar nf/treesit-install-all-languages)
-  :init
-  (setq treesit-language-source-alist
-   '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-     (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-     (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-     (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-     (cmake . ("https://github.com/uyha/tree-sitter-cmake"))
-     (go . ("https://github.com/tree-sitter/tree-sitter-go"))
-     (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-     (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
-     (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-     (julia . ("https://github.com/tree-sitter/tree-sitter-julia"))
-     (lua . ("https://github.com/Azganoth/tree-sitter-lua"))
-     (make . ("https://github.com/alemuller/tree-sitter-make"))
-     (ocaml . ("https://github.com/tree-sitter/tree-sitter-ocaml" "master" "ocaml/src"))
-     (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-     (php . ("https://github.com/tree-sitter/tree-sitter-php"))
-     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-     (ruby . ("https://github.com/tree-sitter/tree-sitter-ruby"))
-     (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
-     (sql . ("https://github.com/m-novikov/tree-sitter-sql"))
-     (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
-     (zig . ("https://github.com/GrayJack/tree-sitter-zig"))))
-  :config
-  (defun nf/treesit-install-all-languages ()
-    "Install all languages specified by `treesit-language-source-alist'."
-    (interactive)
-    (let ((languages (mapcar 'car treesit-language-source-alist)))
-      (dolist (lang languages)
-	      (treesit-install-language-grammar lang)
-	      (message "`%s' parser was installed." lang)
-	      (sit-for 0.75)))))
-
 (use-package cmake-ts-mode
   :ensure t
   :defer t)
 
-
-(use-package fortran-mode
-  :mode ("\\.f90\\'" "\\.f03\\'" "\\.f08\\'" "\\.f18\\'"))
 
 (use-package disaster
   :ensure t
@@ -1140,14 +1161,6 @@
   :defer t)
 
 ;;;========================================
-;;; Ada
-;;;========================================
-
-(use-package ada-ts-mode
-  :ensure t
-  :defer t)
-
-;;;========================================
 ;;; Accounting
 ;;;========================================
 
@@ -1162,7 +1175,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(zig-mode xr xeft which-key vterm vertico treemacs transpose-frame tempel-collection slime shackle rustic rainbow-delimiters racket-mode puni plantuml-mode pet pdf-tools pandoc-mode ox-reveal org-tree-slide org-special-block-extras org-roam org-ref org-modern orderless olivetti numpydoc nasm-mode multiple-cursors modus-themes mise maxima masm-mode marginalia lua-mode ledger-mode langtool jinx imenu-list iedit hide-mode-line gnuplot gif-screencast geiser-guile gcmh flymake-nasm engrave-faces elisp-lint eglot dockerfile-mode docker disaster diminish difftastic deadgrep csv-mode corfu citar circadian cdlatex cargo cape buttercup auctex ada-ts-mode)))
+   '(exunit elixir-ts-mode mix flycheck-credo eglot auctex buttercup cape cdlatex circadian citar corfu csv-mode dape deadgrep difftastic diminish disaster docker dockerfile-mode elisp-lint engrave-faces flymake-nasm gcmh geiser-guile gif-screencast gnuplot hide-mode-line iedit imenu-list jinx langtool ledger-mode lua-mode marginalia markdown-mode masm-mode maxima modus-themes multiple-cursors nasm-mode numpydoc olivetti orderless org-modern org-ref org-roam org-special-block-extras org-tree-slide ox-reveal pandoc-mode pdf-tools pet plantuml-mode puni racket-mode rainbow-delimiters shackle slime tempel-collection transpose-frame treesit-auto vertico vterm which-key xeft xr zig-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
