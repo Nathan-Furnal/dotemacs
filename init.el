@@ -1,17 +1,18 @@
 ;;; init.el --- Init -*- no-byte-compile: t; lexical-binding: t; -*-
 
 ;; Author: James Cherti & Nathan Furnal
-;; URL: https://github.com/jamescherti/minimal-emacs.d & https://gitlab.com/nathanfurnal/dotemacs
+;; URL:  https://gitlab.com/nathanfurnal/dotemacs
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
 ;; Version: 1.0.2
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
-;; Based on Minimal Emacs, without pre and post loading and with my full config
-;; This is the main initialization file for Emacs. It configures package
-;; archives, ensures essential packages like `use-package` are installed, and
-;; sets up further package management and customization settings.
+;; Based on Minimal Emacs (https://github.com/jamescherti/minimal-emacs.d),
+;; without pre and post loading and with my full config This is the main
+;; initialization file for Emacs. It configures package archives, ensures
+;; essential packages like `use-package` are installed, and sets up further
+;; package management and customization settings.
 
 ;;; Code:
 
