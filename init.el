@@ -68,15 +68,11 @@
 (use-package emacs
   :custom
   ;; Ensures builtins are up to date
-  (package-install-upgrade-built-in t)
   (enable-recursive-minibuffers t)
   ;; Keep the cursor out of the read-only portions of the minibuffer  
   (minibuffer-prompt-properties
    '(read-only t intangible t cursor-intangible t face
                minibuffer-prompt))
-  ;; Can be activated with `display-line-numbers-mode'
-  (display-line-numbers-width 3)
-  (display-line-numbers-widen t)
   ;; Avoid generating lockfiles to prevent creating world-readable
   ;; copies of files. 
   (create-lockfiles nil)
@@ -117,26 +113,9 @@
   ;; No beeping or blinking
   (visible-bell nil)
   (ring-bell-function #'ignore)
-  ;; Indent and formatting
-  (left-fringe-width  8)
-  (right-fringe-width 8)
-  ;; Do not show an arrow at the top/bottomin the fringe and empty lines
-  (indicate-buffer-boundaries nil)
-  (indicate-empty-lines nil)
-  ;; Continue wrapped lines at whitespace rather than breaking in the
-  ;; middle of a word.
-  (word-wrap t)
-  ;; Disable wrapping by default due to its performance cost.
-  (truncate-lines t)
   ;; If enabled and `truncate-lines' is disabled, soft wrapping will not occur
   ;; when the window is narrower than `truncate-partial-width-windows' characters.
   (truncate-partial-width-windows nil)
-  ;; Prefer spaces over tabs. Spaces offer a more consistent default compared to
-  ;; 8-space tabs. This setting can be adjusted on a per-mode basis as needed.
-  (tab-width 4)
-  ;; We often split terminals and editor windows or place them side-by-side,
-  ;; making use of the additional horizontal space.
-  (fill-column 80)
   ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
   ;; try `cape-dict'.
   ;; (text-mode-ispell-word-completion nil)
@@ -144,12 +123,29 @@
    (expand-file-name "autosave/" user-emacs-directory))
   ;; Remove duplicates from the kill ring to reduce clutter
   (kill-do-not-save-duplicates t)
-  (tab-always-indent 'complete)
   ;; Disable the obsolete practice of end-of-line spacing from the
   ;; typewriter era.
   (sentence-end-double-space nil)
   
   :init
+  ;; Can be activated with `display-line-numbers-mode'
+  (setq-default display-line-numbers-width 3
+                display-line-numbers-widen t)
+  ;; Indent and formatting
+  (setq-default left-fringe-width 8
+                right-fringe-width 8)
+  ;; Do not show an arrow at the top/bottomin the fringe and empty lines
+  (setq-default indicate-buffer-boundaries nil
+                indicate-empty-lines nil)
+  ;; Continue wrapped lines at whitespace rather than breaking in the
+  ;; middle of a word.
+  (setq-default word-wrap t)
+  ;; Disable wrapping by default due to its performance cost.
+  (setq-default truncate-lines t)
+  ;; Tab width
+  (setq-default tab-width 4
+                tab-always-indent t)
+  (setq-default fill-column 80)
   (set-face-attribute 'default nil :family "Iosevka Term Curly" :height 140 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 140 :weight 'medium)
   (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 135 :weight 'medium)
@@ -195,8 +191,8 @@
   :ensure nil
   :custom
   ;; The native border "uses" a pixel of the fringe on the rightmost
-  ;; splits, whereas `window-divider` does not.n
-  (window-divider-default-bottom-width 1)
+  ;; splits, whereas `window-divider` does not.
+  (window-divider-default-bottom-width 0)
   (window-divider-default-places t)
   (window-divider-default-right-width 1))
 
@@ -210,7 +206,7 @@
   (show-paren-when-point-in-periphery t))
 
 (use-package whitespace
-  :ensure nil  
+  :ensure nil
   :custom
   (whitespace-line-column nil))
 
@@ -288,7 +284,7 @@
   (mouse-yank-at-point t)
   ;; Found in `mwheel.el'
   (mouse-wheel-scroll-amount '(2 ((shift) . hscroll)))
-  (mouse-wheel-scroll-amount-horizontal 2))  
+  (mouse-wheel-scroll-amount-horizontal 2))
 
 (use-package simple
   :ensure nil  
@@ -296,7 +292,8 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Don't blink the paren matching the one at point, it's too distracting.
   (blink-matching-paren nil)
-  (indent-tabs-mode nil))
+  :init
+  (setq-default indent-tabs-mode nil))
 
 (use-package tramp
   :ensure nil  
@@ -305,16 +302,6 @@
   (tramp-backup-directory-alist backup-directory-alist)
   (tramp-auto-save-directory
    (expand-file-name "tramp-autosave/" user-emacs-directory)))
-
-(use-package recentf
-  :ensure nil  
-  ;; `recentf' is an Emacs package that maintains a list of recently
-  ;; accessed files, making it easier to reopen files you have worked on
-  ;; recently.
-  :custom
-  (recentf-max-saved-items 300) ; default is 20
-  (recentf-auto-cleanup 'mode)
-  :hook (after-init-hook . recentf-mode))
 
 (use-package saveplace
   :ensure nil  
@@ -344,6 +331,16 @@
 	 :map isearch-mode-map
 	 ("<DEL>" . isearch-del-char)))
 
+(use-package recentf
+  :ensure nil
+  ;; `recentf' is an Emacs package that maintains a list of recently
+  ;; accessed files, making it easier to reopen files you have worked on
+  ;; recently.
+  :custom
+  (recentf-max-saved-items 300)
+  (recentf-auto-cleanup 'mode)
+  :hook (after-init-hook . recentf-mode))
+
 ;;;========================================
 ;;; Better defaults
 ;;;========================================
@@ -354,7 +351,7 @@
 (use-package gcmh
   :pin gnu
   :ensure t
-  :diminish ""                          ; Hide in modeline as it is always there
+  :diminish ""    ; Hide in modeline as it is always there
   :hook (after-init-hook . gcmh-mode)
   :custom
   (gcmh-idle-delay 'auto)
