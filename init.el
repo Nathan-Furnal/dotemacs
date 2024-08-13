@@ -921,7 +921,16 @@
   :custom
   (eldoc-echo-area-use-multiline-p)
   (eglot-autoshutdown t)
+  (eglot-report-progress nil)  ; Prevent minibuffer spam  
+  :commands (eglot
+             eglot-rename
+             eglot-ensure
+             eglot-rename
+             eglot-format-buffer)
   :config
+  ;; Optimizations
+  (fset #'jsonrpc--log-event #'ignore)
+  (setq jsonrpc-event-hook nil)  
   ;; Python specific
   (add-to-list 'eglot-server-programs
 	       '(python-base-mode . ("pyright-langserver" "--stdio")))
