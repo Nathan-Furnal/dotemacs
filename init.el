@@ -155,6 +155,8 @@
   (put 'narrow-to-region 'disabled nil) ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
   :config
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (add-hook 'after-init-hook #'window-divider-mode)
+  (blink-cursor-mode -1)  
   :bind (("C-z" . undo)
          ("C-x C-z" . nil)
          ("C-h h" . nil)
@@ -189,20 +191,13 @@
   (split-height-threshold nil))
 
 (use-package frame
-  :ensure nil  
+  :ensure nil
   :custom
   ;; The native border "uses" a pixel of the fringe on the rightmost
   ;; splits, whereas `window-divider` does not.n
   (window-divider-default-bottom-width 1)
   (window-divider-default-places t)
-  (window-divider-default-right-width 1)
-  ;; The blinking cursor is distracting and interferes with cursor settings in
-  ;; some minor modes that try to change it buffer-locally (e.g., Treemacs).
-  ;; Additionally, it can cause freezing, especially on macOS, for users with
-  ;; customized and colored cursors.  
-  (blink-cursor-mode -1)
-  :hook
-  (after-init-hook . window-divider-mode))
+  (window-divider-default-right-width 1))
 
 (use-package paren
   :ensure nil  
@@ -225,7 +220,7 @@
   (comint-buffer-maximum-size 2048))
 
 (use-package compile
-  :ensure nil  
+  :ensure nil
   :custom
   (compilation-always-kill t)
   (compilation-ask-about-save nil)
@@ -1045,8 +1040,16 @@
 (use-package pet
   :pin melpa
   :ensure t
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
+
+;; Use ruff with flymake in Python buffer
+(use-package flymake-ruff
+  :pin melpa
+  :ensure t
   :defer t
-  :hook (python-base-mode-hook . (lambda () (pet-mode -10))))
+  :hook (python-base-mode-hook . (lambda () (flymake-mode 1)
+                                            (flymake-ruff-load))))
 
 ;;;========================================
 ;;; Lua
@@ -1132,7 +1135,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(bind-key cl-generic cl-lib erc external-completion faceup flymake idlwave let-alist map nadvice ntlm org project python seq so-long soap-client svg tramp use-package verilog-mode xref eglot zig-mode vterm vertico treesit-auto slime rainbow-delimiters puni pet pdf-tools pandoc-mode org-modern orderless numpydoc modus-themes mix markdown-mode marginalia lua-mode langtool jinx hide-mode-line gcmh flycheck-credo exunit engrave-faces embark-consult elixir-ts-mode elisp-lint dockerfile-mode docker diminish difftastic denote dape csv-mode corfu citar circadian cdlatex cape buttercup auctex)))
+   '(flymake-ruff bind-key cl-generic cl-lib erc external-completion faceup flymake idlwave let-alist map nadvice ntlm org project python seq so-long soap-client svg tramp use-package verilog-mode xref eglot zig-mode vterm vertico treesit-auto slime rainbow-delimiters puni pet pdf-tools pandoc-mode org-modern orderless numpydoc modus-themes mix markdown-mode marginalia lua-mode langtool jinx hide-mode-line gcmh flycheck-credo exunit engrave-faces embark-consult elixir-ts-mode elisp-lint dockerfile-mode docker diminish difftastic denote dape csv-mode corfu citar circadian cdlatex cape buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
