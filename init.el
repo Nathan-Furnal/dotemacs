@@ -1,179 +1,413 @@
-;;; init.el --- Fun stuff all around -*- lexical-binding: t; -*-
+;;; init.el --- Init -*- no-byte-compile: t; lexical-binding: t; -*-
 
-;; Package-Requires : ((emacs "29.060"))
+;; Author: James Cherti
+;; URL: https://github.com/jamescherti/minimal-emacs.d
+;; Package-Requires: ((emacs "29.1"))
+;; Keywords: maint
+;; Version: 1.0.2
+;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
-;; This file aims to provide a lightweight Emacs experience, it's heavily
-;; inspired from Prot's config as explained in the README.  I also try use Emacs
-;; internals as well as possible.
+;; Based on Minimal Emacs, without pre and post loading and with my full config
+;; This is the main initialization file for Emacs. It configures package
+;; archives, ensures essential packages like `use-package` are installed, and
+;; sets up further package management and customization settings.
 
 ;;; Code:
 
-(require 'use-package)
+;;; package.el
+
+(require 'package)
+
+(when (version< emacs-version "28")
+  (add-to-list 'package-archives
+               '("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+
+(customize-set-variable 'package-archive-priorities
+                        '(("gnu"    . 99)
+                          ("nongnu" . 80)                        
+                          ("melpa"  . 0)))
+
+(when package-enable-at-startup
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents t)))
+
+;;; use-package
+;; Load use-package for package configuration
+
+;; Ensure the 'use-package' package is installed and loaded
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents t)
+  (package-install 'use-package)
+  (eval-when-compile
+    (require 'use-package)))
+
+(eval-when-compile
+  (require 'use-package))
 
 (use-package use-package
   :custom
   (use-package-hook-name-suffix nil)
   (use-package-compute-statistics t))
 
-(setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-	("elpa" . "https://elpa.gnu.org/packages/")))
-
-(unless (bound-and-true-p package--initialized)
-  (package-initialize))
-
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
 
 ;;;========================================
-;;; Useful defaults
+;;; Defaults
 ;;;========================================
+
+;; Useful defaults and setup
+;; You don't need to use `use-package' here and can simply use
+;; raw variables but it helps me organize the init file
 
 (use-package emacs
   :custom
-  (browse-url-browser-function 'browse-url-firefox)
-  (browse-url-new-window-flag  t)
-  (browse-url-firefox-new-window-is-tab t)
-  ;; (package-install-upgrade-built-in t)
+  ;; Ensures builtins are up to date
+  (package-install-upgrade-built-in t)
+  (enable-recursive-minibuffer t)
+  ;; Keep the cursor out of the read-only portions of the minibuffer  
+  (minibuffer-prompt-properties
+   '(read-only t intangible t cursor-intangible t face
+               minibuffer-prompt))
+  ;; Can be activated with `display-line-numbers-mode'
+  (display-line-numbers-width 3)
+  (display-line-numbers-widen t)
+  ;; Avoid generating lockfiles to prevent creating world-readable
+  ;; copies of files. 
+  (create-lockfiles nil)
+  ;; Do not auto-disable auto-save after deleting large chunks of
+  ;; text. The purpose of auto-save is to provide a failsafe, and
+  ;; disabling it contradicts this objective.
+  (auto-save-include-big-deletions t)
+  ;; Auto save options
+  (kill-buffer-delete-auto-save-files t)
+  ;; Resizing the Emacs frame can be costly when changing the font. Disable this
+  ;; to improve startup times with fonts larger than the system default.
+  (frame-resize-pixelwise t)
+  ;; However, do not resize windows pixelwise, as this can cause crashes in some
+  ;; cases when resizing too many windows at once or rapidly.
+  (window-resize-pixelwise nil)
+  (resize-mini-windows 'grow-only)
+  ;; Smooth scrolling
+  (fast-but-imprecise-scrolling t)
+  (hscroll-margin 2)
+  (hscroll-step 1)
+  ;; Emacs spends excessive time recentering the screen when the cursor
+  ;; moves more than N lines past the window edges (where N is the value of
+  ;; `scroll-conservatively`). This can be particularly slow in larger files
+  ;; during extensive scrolling. If `scroll-conservatively` is set above
+  ;; 100, the window is never automatically recentered. The default value of
+  ;; 0 triggers recentering too aggressively. Setting it to 10 reduces
+  ;; excessive recentering and only recenters the window when scrolling
+  ;; significantly off-screen.
+  (scroll-conservatively 10)
+  (scroll-margin 0)
+  (scroll-preserve-screen-position t)
+  ;; Minimize cursor lag slightly by preventing automatic adjustment of
+  ;; `window-vscroll' for tall lines.
+  (auto-window-vscroll nil)
+  ;; Don't stretch the cursor to fit wide characters, it is disorienting,
+  ;; especially for tabs.
+  (x-stretch-cursor nil)
+  ;; No beeping or blinking
+  (visible-bell nil)
+  (ring-bell-function #'ignore)
+  ;; Indent and formatting
+  (left-fringe-width  8)
+  (right-fringe-width 8)
+  ;; Do not show an arrow at the top/bottomin the fringe and empty lines
+  (indicate-buffer-boundaries nil)
+  (indicate-empty-lines nil)
+  ;; Continue wrapped lines at whitespace rather than breaking in the
+  ;; middle of a word.
+  (word-wrap t)
+  ;; Disable wrapping by default due to its performance cost.
+  (truncate-lines t)
+  ;; If enabled and `truncate-lines' is disabled, soft wrapping will not occur
+  ;; when the window is narrower than `truncate-partial-width-windows' characters.
+  (truncate-partial-width-windows nil)
+  ;; Prefer spaces over tabs. Spaces offer a more consistent default compared to
+  ;; 8-space tabs. This setting can be adjusted on a per-mode basis as needed.
+  (tab-width 4)
+  ;; We often split terminals and editor windows or place them side-by-side,
+  ;; making use of the additional horizontal space.
+  (fill-column 80)
+  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; try `cape-dict'.
+  ;; (text-mode-ispell-word-completion nil)
+  (auto-save-list-file-prefix
+   (expand-file-name "autosave/" user-emacs-directory))
+  ;; Remove duplicates from the kill ring to reduce clutter
+  (kill-do-not-save-duplicates t)
+  (tab-always-indent 'complete)
+  ;; Disable the obsolete practice of end-of-line spacing from the
+  ;; typewriter era.
+  (sentence-end-double-space nil)
+  
   :init
   (set-face-attribute 'default nil :family "Iosevka Term Curly" :height 140 :weight 'regular)
   (set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 140 :weight 'medium)
   (set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 135 :weight 'medium)
-  (setq initial-major-mode 'fundamental-mode)   ; No need to have an Elisp buffer when starting up
-  (setq-default cursor-type 'bar)               ; Line-style cursor similar to other text editors
-  (setq initial-scratch-message
-	"Welcome to Emacs!")	                ; Make *scratch* buffer have a welcome message
-  (setq-default frame-title-format '("%b"))     ; Make window title the buffer name
-  (setq-default fill-column 80)		        ; Set fill column to 80 rather than 70, in all cases.
-  (setq inhibit-startup-screen t)               ; Disable startup screen
-  (set-language-environment "UTF-8")
-  (set-default-coding-systems 'utf-8-unix)
-  (setq confirm-kill-processes nil)		; Stop confirming the killing of processes
-  (setq use-short-answers t)                    ; y-or-n-p makes answering questions faster
-  (show-paren-mode t)                           ; Visually indicates pair of matching parentheses
-  (delete-selection-mode t)                     ; Start writing straight after deletion
-  (put 'narrow-to-region 'disabled nil)	        ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
-  (setq read-process-output-max (* 1024 1024))  ; Increase the amount of data which Emacs reads from the process
-  (global-hl-line-mode 1)			; Highlight the current line to make it more visible
-  (setq create-lockfiles nil)                   ; lock files kill `npm start'
-  (pixel-scroll-precision-mode 1)	        ; Precision scrolling
-
-  ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
-  ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
-  ;; setting is useful beyond Corfu.
-  (setq read-extended-command-predicate #'command-completion-default-include-p)
-  (setq tab-always-indent 'complete)
-
-  (setq backup-directory-alist
-	`(("." . ,(concat user-emacs-directory "backups"))))
-  
-    :bind (("C-z" . undo)
-           ("C-x C-z" . nil)
-           ("C-h h" . nil)
-	   ;; AZERTY bindings
-	   ("C-x &" . delete-other-windows)
-	   ("C-x é" . split-window-below)
-	   ("C-x \"" . split-window-right)
-	   ("C-x à" . delete-window)
-	   ("M-ù" . xref-find-definitions)
-	   ("M-µ" . xref-find-references)
-	   ("M-ç" . text-scale-increase)
-	   ("M-à" . text-scale-decrease)
-	   ("C-l" . duplicate-dwim))
-    :hook (text-mode-hook . auto-fill-mode))
-;; Adopt a sneaky garbage collection strategy of waiting until idle
-;; time to collect; staving off the collector while the user is
-;; working.  Thanks Doom -
-;; https://github.com/hlissner/doom-emacs/blob/develop/docs/faq.org#how-does-doom-start-up-so-quickly
-(use-package gcmh
-  :ensure t
-  :diminish gcmh-mode
-  :custom
-  (gcmh-mode 1)
-  (gcmh-idle-delay 10)
-  (gcmh-high-cons-threshold (* 32 1024 1024))
-  (gc-cons-percentage 0.8))
-
-(use-package corfu
-  :pin elpa
-  :ensure t
-  ;; Optional customizations
-  :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  (corfu-separator ?\s)          ;; Orderless field separator
-  (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
-  (corfu-quit-no-match t)      ;; Never quit, even if there is no match
-  (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-preselect 'prompt)      ;; Preselect the prompt
-  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  (corfu-scroll-margin 5)        ;; Use scroll margin
-
-  ;; Recommended: Enable Corfu globally.
-  ;; This is recommended since Dabbrev can be used globally (M-/).
-  ;; See also `corfu-excluded-modes'.
-  :init
-  (global-corfu-mode))
-
-(use-package elec-pair
-  :ensure nil
-  :defer t
+  (put 'narrow-to-region 'disabled nil) ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
   :config
-  (defun nf-electric-pair-local-text-mode ()
-    "Advise and wrap electric pairs in text mode."
-    (add-function :before-until electric-pair-inhibit-predicate
-		  (lambda (c) (eq c ?<)))
-    (electric-pair-local-mode))
-  :hook ((prog-mode-hook . electric-pair-local-mode)
-	 (text-mode-hook . nf-electric-pair-local-text-mode)))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  :bind (("C-z" . undo)
+         ("C-x C-z" . nil)
+         ("C-h h" . nil)
+	 ;; AZERTY bindings
+	 ("C-x &" . delete-other-windows)
+	 ("C-x é" . split-window-below)
+	 ("C-x \"" . split-window-right)
+	 ("C-x à" . delete-window)
+	 ("M-ù" . xref-find-definitions)
+	 ("M-µ" . xref-find-references)
+	 ("M-ç" . text-scale-increase)
+	 ("M-à" . text-scale-decrease)
+	 ("C-l" . duplicate-dwim)))
 
-;; The README is very informative as to how to set paths and shells properly
-;; https://github.com/purcell/exec-path-from-shell
+(use-package hl-line
+  :ensure nil  
+  :custom
+  (global-hl-line-mode 1))
 
-;; (use-package exec-path-from-shell
-;;   :ensure t
-;;   :defer t
-;;   :hook (after-init-hook . exec-path-from-shell-initialize))
+(use-package delsel
+  :ensure nil  
+  :custom
+  (delete-selection-mode t))
 
-(use-package eldoc
-  :diminish eldoc-mode)
+(use-package window
+  :ensure nil  
+  :custom
+  ;; switch-to-buffer runs pop-to-buffer-same-window instead
+  (switch-to-buffer-obey-display-actions t)
+  ;; Prefer vertical splits over horizontal ones
+  (split-width-threshold 170)
+  (split-height-threshold nil))
+
+(use-package frame
+  :ensure nil  
+  :custom
+  ;; The native border "uses" a pixel of the fringe on the rightmost
+  ;; splits, whereas `window-divider` does not.n
+  (window-divider-default-bottom-width 1)
+  (window-divider-default-places t)
+  (window-divider-default-right-width 1)
+  ;; The blinking cursor is distracting and interferes with cursor settings in
+  ;; some minor modes that try to change it buffer-locally (e.g., Treemacs).
+  ;; Additionally, it can cause freezing, especially on macOS, for users with
+  ;; customized and colored cursors.  
+  (blink-cursor-mode -1)
+  :hook
+  (after-init-hook . window-divider-mode))
+
+(use-package paren
+  :ensure nil  
+  :custom
+  (show-paren-mode t)
+  (show-paren-delay 0.1)
+  (show-paren-highlight-openparen t)
+  (show-paren-when-point-inside-paren t)
+  (show-paren-when-point-in-periphery t))
+
+(use-package whitespace
+  :ensure nil  
+  :custom
+  (whitespace-line-column nil))
+
+(use-package comint
+  :ensure nil  
+  :custom
+  (comint-prompt-read-only t)
+  (comint-buffer-maximum-size 2048))
+
+(use-package compile
+  :ensure nil  
+  :custom
+  (compilation-always-kill t)
+  (compilation-ask-about-save nil)
+  (compilation-scroll-output 'first-error))
+
+(use-package files
+  :ensure nil  
+  :custom
+  ;; Disable the warning "X and Y are the same file". Ignoring this warning is
+  ;; acceptable since it will redirect you to the existing buffer regardless.
+  (find-file-suppress-same-file-warnings t)
+  ;; Resolve symlinks when opening files, so that any operations are conducted
+  ;; from the file's true directory (like `find-file').
+  (find-file-visit-truename t)
+  ;; Skip confirmation prompts when creating a new file or buffer
+  (confirm-nonexistent-file-or-buffer nil)
+  ;; Avoid generating backups to prevent creating world-readable copies
+  (make-backup-files nil)
+  (backup-directory-alist
+   `(("." . ,(expand-file-name "backup" user-emacs-directory))))
+  (backup-by-copying-when-linked t)
+  (backup-by-copying t)  ; Backup by copying rather renaming
+  (delete-old-versions t)  ; Delete excess backup versions silently
+  (version-control t)  ; Use version numbers for backup files
+  (kept-new-versions 5)
+  (kept-old-versions 5)
+  ;; Enable auto-save to safeguard against crashes or data loss. The
+  ;; `recover-file' or `recover-session' functions can be used to restore
+  ;; auto-saved data.
+  (auto-save-default t)
+  ;; Auto revert
+  ;; Auto-revert in Emacs is a feature that automatically updates the
+  ;; contents of a buffer to reflect changes made to the underlying file
+  ;; on disk.
+  (revert-without-query (list "."))  ; Do not prompt
+  ;; According to the POSIX, a line is defined as "a sequence of zero or
+  ;; more non-newline characters followed by a terminating newline".
+  (require-final-newline t))
 
 (use-package autorevert
-  :defer 2
-  :diminish auto-revert-mode)
+  :ensure nil  
+  :custom
+  (auto-revert-stop-on-user-input nil)
+  (auto-revert-verbose t)
+  ;; Revert other buffers (e.g, Dired)
+  (global-auto-revert-non-file-buffers t)
+  :hook (after-init-hook . global-auto-revert-mode))
+
+(use-package vc-hooks
+  :ensure nil  
+  :custom
+  (vc-follow-symlinks t)
+  ;; Do not backup version controlled files
+  (vc-make-backup-files nil))
+  
+(use-package uniquify
+  :ensure nil  
+  :custom
+  (uniquify-buffer-name-style 'forward))
+
+(use-package mouse
+  :ensure nil  
+  :custom
+  (mouse-yank-at-point t)
+  ;; Found in `mwheel.el'
+  (mouse-wheel-scroll-amount '(2 ((shift) . hscroll)))
+  (mouse-wheel-scroll-amount-horizontal 2))  
+
+(use-package simple
+  :ensure nil  
+  :custom
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Don't blink the paren matching the one at point, it's too distracting.
+  (blink-matching-paren nil)
+  (indent-tabs-mode nil))
+
+(use-package tramp
+  :ensure nil  
+  :after files
+  :custom
+  (tramp-backup-directory-alist backup-directory-alist)
+  (tramp-auto-save-directory
+   (expand-file-name "tramp-autosave/" user-emacs-directory)))
 
 (use-package recentf
-  :defer 2)
+  :ensure nil  
+  ;; `recentf' is an Emacs package that maintains a list of recently
+  ;; accessed files, making it easier to reopen files you have worked on
+  ;; recently.
+  :custom
+  (recentf-max-saved-items 300) ; default is 20
+  (recentf-auto-cleanup 'mode)
+  :hook (after-init-hook . recentf-mode))
+
+(use-package saveplace
+  :ensure nil  
+  ;; `save-place-mode` enables Emacs to remember the last location within a file
+  ;; upon reopening. This feature is particularly beneficial for resuming work at
+  ;; the precise point where you previously left off.  
+  :custom
+  (save-place-file (expand-file-name "saveplace" user-emacs-directory))
+  (save-place-limit 600)
+  :hook (after-init-hook . save-place-mode))
+
+(use-package savehist
+  :ensure nil  
+  :custom
+  ;; `savehist` is an Emacs feature that preserves the minibuffer history between
+  ;; sessions. It saves the history of inputs in the minibuffer, such as commands,
+  ;; search strings, and other prompts, to a file. This allows users to retain
+  ;; their minibuffer history across Emacs restarts.
+  (history-length 300)
+  (savehist-save-minibuffer-history t)
+  :hook (after-init-hook . savehist-mode))
+
+(use-package isearch
+  :ensure nil
+  ;; Delete char on <DEL> instead of going back searches
+  :bind (("C-c s" . isearch-forward-thing-at-point)
+	 :map isearch-mode-map
+	 ("<DEL>" . isearch-del-char)))
+
+;;;========================================
+;;; Better defaults
+;;;========================================
+
+;;; Improve defaults with packages (not builtins)
+
+;; Better GC strategy
+(use-package gcmh
+  :pin gnu
+  :ensure t
+  :diminish ""                          ; Hide in modeline as it is always there
+  :hook (after-init-hook . gcmh-mode)
+  :custom
+  (gcmh-idle-delay 'auto)
+  (gcmh-auto-idle-delay-factor 10)
+  (gcmh-low-cons-threshold minimal-emacs-gc-cons-threshold))
 
 ;; Better shell
-
 (use-package vterm
+  :pin melpa
   :ensure t
   :defer t
   :custom-face (vterm-face ((t (:family "Iosevka Nerd Font"))))
-  :bind ("C-$" . vterm))
+  :bind ("C-$" . vterm)
+  ;; Speed up vterm
+  :config
+  (setq vterm-timer-delay 0.01))
 
+;; Vertical minibuffer
 (use-package vertico
-  :ensure t
-  :pin elpa
-  :init
-  (vertico-mode)
+  :pin gnu  
+  :ensure t  
+  :hook (after-init-hook . vertico-mode)
   :config
   (vertico-multiform-mode 1)
   (add-to-list 'vertico-multiform-categories
                '(jinx grid (vertico-grid-annotate . 20))))
 
-
-;; Language parsing with tree-sitter
-
+;; Language parsing with tree-sitter and tree-sitter based modes
 (use-package treesit-auto
+  :pin melpa
   :ensure t
   :custom
   (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
+
+;; Rainbow parens
+(use-package rainbow-delimiters
+  :pin melpa
+  :ensure t
+  :defer t
+  ;; I reduced the default value of 9 to simplify the font-lock keyword,
+  ;; aiming to improve performance. This package helps differentiate
+  ;; nested delimiter pairs, particularly in languages with heavy use of
+  ;; parentheses.
+  :custom
+  (rainbow-delimiters-max-face-count 5)
+  :hook (prog-mode-hook . rainbow-delimiters-mode))
 
 ;;;========================================
 ;;; Themes
@@ -202,8 +436,8 @@
                 (t . (monochrome))))))
 
 ;; Running modus-themes depending on the time of the day.
-
 (use-package circadian
+  :pin melpa
   :ensure t
   :custom
   (calendar-latitude 50.85)
@@ -213,18 +447,13 @@
                            (:sunset  . modus-vivendi-tinted)))
   (circadian-setup))
 
-
 ;;;========================================
-;;; Completion & Navigation
+;;; Completion, navigation & actions
 ;;;========================================
 
-(use-package isearch
-  ;; Delete char on <DEL> instead of going back searches
-  :bind (("C-c s" . isearch-forward-thing-at-point)
-	 :map isearch-mode-map
-	 ("<DEL>" . isearch-del-char)))
-
+;; More permissive matching for file names and minibuffer actions
 (use-package orderless
+  :pin melpa
   :ensure t
   :custom
   (completion-styles '(partial-completion orderless flex))
@@ -233,32 +462,39 @@
   (completion-category-overrides '((file (styles partial-completion))
 				   (minibuffer (initials orderless)))))
 
-
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :ensure t
-  :defer 2
-  :config
-  (savehist-mode))
-
-;; Enable richer annotations using the Marginalia package
-
+;; Enable richer annotations
 (use-package marginalia
   :pin melpa
   :ensure t
-  :custom (marginalia-annotators '(marginalia-annotators-light))
-  :init
-  (marginalia-mode))
+  :commands (marginalia-mode marginalia-cycle)  
+  :custom
+  (marginalia-annotators '(marginalia-annotators-light))
+  :hook (after-init-hook . marginalia-mode))
 
-(use-package which-key
+;; Better completion popup
+(use-package corfu
+  :pin gnu
   :ensure t
-  :defer 4
-  :diminish which-key-mode
-  :config
-  (which-key-mode 1))
+  ;; Optional customizations
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-separator ?\s)          ;; Orderless field separator
+  (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
+  (corfu-quit-no-match t)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
+  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  (corfu-scroll-margin 5)        ;; Use scroll margin
 
-;; Add extensions
+  ;; Recommended: Enable Corfu globally.
+  ;; This is recommended since Dabbrev can be used globally (M-/).
+  ;; See also `corfu-excluded-modes'.
+  :hook (after-init-hook . global-corfu-mode))
+
+;; Better completion at point
 (use-package cape
+  :pin melpa
   :ensure t
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
@@ -279,46 +515,179 @@
   (add-hook 'completion-at-point-functions #'cape-dict)
   ;; (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
   ;; (add-hook 'completion-at-point-functions #'cape-line)
+  )
+
+;; Example configuration for Consult
+(use-package consult
+  :pin gnu
+  :ensure t
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-c M-x" . consult-mode-command)
+         ("C-c h" . consult-history)
+         ("C-c k" . consult-kmacro)
+         ("C-c m" . consult-man)
+         ("C-c i" . consult-info)
+         ([remap Info-search] . consult-info)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
 )
 
-(use-package deadgrep
+(use-package embark
+  ;; Embark is an Emacs package that acts like a context menu, allowing
+  ;; users to perform context-sensitive actions on selected items
+  ;; directly from the completion interface.
+  :pin gnu
   :ensure t
   :defer t
-  :bind ("M-s o" . deadgrep))
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
-;;;========================================
-;;; Windows & movement
-;;;========================================
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
 
-(use-package windmove
-  :ensure nil
-  :defer t
   :config
-  (setq windmove-create-window nil)     ; Emacs 27.1
-  :bind (("C-c <up>" . windmove-up)
-         ("C-c <right>" . windmove-right)
-         ("C-c <down>" . windmove-down)
-         ("C-c <left>" . windmove-left)))
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
 
-(use-package transpose-frame
+(use-package embark-consult
+  :pin gnu
+  :after consult
   :ensure t
   :defer t
-  :commands (transpose-frame
-             flip-frame
-             flop-frame
-             rotate-frame
-             rotate-frame-clockwise
-             rotate-frame-anticlockwise)
-  :bind (("C-c f" . flop-frame)
-         ("C-c r" . rotate-frame-clockwise)))
+  :hook
+  (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 ;;;========================================
-;;; Spell checking
+;;; Version control
+;;;========================================
+
+;; Git integration for Emacs
+;; Requires git
+(use-package magit
+  :pin melpa
+  :ensure t
+  :defer t
+  :bind ("C-x g" . magit-status))
+
+;; Structural diff tool for git
+;; Requires difftastic
+(use-package difftastic
+  :pin melpa
+  :ensure t
+  :bind (:map magit-blame-read-only-mode-map
+         ("D" . difftastic-magit-show)
+         ("S" . difftastic-magit-show))
+  :after magit-diff
+  :config
+  (transient-append-suffix 'magit-diff '(-1 -1)
+       [("D" "Difftastic diff (dwim)" difftastic-magit-diff)
+        ("S" "Difftastic show" difftastic-magit-show)]))
+
+;;;========================================
+;;; Spell & Syntax checking
 ;;;========================================
 
 ;; Requires aspell, aspell-en & aspell-fr to work
-
 (use-package jinx
+  :pin melpa
   :ensure t
   :defer t
   :hook (emacs-startup . global-jinx-mode)
@@ -327,14 +696,14 @@
    ("M-$" . jinx-correct)))
 
 ;; Syntax checking for GNU Emacs
-
 (use-package flymake
+  :pin gnu
   :ensure t
   :defer t)
 
 ;; Grammar checking
-
 (use-package langtool
+  :pin melpa
   :ensure t
   :defer t
   :custom
@@ -347,18 +716,15 @@
    langtool-check-done))
 
 ;;;========================================
-;;; Org-mode
+;;; Org-mode, notes and publishing
 ;;;========================================
 
 (use-package org
+  :pin gnu
   :ensure nil
   :diminish "Οrg"
   :custom
-  (org-imenu-depth 7)
-  (org-fontify-done-headline nil)
-  (org-fontify-quote-and-verse-blocks t)
-  (org-fontify-whole-heading-line nil)
-  (org-fontify-whole-block-delimiter-line t)
+  (org-imenu-depth 5)
   
   (org-confirm-babel-evaluate nil)         ; Don't prompt before running code in org
   (org-src-fontify-natively t)             ; Use syntax highlighting in source blocks while editing
@@ -367,49 +733,38 @@
   (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
   (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
   (org-cite-csl-styles-dir "~/Zotero/styles") ; Use Zotero styles for CSL exports (bibliography management)
-  (citar-citeproc-csl-styles-dir (expand-file-name "~/Zotero/styles"))
   (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
   :config
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
 
-  (defun nf-toggle-presentation ()
-    "Toggle between presentation and regular `org-mode'.
-    The modes used are `olivetti-mode' and
-    `org-tree-slide-mode'."
-    (interactive)
-    (if (bound-and-true-p olivetti-mode)
-	(olivetti-mode -1)
-      (olivetti-mode 1))
-    (if (bound-and-true-p org-tree-slide-mode)
-	(org-tree-slide-mode -1)
-      (org-tree-slide-mode 1))
-
-    (if (bound-and-true-p hide-mode-line-mode)
-	(hide-mode-line-mode -1)
-      (hide-mode-line-mode 1)))
-
-  (defun nf/parse-headline (x)
-    (plist-get (cadr x) :raw-value))
-
-  (defun nf/get-headlines ()
-    (org-element-map (org-element-parse-buffer) 'headline #'nf/parse-headline))
-
-  (defun nf/link-to-headline ()
-    "Insert an internal link to a headline."
-    (interactive)
-    (let* ((headlines (nf/get-headlines))
-	   (choice (completing-read "Headings: " headlines nil t))
-	   (desc (read-string "Description: " choice)))
-      (org-insert-link buffer-file-name (concat "*" choice) desc)))
-
-  :bind (:map org-mode-map
-	      ("C-x p" . nf-toggle-presentation))
   :hook (org-mode-hook . (lambda ()
 			   (variable-pitch-mode t)
 			   (setq-default fill-column 100))))
 
+;; Modern aesthetic for org-mode
+(use-package org-modern
+  :pin melpa
+  :ensure t
+  :defer t
+  :custom
+  (org-modern-table nil)
+  :config
+  (set-face-attribute 'org-modern-symbol nil :family "Iosevka")  
+  :hook ((org-mode-hook . org-modern-mode)
+	 (org-agenda-finalize-hook . org-modern-agenda)))
+
+;; Simple notes for Emacs with an efficient file-naming scheme
+(use-package denote
+  :pin gnu
+  :ensure t
+  :defer t  
+  :custom
+  (denote-directory (expand-file-name "~/Documents/notes/")))
+
+;; LaTeX exports from org-mode
 (use-package ox-latex
+  :ensure nil
   :after org
   :config
   (use-package engrave-faces
@@ -419,20 +774,15 @@
     :config
     (add-to-list 'org-latex-engraved-options '("numbers" . "left"))))
 
-;;; Add magnificent margins and custom blocks
-
-(use-package org-special-block-extras
-  :ensure t
-  :defer t
-  :hook (org-mode-hook . org-special-block-extras-mode))
-
-;; Custome LaTeX templates
-;; Requires a full LaTeX install, usually called `texlive'.
-;; The arch wiki https://wiki.archlinux.org/index.php/TeX_Live details how to use it
-;; latex compilation found at https://github.com/jkitchin/org-ref/blob/master/org-ref.org
-;; Better latexmk for glossaries with a ~/.latexmkrc file. Explained at `https://tex.stackexchange.com/a/44316/223017'.
-
+;; Custome LaTeX templates Requires a full LaTeX install, usually
+;; called `texlive'.  The arch wiki
+;; https://wiki.archlinux.org/index.php/TeX_Live details how to use it
+;; latex compilation found at
+;; https://github.com/jkitchin/org-ref/blob/master/org-ref.org Better
+;; latexmk for glossaries with a ~/.latexmkrc file. Explained at
+;; `https://tex.stackexchange.com/a/44316/223017'.
 (use-package auctex
+  :pin gnu
   :ensure t
   :defer t)
 
@@ -448,12 +798,19 @@
      (output-pdf "PDF Tools")
      (output-html "xdg-open"))))
 
+;; My custom templates for LaTeX
 (use-package template
+  :ensure nil
   :defer t
   :hook (org-mode-hook . (lambda ()
-			   (load-file (expand-file-name (concat user-emacs-directory "latex/template.el"))))))
+			   (load-file
+			    (expand-file-name
+			     (concat user-emacs-directory "latex/template.el"))))))
 
+;; CDLaTeX is a minor mode supporting fast insertion of environment
+;; templates and math stuff in LaTeX.
 (use-package cdlatex
+  :pin melpa
   :ensure t
   :defer t
   :diminish " cdlatex"
@@ -463,148 +820,35 @@
   :bind (:map org-cdlatex-mode-map
 	      ("`" . nil)))
 
-(use-package org-ref
+;; Citar provides a highly-configurable completing-read front-end to
+;; browse and act on BibTeX, BibLaTeX, and CSL JSON bibliographic
+;; data, and LaTeX, markdown, and org-cite editing support.
+(use-package citar
+  :pin melpa
   :ensure t
   :defer t
-  :config
-  (setq org-export-before-parsing-functions '(org-ref-glossary-before-parsing
-					      org-ref-acronyms-before-parsing)))
+  :custom
+  (citar-citeproc-csl-styles-dir (expand-file-name "~/Zotero/styles"))
+  (citar-library-paths '((expand-file-name "~/Drive/KLB/")))
+  :hook
+  (LaTeX-mode-hook . citar-capf-setup)
+  (org-mode-hook . citar-capf-setup))
 
+;; citeproc-el is an Emacs Lisp library for rendering citations and
+;; bibliographies in styles described in the Citation Style Language
+;; (CSL), an XML-based, open format to describe the formatting of
+;; bibliographic references (see http://citationstyles.org/ for
+;; further information on CSL).
 (use-package citeproc
   :ensure t
-  :defer t
-  :after org-ref)
-
-(use-package citar
-  :ensure t
-  :defer t
-  :custom (citar-library-paths '("~/Drive/KLB/"))
-  :hook
-  (LaTeX-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup))
-
-(use-package shackle
-  :ensure t
-  :defer t
-  :hook (org-mode-hook . shackle-mode)
-  :config
-  (setq shackle-rules
-	'((pdf-view-mode :align right)))) ; Ensure PDF view opens on the right
-
-(use-package org-roam
-  :ensure t
-  :defer t
-  :diminish "-Ω-"
-  :defines (org-roam-capture-templates org-roam-mode-map)
-  :custom
-  (org-roam-directory (file-truename (expand-file-name "~/org-roam")))
-  (org-roam-db-location (expand-file-name "~/org-roam/org-roam.db"))
-  :config
-  (setq org-roam-capture-templates
-	'(("d" "default" plain "%?"
-           :if-new (file+head "fleeting/%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n#+created: %U \n#+last_modified: %U\n\n")
-           :unnarrowed t)
-	  ("c" "concept" plain "%?"
-	   :if-new (file+head "concepts/${slug}.org"
-	   "#+latex_class: el-notes\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+last_modified: %U\n\n")
-	   :unnarrowed t)
-	  ("l" "literature" plain "%?"
-	   :if-new (file+head "literature/${slug}.org"
-	   "#+latex_class: el-notes\n#+title: ${title}\n#+author: Nathan Furnal\n#+filetags:\n#+created: %U\n#+las_modified: %U\n\n")
-	   :unnarrowed t)))
-  (org-roam-db-autosync-enable)
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-	 ("C-c n i" . org-roam-node-insert)
-	 ("C-c n c" . org-roam-capture)))
-
-
-;;; Replacing deft with the faster alternative : xeft.
-(use-package xeft
-  :pin elpa
-  :ensure t
-  :defer t
-  :custom
-  (xeft-directory (expand-file-name "~/projects/notes"))
-  (xeft-default-extension "org")
-  (xeft-ignore-extension '("iimg" "md~" "tex" "tex~" "log" "gls" "glo" "glg" "org~"
-			   "odt" "bbl" "ist" "qexams" "resums" "pdf" "class" "java"
-			   "docx" "mw" "png" "jpg" "defs" "fls" "toc" "out" "fdb_latexmk"
-			   "aux" "" "#" "pyg" "brf" "dvi" "html" "css" "js"))
-  :commands xeft)
-
-(use-package imenu-list
-  :ensure t
-  :defer t
-  :bind ("C-é" . imenu-list-smart-toggle))
-
-;;; Add presentation with Reveal.js
-
-(use-package ox-reveal
-  :ensure t
-  :defer 5)
-
-;;; Modern org
-
-(use-package org-modern
-  :ensure t
-  :defer t
-  :pin melpa
-  :custom
-  (org-modern-table nil)
-  :config
-  (set-face-attribute 'org-modern-symbol nil :family "Iosevka")  
-  :hook ((org-mode-hook . org-modern-mode)
-	 (org-agenda-finalize-hook . org-modern-agenda)))
-
-;;;========================================
-;;; Presentation
-;;;========================================
-
-(use-package org-tree-slide
-  :ensure t
-  :defer t
-  :diminish
-  :custom
-  (org-tree-slide-breadcrumbs nil)
-  (org-tree-slide-header nil)
-  (org-tree-slide-slide-in-effect nil)
-  (org-tree-slide-heading-emphasis nil)
-  (org-tree-slide-cursor-init t)
-  (org-tree-slide-modeline-display nil)
-  (org-tree-slide-skip-done nil)
-  (org-tree-slide-skip-comments t)
-  (org-tree-slide-fold-subtrees-skipped t)
-  (org-tree-slide-skip-outline-level 8)
-  (org-tree-slide-never-touch-face t)
-  (org-tree-slide-activate-message (format "Presentation %s" (propertize "ON" 'face 'success)))
-  (org-tree-slide-deactivate-message (format "Presentation %s" (propertize "OFF" 'face 'error)))
-  :defines org-tree-slide-mode-map
-  :bind (:map org-tree-slide-mode-map
-         ("<C-down>" . org-tree-slide-display-header-toggle)
-         ("<C-right>" . org-tree-slide-move-next-tree)
-         ("<C-left>" . org-tree-slide-move-previous-tree)))
-
-;;;========================================
-;;; Focus
-;;;========================================
-
-(use-package olivetti
-  :ensure t
-  :defer t
-  :diminish
-  :custom
-  (olivetti-body-width 0.7)
-  (olivetti-minimum-body-width 80)
-  (olivetti-recall-visual-line-mode-entry-state t))
+  :defer t)
 
 ;;;========================================
 ;;; Reading
 ;;;========================================
 
 (use-package pdf-tools
+  :pin melpa
   :ensure t
   :defer t
   :magic ("%PDF" . pdf-view-mode)
@@ -616,12 +860,9 @@
   (pdf-view-resize-factor 1.05)
   ;; create annotation on highlight
   (pdf-annot-activate-created-annotations t)
-  :config
-  (pdf-tools-install :no-query)
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
 	      ("C-r" . isearch-backward)))
-
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -634,6 +875,7 @@
 ;;;========================================
 
 (use-package markdown-mode
+  :pin melpa
   :ensure t
   :defer t
   :commands (markdown-mode gfm-mode)
@@ -652,85 +894,57 @@
 	      ("C-c <down>" . nil)))
 
 ;;;========================================
-;;; Exporting text files
+;;; CSV
 ;;;========================================
 
-(use-package pandoc-mode
+(use-package csv-mode
   :ensure t
   :defer t)
 
 ;;;========================================
-;;; Version control
+;;; Exporting text files
 ;;;========================================
 
-;; Git integration for Emacs
-;; Requires git
-
-(use-package magit
-  :ensure t
-  :defer t
+(use-package pandoc-mode
   :pin melpa
-  :bind ("C-x g" . magit-status))
-
-(use-package difftastic
   :ensure t
-  :defer t
-  :after magit-diff
-  :config
-  (transient-append-suffix 'magit-diff '(-1 -1)
-       [("D" "Difftastic diff (dwim)" difftastic-magit-diff)
-        ("S" "Difftastic show" difftastic-magit-show)]))
+  :defer t)
 
 ;;;========================================
-;;; Editing
-;;;========================================
-
-(use-package iedit
-  :ensure t
-  :defer t
-  :bind ("C-:" . iedit-mode))
-
-(use-package rect
-  :ensure nil
-  :defer t
-  :bind ("C-x <SPC>" . rectangle-mark-mode))
-
-;;;========================================
-;;; Development with Eglot
+;;; IDE-like behavior & Language servers
 ;;;========================================
 
 (use-package eglot
-  :pin elpa
+  :pin gnu
   :ensure t
   :defer t
   :custom
-  (read-process-output-max (* 1024 1024))
   (eldoc-echo-area-use-multiline-p)
   (eglot-autoshutdown t)
   :config
   ;; Python specific
-  (add-to-list 'eglot-server-programs '((python-base-mode) . ("pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+	       '(python-base-mode . ("pyright-langserver" "--stdio")))
   (setq-default eglot-workspace-configuration
 		'((:pyright .
 			    ((useLibraryCodeForTypes . t)))))
+  ;; Elixir specific
+  (add-to-list 'eglot-server-programs
+	       '((elixir-ts-mode elixir-mode heex-ts-mode) . ("elixir-ls" "--stdio")))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
 	 ("C-c l r" . eglot-rename)))
 
 ;; Debugger
-
 (use-package dape
   :ensure t
   :defer t
-
   :custom
   (dape-buffer-window-arrangement 'gud)
-
   :config
   ;; Global bindings for setting breakpoints with mouse
   (dape-breakpoint-global-mode)
-
   ;; To not display info and/or buffers on startup
   ;; (remove-hook 'dape-on-start-hooks 'dape-info)
   ;; (remove-hook 'dape-on-start-hooks 'dape-repl)
@@ -751,24 +965,22 @@
 ;;;========================================
 
 (use-package elisp-mode
+  :ensure nil
   :config
   :diminish "EL")
 
 (use-package buttercup
+  :pin melpa
   :ensure t
   :defer t)
 
 (use-package package-lint
+  :pin melpa
   :ensure t
   :defer t)
 
 (use-package elisp-lint
-  :ensure t
-  :defer t)
-
-;; Converts regex to `rx' syntax (very useful)
-;; https://github.com/mattiase/xr
-(use-package xr
+  :pin melpa
   :ensure t
   :defer t)
 
@@ -777,55 +989,30 @@
 ;;;========================================
 
 (use-package lisp-mode
+  :ensure nil
   :diminish "CL")
 
 (use-package slime
+  :pin melpa
   :ensure t
   :defer t
   :config
   (setq inferior-lisp-program "sbcl"))
 
 (use-package puni
+  :pin melpa
   :diminish puni-mode
   :ensure t
   :defer t
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook scheme-mode-hook) . puni-mode))
 
 ;;;========================================
-;;; Scheme & Racket
-;;;========================================
-
-(use-package scheme
-  :defer t
-  :ensure nil
-  :mode ("\\.scm$\\'"))
-
-(use-package geiser-guile
-  :ensure t
-  :defer t)
-
-(use-package racket-mode
-  :defer t
-  :ensure t
-  :diminish "RKT"
-  :mode ("\\.rkt\\'")
-  :custom
-  (racket-show-functions 'racket-show-echo-area)
-  :defines racket-mode-map
-  :bind (:map racket-mode-map
-	      ("C-c C-c" . racket-run)
-	      ("M-<RET>" . racket-eval-last-sexp)
-	      ("M-l" . racket-insert-lambda))
-  :hook ((racket-mode-hook .  racket-xp-mode)
-	 (racket-repl-mode-hook . hide-mode-line-mode)))
-
-;;;========================================
 ;;; Python
 ;;;========================================
 
 ;; Hide the modeline for inferior python processes
-
 (use-package hide-mode-line
+  :pin melpa
   :ensure t
   :defer t
   :hook ((inferior-python-mode-hook . hide-mode-line-mode)
@@ -835,6 +1022,7 @@
 
 ;; numpy docstring for python
 (use-package numpydoc
+  :pin melpa
   :ensure t
   :defer t
   :config
@@ -843,112 +1031,20 @@
   :bind (:map python-base-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
-
+;; Tracks down the correct Python tooling executables from your
+;; virtualenvs
 (use-package pet
+  :pin melpa
   :ensure t
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
-
-;;;========================================
-;;; Org-mode Babel
-;;;========================================
-
-;; Loading org babel languages one by one to defer them.
-
-(use-package ob-latex
   :defer t
-  :commands (org-babel-execute:latex))
-
-(use-package ob-python
-  :defer t
-  :commands (org-babel-execute:python))
-
-(use-package ob-R
-  :defer t
-  :commands (org-babel-execute:R))
-
-(use-package ob-shell
-  :defer t
-  :commands
-  (org-babel-execute:sh
-   org-babel-expand-body:sh
-
-   org-babel-execute:bash
-   org-babel-expand-body:bash))
-
-(use-package ob-sql
-  :defer t
-  :commands (org-babel-execute:sql))
-
-(use-package ob-emacs-lisp
-  :defer t
-  :commands (org-babel-execute:elisp
-	     org-babel-expand-body:elisp
-
-	     org-babel-execute:emacs-lisp
-	     org-babel-expand-body:emacs-lisp))
-
-(use-package ob-C
-  :defer t
-  :commands  (org-babel-execute:C
-	      org-babel-expand-body:C
-
-	      org-babel-execute:C++
-	      org-babel-expand-body:C++))
-
-(use-package ob-maxima
-  :defer t
-  :commands (org-babel-execute:maxima))
-
-(use-package ob-java
-  :defer t
-  :commands (org-babel-execute:java))
-
-(use-package ob-ditaa
-  :defer t
-  :custom
-  (org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
-  :commands (org-babel-execute:ditaa))
-
-(use-package ob-plantuml
-  :defer t
-  :custom
-  (org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-  :commands (org-babel-execute:plantuml))
-
-(use-package ob-dot
-  :defer t
-  :commands (org-babel-execute:dot))
-
-(use-package ob-gnuplot
-  :defer t
-  :commands (org-babel-execute:gnuplot
-	     org-babel-expand-body:gnuplot))
-
-(use-package ob-makefile
-  :defer t)
-
-(use-package ob-js
-  :ensure nil
-  :defer t
-  :commands (org-babel-execute:js))
-
-(use-package ob-scheme
-  :ensure nil
-  :defer t
-  :commands (org-babel-execute:scheme))
-
-(use-package ob-lisp
-  :ensure nil
-  :defer t
-  :custom (org-babel-lisp-eval-fn 'sly-eval)
-  :commands (org-babel-execute:lisp))
+  :hook (python-base-mode-hook . (lambda () (pet-mode -10))))
 
 ;;;========================================
 ;;; Lua
 ;;;========================================
 
 (use-package lua-mode
+  :pin melpa
   :ensure t
   :defer t
   :bind (:map lua-mode-map
@@ -961,6 +1057,7 @@
 ;;;========================================
 
 (use-package go-ts-mode
+  :ensure nil
   :custom
   (go-ts-mode-indent-offset 4))
 
@@ -969,6 +1066,7 @@
 ;;;========================================
 
 (use-package zig-mode
+  :pin melpa
   :ensure t
   :defer t)
 
@@ -978,17 +1076,20 @@
 
 ;; Major tree-sitter mode
 (use-package elixir-ts-mode
+  :pin melpa
   :ensure t
   :defer t)
 
 ;; Build tool
 (use-package mix
+  :pin melpa
   :ensure t
   :defer t
   :hook (elixir-ts-mode-hook . mix-minor-mode))
 
 ;; Static code analysis
 (use-package flycheck-credo
+  :pin melpa
   :ensure t
   :defer t  
   :custom
@@ -997,156 +1098,10 @@
 
 ;; Commands for exUnit
 (use-package exunit
+  :pin melpa
   :ensure t
   :defer t
   :hook (elixir-ts-mode-hook . exunit-mode))
-
-;;;========================================
-;;; Code snippets and skeletons
-;;;========================================
-
-;; Configure Tempel
-(use-package tempel
-  :ensure t
-  :defer t
-  ;; Require trigger prefix before template name when completing.
-  ;; :custom
-  ;; (tempel-trigger-prefix "<")
-
-  :bind (("M-=" . tempel-complete) ;; Alternative tempel-expand
-         ("M-*" . tempel-insert))
-  :init
-  ;; Setup completion at point
-  (defun tempel-setup-capf ()
-    ;; Add the Tempel Capf to `completion-at-point-functions'.
-    ;; `tempel-expand' only triggers on exact matches. Alternatively use
-    ;; `tempel-complete' if you want to see all matches, but then you
-    ;; should also configure `tempel-trigger-prefix', such that Tempel
-    ;; does not trigger too often when you don't expect it. NOTE: We add
-    ;; `tempel-expand' *before* the main programming mode Capf, such
-    ;; that it will be tried first.
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
-  :hook
-  (prog-mode-hook . tempel-setup-capf)
-  (text-mode-hook . tempel-setup-capf)
-
-  ;; Optionally make the Tempel templates available to Abbrev,
-  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
-  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
-  ;; (global-tempel-abbrev-mode)
-)
-
-;; Optional: Add tempel-collection.
-;; The package is young and doesn't have comprehensive coverage.
-(use-package tempel-collection
-  :ensure t
-  :after tempel)
-
-;;;========================================
-;;; Sharing
-;;;========================================
-
-(use-package gif-screencast
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; Mathematics
-;;;========================================
-
-(use-package maxima
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; Diagrams & Graphs
-;;;========================================
-
-(use-package plantuml-mode
-  :ensure t
-  :defer t
-  :custom
-  (plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
-  (plantuml-default-exec-mode 'jar))
-
-(use-package gnuplot
-  :ensure t
-  :defer t)
-
-;;;========================================
-;;; Assembly language
-;;;========================================
-
-(use-package nasm-mode
-  :ensure t
-  :defer t
-  :diminish "Νasm"
-  :custom
-  (nasm-basic-offset 4)
-  :hook (nasm-mode-hook . flymake-mode))
-
-(use-package masm-mode
-  :ensure t
-  :defer t
-  :diminish "Masm")
-
-(use-package flymake-nasm
-  :ensure t
-  :defer t
-  :hook (nasm-mode-hook . flymake-nasm-setup))
-
-;;;========================================
-;;; QoL
-;;;========================================
-
-;;; Shortcuts
-
-(use-package handy
-  :load-path "lisp/"
-  :bind ("C-c I" . handy-find-user-init-file))
-
-;;; Multiple cursors
-
-(use-package multiple-cursors
-  :ensure t
-  :defer t
-  :bind
-  (("C-<" . mc/mark-all-like-this-dwim)
-   ("C->" . mc/mark-all-dwim)))
-
-(use-package cmake-ts-mode
-  :ensure t
-  :defer t)
-
-
-(use-package disaster
-  :ensure t
-  :defer t
-  :bind (:map c-ts-base-mode-map
-	("C-c d" . disaster)
-	:map c++-ts-mode-map
-	("C-c d" . disaster)
-	:map fortran-mode-map
-	("C-c d" . disaster)
-	:map c-mode-map
-	("C-c d" . disaster)
-	:map c++-mode-map
-	("C-c d" . disaster)))
-
-;;; Colors
-
-(use-package rainbow-delimiters
-  :ensure t
-  :defer t
-  :hook (prog-mode-hook . rainbow-delimiters-mode))
-
-;;; CSV
-
-(use-package csv-mode
-  :ensure t
-  :defer t)
 
 ;;;========================================
 ;;; Docker
@@ -1160,14 +1115,7 @@
   :ensure t
   :defer t)
 
-;;;========================================
-;;; Accounting
-;;;========================================
-
-(use-package ledger-mode
-  :ensure t
-  :defer t)
-
+(provide 'init)
 ;;; init.el ends here
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1175,7 +1123,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(exunit elixir-ts-mode mix flycheck-credo eglot auctex buttercup cape cdlatex circadian citar corfu csv-mode dape deadgrep difftastic diminish disaster docker dockerfile-mode elisp-lint engrave-faces flymake-nasm gcmh geiser-guile gif-screencast gnuplot hide-mode-line iedit imenu-list jinx langtool ledger-mode lua-mode marginalia markdown-mode masm-mode maxima modus-themes multiple-cursors nasm-mode numpydoc olivetti orderless org-modern org-ref org-roam org-special-block-extras org-tree-slide ox-reveal pandoc-mode pdf-tools pet plantuml-mode puni racket-mode rainbow-delimiters shackle slime tempel-collection transpose-frame treesit-auto vertico vterm which-key xeft xr zig-mode)))
+   '(eglot zig-mode vterm vertico treesit-auto slime rainbow-delimiters puni pet pdf-tools pandoc-mode org-modern orderless numpydoc modus-themes mix markdown-mode marginalia lua-mode langtool jinx hide-mode-line gcmh flycheck-credo exunit engrave-faces embark-consult elixir-ts-mode elisp-lint dockerfile-mode docker diminish difftastic denote dape csv-mode corfu citar circadian cdlatex cape buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
