@@ -432,7 +432,6 @@
   :ensure t
   :defer t
   :init
-  (setq )
   (setq ef-themes-headings
       '((1 overline variable-pitch 1.5)
         (2 overline-variable-pitch 1.3)
