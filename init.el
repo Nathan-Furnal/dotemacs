@@ -423,10 +423,22 @@
 						(custom-set-faces
 						 '(mode-line ((t :family "Iosevka Etoile" :height 100 :weight 'regular))))))
   (setq modus-themes-headings
-        (quote ((1 . (overline variable-pitch 1.4))
-                (2 . (overline variable-pitch 1.25))
+        (quote ((1 . (overline variable-pitch 1.5))
+                (2 . (overline variable-pitch 1.3))
                 (3 . (overline 1.1))
                 (t . (monochrome))))))
+
+(use-package ef-themes
+  :ensure t
+  :defer t
+  :init
+  (setq )
+  (setq ef-themes-headings
+      '((1 overline variable-pitch 1.5)
+        (2 overline-variable-pitch 1.3)
+        (3 overline 1.1)
+        (agenda-date 1.3)     
+        (t monochrome))))
 
 ;; Running modus-themes depending on the time of the day.
 (use-package circadian
@@ -436,8 +448,8 @@
   (calendar-latitude 50.85)
   (calendar-longitude 4.35)
   :config
-  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-                           (:sunset  . modus-vivendi-tinted)))
+  (setq circadian-themes '((:sunrise . ef-reverie)
+                           (:sunset  . ef-dream)))
   (circadian-setup))
 
 ;;;========================================
@@ -720,7 +732,7 @@
   (org-imenu-depth 5)
   
   (org-confirm-babel-evaluate nil)         ; Don't prompt before running code in org
-  (org-src-fontify-natively t)             ; Use syntax highlighting in source blocks while editing
+  (org-src-fontify-natively t)             ; Fontify code in code blocks
   (org-src-tab-acts-natively t)            ; Tabs act as 4 spaces in source blocks
   (org-src-preserve-indentation t)         ; Preserving indentation in source blocks
   (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
@@ -743,18 +755,6 @@
 			   (variable-pitch-mode t)
 			   (setq-default fill-column 100))))
 
-;; Modern aesthetic for org-mode
-(use-package org-modern
-  :pin melpa
-  :ensure t
-  :defer t
-  :custom
-  (org-modern-table nil)
-  :config
-  (set-face-attribute 'org-modern-symbol nil :family "Iosevka")  
-  :hook ((org-mode-hook . org-modern-mode)
-	     (org-agenda-finalize-hook . org-modern-agenda)))
-
 ;; Simple notes for Emacs with an efficient file-naming scheme
 (use-package denote
   :pin gnu
@@ -762,6 +762,13 @@
   :defer t  
   :custom
   (denote-directory (expand-file-name "~/Documents/notes/")))
+
+;; Manipulate denote files in consult
+(use-package consult-denote
+  :pin gnu
+  :after (consult denote)
+  :ensure t
+  :defer t)
 
 ;; LaTeX exports from org-mode
 (use-package ox-latex
@@ -774,6 +781,11 @@
     (org-latex-src-block-backend 'engraved)
     :config
     (add-to-list 'org-latex-engraved-options '("numbers" . "left"))))
+
+(use-package ox-tufte
+  :pin melpa
+  :ensure t
+  :defer t)
 
 ;; Custome LaTeX templates Requires a full LaTeX install, usually
 ;; called `texlive'.  The arch wiki
@@ -841,13 +853,6 @@
 ;; bibliographic references (see http://citationstyles.org/ for
 ;; further information on CSL).
 (use-package citeproc
-  :ensure t
-  :defer t)
-
-;; I'm using Asciidoc at work sometimes because Emacs is not available
-;; But I want to be able to use it on my local machine when possible
-(use-package adoc-mode
-  :pin melpa
   :ensure t
   :defer t)
 
@@ -944,13 +949,17 @@
   (setq jsonrpc-event-hook nil)  
   ;; Python specific
   (add-to-list 'eglot-server-programs
-	       '(python-base-mode . ("pyright-langserver" "--stdio")))
-  (setq-default eglot-workspace-configuration
-		'((:pyright .
-			    ((useLibraryCodeForTypes . t)))))
+               '((python-mode python-ts-mode)
+                 "basedpyright-langserver" "--stdio"))
   ;; Elixir specific
   (add-to-list 'eglot-server-programs
-	       '((elixir-ts-mode elixir-mode heex-ts-mode) . ("elixir-ls" "--stdio")))
+	           '((elixir-ts-mode elixir-mode heex-ts-mode) . ("elixir-ls" "--stdio")))
+  ;; Golang specific
+  (setq-default eglot-workspace-configuration
+    '((:gopls .
+        ((staticcheck . t)
+         (matcher . "CaseSensitive")
+         (ui.semanticTokens . t)))))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -1027,6 +1036,48 @@
   :hook ((emacs-lisp-mode-hook lisp-mode-hook racket-mode-hook scheme-mode-hook) . puni-mode))
 
 ;;;========================================
+;;; Scheme 
+;;;========================================
+
+(use-package geiser
+  :ensure t
+  :defer t)
+
+;; Guile
+(use-package geiser-guile
+  :ensure t
+  :defer t
+  :custom
+  (geiser-guile-binary "/usr/bin/guile"))
+
+;; Chez
+(use-package geiser-chez
+  :ensure t
+  :defer t
+  :custom
+  (geiser-chez-binary "/usr/bin/chez"))
+
+;; Chicken
+(use-package geiser-chicken
+  :ensure t
+  :defer t
+  :custom
+  (geiser-chicken-binary "/usr/bin/chicken-csi"))
+
+;;;========================================
+;;; Maxima
+;;;========================================
+
+(use-package maxima
+  :ensure t
+  :defer t
+  :custom
+  (org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+	                        maxima-display-maxima-buffer nil)
+  :mode (("\\.mac\\'" . maxima-mode))
+  :interpreter ("maxima" . maxima-mode))
+
+;;;========================================
 ;;; Python
 ;;;========================================
 
@@ -1084,10 +1135,9 @@
 ;;; Golang
 ;;;========================================
 
-(use-package go-ts-mode
-  :ensure nil
-  :custom
-  (go-ts-mode-indent-offset 4))
+(use-package go-mode
+  :ensure t
+  :defer t)
 
 ;;;========================================
 ;;; Zig
@@ -1153,7 +1203,7 @@
  '(org-agenda-files
    '("/home/nathan/Documents/notes/agendas/PERSONAL.org" "/home/nathan/Documents/notes/agendas/WORK.org") nil nil "Customized with use-package org")
  '(package-selected-packages
-   '(org-super-agenda eldoc flymake-ruff bind-key cl-generic cl-lib erc external-completion faceup flymake idlwave let-alist map nadvice ntlm org project python seq so-long soap-client svg tramp use-package verilog-mode xref eglot zig-mode vterm vertico treesit-auto slime rainbow-delimiters puni pet pdf-tools pandoc-mode org-modern orderless numpydoc modus-themes mix markdown-mode marginalia lua-mode langtool jinx hide-mode-line gcmh flycheck-credo exunit engrave-faces embark-consult elixir-ts-mode elisp-lint dockerfile-mode docker diminish difftastic denote dape csv-mode corfu citar circadian cdlatex cape buttercup auctex)))
+   '(ef-themes go-mode geiser-chicken maxima geiser-chez geiser-guile geiser multiple-cursors htmlize ox-tufte consult-denote org-super-agenda eldoc flymake-ruff bind-key cl-generic cl-lib erc external-completion faceup flymake idlwave let-alist map nadvice ntlm org project python seq so-long soap-client svg tramp use-package verilog-mode xref eglot zig-mode vterm vertico treesit-auto slime rainbow-delimiters puni pet pdf-tools pandoc-mode orderless numpydoc modus-themes mix markdown-mode marginalia lua-mode langtool jinx hide-mode-line gcmh flycheck-credo exunit engrave-faces embark-consult elixir-ts-mode elisp-lint dockerfile-mode docker diminish difftastic denote dape csv-mode corfu citar circadian cdlatex cape buttercup auctex)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
