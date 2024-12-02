@@ -38,3 +38,4 @@ opam*
 url*
 tree-sitter
 saveplace
+*.elc

@@ -146,10 +146,11 @@
   :custom
   (calendar-latitude 50.85)
   (calendar-longitude 4.35)
+  (circadian-themes '((:sunrise . ef-reverie)
+                      (:sunset  . ef-dream)))
   :config
-  (setq circadian-themes '((:sunrise . ef-reverie)
-                           (:sunset  . ef-dream)))
-  (circadian-setup))
+  (circadian-setup)
+  :hook (after-init . circadian-setup))
 
 ;;;========================================
 ;;; Completion, navigation & actions
@@ -586,11 +587,6 @@
 ;;; Agenda & Organization
 ;;;========================================
 
-(use-package org-super-agenda
-  :ensure t
-  :defer t
-  :hook (after-init . org-super-agenda-mode))
-
 ;;;========================================
 ;;; Markdown
 ;;;========================================
@@ -861,7 +857,13 @@
 (use-package elixir-ts-mode
   :pin melpa
   :ensure t
-  :defer t)
+  :defer t
+  :config
+  (defun nf/insert-pipe()
+    (interactive)
+    (insert "|>"))
+  :bind (:map elixir-ts-mode-map
+              ("C-c &" . nf/insert-pipe)))
 
 ;; Build tool
 (use-package mix
@@ -885,6 +887,17 @@
   :ensure t
   :defer t
   :hook (elixir-ts-mode . exunit-mode))
+
+(use-package inf-elixir
+  :ensure t
+  :defer t
+  :bind (:map elixir-ts-mode-map
+         ("C-c i i" . inf-elixir)
+         ("C-c i p" . inf-elixir-project)
+         ("C-c i l" . inf-elixir-send-line)
+         ("C-c i r" . inf-elixir-send-region)
+         ("C-c i b" . inf-elixir-send-buffer)
+         ("C-c i R" . inf-elixir-reload-module)))
 
 ;;;========================================
 ;;; Docker
