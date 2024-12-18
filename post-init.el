@@ -473,6 +473,9 @@
 (use-package consult-denote
   :pin gnu
   :after (consult denote)
+  :custom
+  (consult-denote-find-command #'consult-fd)
+  (consult-denote-grep-command #'consult-ripgrep)
   :ensure t
   :defer t)
 
@@ -582,6 +585,38 @@
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
 	      ("C-r" . isearch-backward)))
+
+;;;========================================
+;;; Atom/RSS
+;;;========================================
+
+(use-package elfeed
+  :ensure t
+  :defer t
+  :commands (elfeed)
+  :custom
+  (url-queue-timeout 30)
+  (elfeed-feeds
+   '(("https://mazzo.li/rss.xml" c low-level unix)
+     ("https://simblob.blogspot.com/feeds/posts/default" gamedev math algorithms)
+     ("https://box2d.org/posts/index.xml" gamedev math algorithms)
+     "https://davidgomes.com/rss/"
+     ("https://fabiensanglard.net/rss.xml" retrogaming)
+     ("https://ferd.ca/feed.rss" distributed)
+     "https://blog.singleton.io/index.xml"
+     ("https://johnnysswlab.com/feed/" cpp performance)
+     ("https://jvns.ca/atom.xml" webdev)
+     ("https://matklad.github.io/feed.xml" low-level programming)
+     ("https://jonathan-frere.com/index.xml" programming)
+     ("https://notes.eatonphil.com/rss.xml" programming)
+     ("https://samwho.dev/blog" programming visualization)
+     ("https://wingolog.org/feed/atom" compilers guile scheme)
+     ("https://jakelazaroff.com/rss.xml" webdev)
+     ("https://www.localfirstnews.com/rss/" local-first)
+     ("https://www.internalpointers.com/rss" networking concurrency)
+     ("https://hazelweakly.me/rss.xml" observability)
+     ("https://norvig.com/rss-feed.xml" software)
+     ("https://pythonspeed.com/atom.xml" python))))
 
 ;;;========================================
 ;;; Agenda & Organization
