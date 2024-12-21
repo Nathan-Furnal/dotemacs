@@ -37,9 +37,6 @@
   (eval-when-compile
     (require 'use-package)))
 
-(use-package diminish :ensure t :after use-package) ;; if you use :diminish
-(use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
-
 ;; Ensure the 'use-package' package is installed and loaded
 
 ;;; Features, warnings, and errors
@@ -310,10 +307,6 @@
 ;; after each deletion, disrupting the flow of editing.
 (setq delete-pair-blink-delay 0.03)
 
-;; Ensure window-start is never invisible. This enhances user experience when
-;; folding/unfolding code (outline, org-mode, outline-minor-mode...)
-(setq-default make-window-start-visible t)
-
 ;;; Indent and formatting
 (setq-default left-fringe-width  8)
 (setq-default right-fringe-width 8)
@@ -387,6 +380,8 @@
 
 (setq sh-indent-after-continuation 'always)
 
+;;; Dired
+
 (setq dired-free-space nil
       dired-deletion-confirmer 'y-or-n-p
       dired-filter-verbose nil
@@ -408,39 +403,6 @@
 
 ;;; Load post-init.el
 (minimal-emacs-load-user-init "post-init.el")
-
-;; Own
-
-(delete-selection-mode t)
-
-;; Thanks Prot'
-;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
-(defun prot/keyboard-quit-dwim ()
-  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
-
-The generic `keyboard-quit' does not do the expected thing when
-the minibuffer is open.  Whereas we want it to close the
-minibuffer, even without explicitly focusing it.
-
-The DWIM behaviour of this command is as follows:
-
-- When the region is active, disable it.
-- When a minibuffer is open, but not focused, close the minibuffer.
-- When the Completions buffer is selected, close it.
-- In every other case use the regular `keyboard-quit'."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   (t
-    (keyboard-quit))))
-
-(define-key global-map (kbd "C-g") #'prot/keyboard-quit-dwim)
-
 
 (provide 'init)
 

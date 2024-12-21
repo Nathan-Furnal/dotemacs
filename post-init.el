@@ -30,6 +30,9 @@
 ;;; Defaults
 ;;;========================================
 
+(use-package diminish :ensure t :after use-package) ;; if you use :diminish
+(use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
+
 ;; Auto-revert in Emacs is a feature that automatically updates the
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
@@ -602,13 +605,13 @@
      ("https://box2d.org/posts/index.xml" gamedev math algorithms)
      "https://davidgomes.com/rss/"
      ("https://fabiensanglard.net/rss.xml" retrogaming)
-     ("https://ferd.ca/feed.rss" distributed)
+     ("https://ferd.ca/feed.rss" distsys)
      "https://blog.singleton.io/index.xml"
      ("https://johnnysswlab.com/feed/" cpp performance)
      ("https://jvns.ca/atom.xml" webdev)
      ("https://matklad.github.io/feed.xml" low-level programming)
      ("https://jonathan-frere.com/index.xml" programming)
-     ("https://notes.eatonphil.com/rss.xml" programming)
+     ("https://notes.eatonphil.com/rss.xml" distsys programming)
      ("https://samwho.dev/blog" programming visualization)
      ("https://wingolog.org/feed/atom" compilers guile scheme)
      ("https://jakelazaroff.com/rss.xml" webdev)
