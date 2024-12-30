@@ -39,3 +39,4 @@ url*
 tree-sitter
 saveplace
 *.elc
+*.so
