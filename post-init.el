@@ -71,6 +71,10 @@
   :config
   (setq vterm-timer-delay 0.01))
 
+(use-package fish-mode
+  :ensure t
+  :defer t)
+
 ;; Vertical minibuffer
 (use-package vertico
   :pin gnu  
@@ -485,14 +489,14 @@
 ;; LaTeX exports from org-mode
 (use-package ox-latex
   :ensure nil
-  :after org
+  :after org)
+
+(use-package engrave-faces
+  :ensure t
+  :custom
+  (org-latex-src-block-backend 'engraved)
   :config
-  (use-package engrave-faces
-    :ensure t
-    :custom
-    (org-latex-src-block-backend 'engraved)
-    :config
-    (add-to-list 'org-latex-engraved-options '("numbers" . "left"))))
+  (add-to-list 'org-latex-engraved-options '("numbers" . "left")))
 
 (use-package ox-tufte
   :pin melpa
@@ -774,6 +778,13 @@
   :defer t
   :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode) . puni-mode))
 
+(use-package parinfer-rust-mode
+  :ensure t
+  :defer t
+  :custom
+  (setq parinfer-rust-auto-download t)
+  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode) . parinfer-rust-mode))
+
 ;;;========================================
 ;;; Scheme 
 ;;;========================================
@@ -807,6 +818,10 @@
 ;;; Maxima
 ;;;========================================
 
+(use-package gnuplot
+  :ensure t
+  :defer t)
+
 (use-package maxima
   :ensure t
   :defer t
@@ -820,14 +835,18 @@
 ;;; Python
 ;;;========================================
 
+(use-package python
+  :ensure nil
+  )
+
 ;; Hide the modeline for inferior python processes
 (use-package hide-mode-line
   :pin melpa
   :ensure t
   :defer t
   :hook ((inferior-python-mode . hide-mode-line-mode)	
-	 (pdf-view-mode . hide-mode-line-mode)
-	 (shell-mode . hide-mode-line-mode)))
+	     (pdf-view-mode . hide-mode-line-mode)
+	     (shell-mode . hide-mode-line-mode)))
 
 ;; numpy docstring for python
 (use-package numpydoc
