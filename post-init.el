@@ -623,7 +623,14 @@
      ("https://www.internalpointers.com/rss" networking concurrency)
      ("https://hazelweakly.me/rss.xml" observability)
      ("https://norvig.com/rss-feed.xml" software)
-     ("https://pythonspeed.com/atom.xml" python))))
+     ("https://pythonspeed.com/atom.xml" python)
+     ("https://austinhenley.com/blog/feed.rss" machine-learning)
+     ("https://www.pathsensitive.com/feeds/posts/default?alt=rss" software-design)
+     ("https://blog.ploeh.dk/rss.xml" software-design)
+     ("https://transactional.blog/feed.xml" database)
+     ("https://www.jmeiners.com/feed.xml" software)
+     ("https://olano.dev/feed.xml" software)
+     ("https://explaining.software/rss" software-design))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -703,6 +710,15 @@
         ((staticcheck . t)
          (matcher . "CaseSensitive")
          (ui.semanticTokens . t)))))
+  ;; Haskell specific
+  (add-to-list 'eglot-server-programs
+               '((haskell-ts-mode)
+                 "haskell-language-server-wrapper" "--lsp"))
+  (setq-default eglot-workspace-configuration
+                '((haskell
+                   (plugin
+                    (stan
+                     (globalOn . :json-false))))))  ;; disable stan
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -835,10 +851,6 @@
 ;;; Python
 ;;;========================================
 
-(use-package python
-  :ensure nil
-  )
-
 ;; Hide the modeline for inferior python processes
 (use-package hide-mode-line
   :pin melpa
@@ -955,6 +967,20 @@
          ("C-c i r" . inf-elixir-send-region)
          ("C-c i b" . inf-elixir-send-buffer)
          ("C-c i R" . inf-elixir-reload-module)))
+
+;;;========================================
+;;; Haskell
+;;;========================================
+
+(use-package haskell-ts-mode
+  :mode ("\\.hs\\'")
+  :ensure t
+  :defer t)
+
+(use-package hindent
+  :ensure t
+  :defer t
+  :hook (haskell-ts-mode . hindent-mode))
 
 ;;;========================================
 ;;; Docker
