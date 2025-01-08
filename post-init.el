@@ -630,7 +630,8 @@
      ("https://transactional.blog/feed.xml" database)
      ("https://www.jmeiners.com/feed.xml" software)
      ("https://olano.dev/feed.xml" software)
-     ("https://explaining.software/rss" software-design))))
+     ("https://explaining.software/rss" software-design)
+     ("https://www.mattkeeter.com/blog/" rust lowl-level graphics))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -799,7 +800,7 @@
   :defer t
   :custom
   (setq parinfer-rust-auto-download t)
-  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode) . parinfer-rust-mode))
+  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode clojure-ts-mode clojurescript-mode)))
 
 ;;;========================================
 ;;; Scheme 
@@ -829,6 +830,26 @@
   :defer t
   :custom
   (geiser-chicken-binary "/usr/bin/chicken-csi"))
+
+
+;;;========================================
+;;; Clojure
+;;;========================================
+
+(use-package clojure-ts-mode
+  :ensure t
+  :defer t
+  :custom
+  (clojure-ts-indent-style 'fixed))
+
+(use-package cider
+  :ensure t
+  :defer t)
+
+(use-package flycheck-clj-kondo
+  :ensure t
+  :defer t
+  :hook (clojure-ts-mode clojurescript-mode))
 
 ;;;========================================
 ;;; Maxima
