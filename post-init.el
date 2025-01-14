@@ -631,7 +631,8 @@
      ("https://www.jmeiners.com/feed.xml" software)
      ("https://olano.dev/feed.xml" software)
      ("https://explaining.software/rss" software-design)
-     ("https://www.mattkeeter.com/blog/" rust lowl-level graphics))))
+     ("https://www.mattkeeter.com/blog/" rust lowl-level graphics)
+     ("https://third-bit.com/atom.xml" software-design teaching))))
 
 ;;;========================================
 ;;; Agenda & Organization
