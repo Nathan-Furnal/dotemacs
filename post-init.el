@@ -633,7 +633,8 @@
      ("https://explaining.software/rss" software-design)
      ("https://www.mattkeeter.com/blog/" rust lowl-level graphics)
      ("https://third-bit.com/atom.xml" software-design teaching)
-     ("https://borretti.me/feed.xml" software))))
+     ("https://borretti.me/feed.xml" software)
+     ("https://cybercat-institute.github.io//feed.xml" software-engineering plt machine-learing))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -722,6 +723,8 @@
                    (plugin
                     (stan
                      (globalOn . :json-false))))))  ;; disable stan
+  ;; Roc specific
+  (add-to-list 'eglot-server-programs '(roc-ts-mode "roc_language_server"))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -848,6 +851,13 @@
   :ensure t
   :defer t)
 
+(use-package clj-refactor
+  :ensure t
+  :defer t
+  :config
+  (cljr-add-keybindings-with-prefix "C-c C-m")
+  :hook clojure-ts-mode)
+
 (use-package flycheck-clj-kondo
   :ensure t
   :defer t
@@ -933,6 +943,19 @@
   :defer t)
 
 ;;;========================================
+;;; Julia
+;;;========================================
+
+(use-package julia-ts-mode
+  :ensure t
+  :defer t)
+
+(use-package julia-snail
+  :ensure t
+  :defer t
+  :hook (julia-ts-mode . julia-snail-mode))
+
+;;;========================================
 ;;; Zig
 ;;;========================================
 
@@ -1010,6 +1033,14 @@
 ;;;========================================
 
 (use-package bqn-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
+;;; Roc
+;;;========================================
+
+(use-package roc-ts-mode
   :ensure t
   :defer t)
 
