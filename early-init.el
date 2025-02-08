@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.1.1
+;; Version: 1.1.2
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -54,7 +54,7 @@ When set to non-nil, Emacs will automatically call `package-initialize' and
          (expand-file-name filename
                            minimal-emacs-user-directory)))
     (when (file-exists-p user-init-file)
-      (load user-init-file nil t))))
+      (load user-init-file nil t t))))
 
 (minimal-emacs-load-user-init "pre-early-init.el")
 
@@ -90,19 +90,25 @@ When set to non-nil, Emacs will automatically call `package-initialize' and
 
 (unless (daemonp)
   (let ((old-value (default-toplevel-value 'file-name-handler-alist)))
-    (set-default-toplevel-value
-     'file-name-handler-alist
-     ;; Determine the state of bundled libraries using calc-loaddefs.el.
-     ;; If compressed, retain the gzip handler in `file-name-handler-alist`.
-     ;; If compiled or neither, omit the gzip handler during startup for
-     ;; improved startup and package load time.
-     (if (eval-when-compile
-           (locate-file-internal "calc-loaddefs.el" load-path))
-         nil
-       (list (rassq 'jka-compr-handler old-value))))
-    ;; Ensure the new value persists through any current let-binding.
+    ;; Determine the state of bundled libraries using calc-loaddefs.el.
+    ;; If compressed, retain the gzip handler in `file-name-handler-alist`.
+    ;; If compiled or neither, omit the gzip handler during startup for
+    ;; improved startup and package load time.
     (set-default-toplevel-value 'file-name-handler-alist
-                                file-name-handler-alist)
+                                (if (eval-when-compile
+                                      (locate-file-internal "calc-loaddefs.el"
+                                                            load-path))
+                                    nil
+                                  (list (rassq 'jka-compr-handler old-value))))
+    ;; Ensure the new value persists through any current let-binding.
+    (put 'file-name-handler-alist 'initial-value old-value)
+    ;; Emacs processes command-line files very early in startup. These files may
+    ;; include special paths like TRAMP paths, so restore
+    ;; `file-name-handler-alist' for this stage of initialization.
+    (define-advice command-line-1 (:around (fn args-left) respect-file-handlers)
+      (let ((file-name-handler-alist
+             (if args-left old-value file-name-handler-alist)))
+        (funcall fn args-left)))
     ;; Remember the old value to reset it as needed.
     (add-hook 'emacs-startup-hook
               (lambda ()
@@ -115,36 +121,33 @@ When set to non-nil, Emacs will automatically call `package-initialize' and
 
   (unless noninteractive
     (unless minimal-emacs-debug
-      (unless minimal-emacs-debug
-        ;; Suppress redisplay and redraw during startup to avoid delays and
-        ;; prevent flashing an unstyled Emacs frame.
-        ;; (setq-default inhibit-redisplay t) ; Can cause artifacts
-        (setq-default inhibit-message t)
+      ;; Suppress redisplay and redraw during startup to avoid delays and
+      ;; prevent flashing an unstyled Emacs frame.
+      ;; (setq-default inhibit-redisplay t) ; Can cause artifacts
+      (setq-default inhibit-message t)
 
-        ;; Reset the above variables to prevent Emacs from appearing frozen or
-        ;; visually corrupted after startup or if a startup error occurs.
-        (defun minimal-emacs--reset-inhibited-vars-h ()
-          ;; (setq-default inhibit-redisplay nil) ; Can cause artifacts
-          (setq-default inhibit-message nil)
-          (remove-hook 'post-command-hook #'minimal-emacs--reset-inhibited-vars-h))
+      ;; Reset the above variables to prevent Emacs from appearing frozen or
+      ;; visually corrupted after startup or if a startup error occurs.
+      (defun minimal-emacs--reset-inhibited-vars-h ()
+        ;; (setq-default inhibit-redisplay nil) ; Can cause artifacts
+        (setq-default inhibit-message nil)
+        (remove-hook 'post-command-hook #'minimal-emacs--reset-inhibited-vars-h))
 
-        (add-hook 'post-command-hook
-                  #'minimal-emacs--reset-inhibited-vars-h -100))
-
-      (dolist (buf (buffer-list))
-        (with-current-buffer buf
-          (setq mode-line-format nil)))
+      (add-hook 'post-command-hook
+                #'minimal-emacs--reset-inhibited-vars-h -100)
 
       (put 'mode-line-format 'initial-value
            (default-toplevel-value 'mode-line-format))
       (setq-default mode-line-format nil)
+      (dolist (buf (buffer-list))
+        (with-current-buffer buf
+          (setq mode-line-format nil)))
 
       (defun minimal-emacs--startup-load-user-init-file (fn &rest args)
         "Advice for startup--load-user-init-file to reset mode-line-format."
         (unwind-protect
-            (progn
-              ;; Start up as normal
-              (apply fn args))
+            ;; Start up as normal
+            (apply fn args)
           ;; If we don't undo inhibit-{message, redisplay} and there's an
           ;; error, we'll see nothing but a blank Emacs frame.
           (setq-default inhibit-message nil)
@@ -273,11 +276,13 @@ When set to non-nil, Emacs will automatically call `package-initialize' and
 (setq package-enable-at-startup nil)
 (setq package-quickstart nil)
 (setq use-package-always-ensure t)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")                        
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 (customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
-                                                      ("nongnu" . 80)                                                    
+                                                      ("nongnu" . 80)
+                                                      ("stable" . 70)
                                                       ("melpa"  . 0)))
 
 ;;; Load post-early-init.el

@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.1.1
+;; Version: 1.1.2
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -23,6 +23,7 @@
 (setq ffap-machine-p-known 'reject)
 
 ;;; package.el
+
 (when (bound-and-true-p minimal-emacs-package-initialize-and-refresh)
   ;; Initialize and refresh package contents again if needed
   (package-initialize)
@@ -46,16 +47,8 @@
 
 (setq warning-suppress-types '((lexical-binding)))
 
-;; Some features that are not represented as packages can be found in
-;; `features', but this can be inconsistent. The following enforce consistency:
-(if (fboundp #'json-parse-string)
-    (push 'jansson features))
-(if (string-match-p "HARFBUZZ" system-configuration-features) ; no alternative
-    (push 'harfbuzz features))
-(if (bound-and-true-p module-file-suffix)
-    (push 'dynamic-modules features))
-
 ;;; Minibuffer
+
 ;; Allow nested minibuffers
 (setq enable-recursive-minibuffers t)
 
@@ -76,15 +69,20 @@
   (advice-add #'yes-or-no-p :override #'y-or-n-p))
 (defalias #'view-hello-file #'ignore)  ; Never show the hello file
 
-;;; Misc
-
-;; switch-to-buffer runs pop-to-buffer-same-window instead
-(setq switch-to-buffer-obey-display-actions t)
+;;; Show-paren
 
 (setq show-paren-delay 0.1
       show-paren-highlight-openparen t
       show-paren-when-point-inside-paren t
       show-paren-when-point-in-periphery t)
+
+;;; Compilation
+
+(setq compilation-always-kill t
+      compilation-ask-about-save nil
+      compilation-scroll-output 'first-error)
+
+;;; Misc
 
 (setq whitespace-line-column nil)  ; whitespace-mode
 
@@ -98,20 +96,14 @@
 (setq-default display-line-numbers-width 3)
 (setq-default display-line-numbers-widen t)
 
-(setq comint-prompt-read-only t)
-(setq comint-buffer-maximum-size 2048)
-
-(setq compilation-always-kill t
-      compilation-ask-about-save nil
-      compilation-scroll-output 'first-error)
-
 (setq truncate-string-ellipsis "…")
-
-;; Delete by moving to trash in interactive mode
-(setq delete-by-moving-to-trash (not noninteractive))
 
 ;; Increase how much is read from processes in a single chunk
 (setq read-process-output-max (* 512 1024))  ; 512kb
+
+;; Improve Emacs' responsiveness by delaying syntax highlighting during input
+;; but may reduce visual feedback.
+(setq redisplay-skip-fontification-on-input t)
 
 ;; Collects and displays all available documentation immediately, even if
 ;; multiple sources provide it. It concatenates the results.
@@ -124,6 +116,9 @@
 
 ;;; Files
 
+;; Delete by moving to trash in interactive mode
+(setq delete-by-moving-to-trash (not noninteractive))
+
 ;; Disable the warning "X and Y are the same file". Ignoring this warning is
 ;; acceptable since it will redirect you to the existing buffer regardless.
 (setq find-file-suppress-same-file-warnings t)
@@ -132,13 +127,6 @@
 ;; from the file's true directory (like `find-file').
 (setq find-file-visit-truename t
       vc-follow-symlinks t)
-
-;; Skip confirmation prompts when creating a new file or buffer
-(setq confirm-nonexistent-file-or-buffer nil)
-
-(setq uniquify-buffer-name-style 'forward)
-
-(setq mouse-yank-at-point t)
 
 ;; Prefer vertical splits over horizontal ones
 (setq split-width-threshold 170
@@ -149,6 +137,19 @@
 (setq window-divider-default-bottom-width 1
       window-divider-default-places t
       window-divider-default-right-width 1)
+
+;;; Buffers
+
+;; switch-to-buffer runs pop-to-buffer-same-window instead
+(setq switch-to-buffer-obey-display-actions t)
+
+(setq uniquify-buffer-name-style 'forward)
+
+(setq comint-prompt-read-only t)
+(setq comint-buffer-maximum-size 2048)
+
+;; Skip confirmation prompts when creating a new file or buffer
+(setq confirm-nonexistent-file-or-buffer nil)
 
 ;;; Backup files
 
@@ -166,9 +167,14 @@
 (setq version-control t)  ; Use version numbers for backup files
 (setq kept-new-versions 5)
 (setq kept-old-versions 5)
+
+;;; VC
+
+(setq vc-git-print-log-follow t)
 (setq vc-make-backup-files nil)  ; Do not backup version controlled files
 
 ;;; Auto save
+
 ;; Enable auto-save to safeguard against crashes or data loss. The
 ;; `recover-file' or `recover-session' functions can be used to restore
 ;; auto-saved data.
@@ -199,21 +205,35 @@
 (setq global-auto-revert-non-file-buffers t)
 
 ;;; recentf
+
 ;; `recentf' is an Emacs package that maintains a list of recently
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
 (setq recentf-max-saved-items 300) ; default is 20
-(setq recentf-auto-cleanup 'mode)
+(setq recentf-max-menu-items 15)
+(setq recentf-auto-cleanup (if (daemonp) 300 'never))
+(defun minimal-emacs--cleanup-hook ()
+  "Run `recentf-cleanup' if `recentf' is loaded and `recentf-mode' is enabled."
+  (when (and (featurep 'recentf)
+             recentf-mode
+             (fboundp 'recentf-cleanup))
+    (recentf-cleanup)))
+(add-hook 'kill-emacs-hook #'minimal-emacs--cleanup-hook)
+
+;; Update recentf-exclude
+(setq recentf-exclude (list "^/\\(?:ssh\\|su\\|sudo\\)?:"))
 
 ;;; saveplace
-;; `save-place-mode` enables Emacs to remember the last location within a file
+
+;; `save-place-mode' enables Emacs to remember the last location within a file
 ;; upon reopening. This feature is particularly beneficial for resuming work at
 ;; the precise point where you previously left off.
 (setq save-place-file (expand-file-name "saveplace" user-emacs-directory))
 (setq save-place-limit 600)
 
 ;;; savehist
-;; `savehist` is an Emacs feature that preserves the minibuffer history between
+
+;; `savehist' is an Emacs feature that preserves the minibuffer history between
 ;; sessions. It saves the history of inputs in the minibuffer, such as commands,
 ;; search strings, and other prompts, to a file. This allows users to retain
 ;; their minibuffer history across Emacs restarts.
@@ -233,6 +253,7 @@
 (setq resize-mini-windows 'grow-only)
 
 ;;; Scrolling
+
 ;; Enables faster scrolling through unfontified regions. This may result in
 ;; brief periods of inaccurate syntax highlighting immediately after scrolling,
 ;; which should quickly self-correct.
@@ -270,7 +291,12 @@
 (setq hscroll-margin 2
       hscroll-step 1)
 
-;;; Mouse Scroll
+;;; Mouse
+
+(setq mouse-yank-at-point nil)
+
+(setq mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
+      mouse-wheel-scroll-amount-horizontal 2)
 
 ;; Emacs 29
 (when (memq 'context-menu minimal-emacs-ui-features)
@@ -278,6 +304,7 @@
     (add-hook 'after-init-hook #'context-menu-mode)))
 
 ;;; Cursor
+
 ;; The blinking cursor is distracting and interferes with cursor settings in
 ;; some minor modes that try to change it buffer-locally (e.g., Treemacs).
 ;; Additionally, it can cause freezing, especially on macOS, for users with
@@ -308,6 +335,7 @@
 (setq delete-pair-blink-delay 0.03)
 
 ;;; Indent and formatting
+
 (setq-default left-fringe-width  8)
 (setq-default right-fringe-width 8)
 
@@ -333,6 +361,9 @@
 
 ;; Enable indentation and completion using the TAB key
 (setq-default tab-always-indent nil)
+
+;; Perf: Reduce command completion overhead.
+(setq read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Enable multi-line commenting which ensures that `comment-indent-new-line'
 ;; properly continues comments onto new lines, which is useful for writing
@@ -363,7 +394,7 @@
 ;; Eliminate delay before highlighting search matches
 (setq lazy-highlight-initial-delay 0)
 
-;;; Mode line
+;;; Modeline
 
 ;; Setting `display-time-default-load-average' to nil makes Emacs omit the load
 ;; average information from the mode line.
@@ -383,12 +414,36 @@
 ;;; Dired
 
 (setq dired-free-space nil
+      dired-dwim-target t  ; Propose a target for intelligent moving or copying.
       dired-deletion-confirmer 'y-or-n-p
       dired-filter-verbose nil
-      dired-clean-confirm-killing-deleted-buffers nil
       dired-recursive-deletes 'top
       dired-recursive-copies  'always
-      dired-create-destination-dirs 'ask)
+      dired-create-destination-dirs 'ask
+      ;; Revert the Dired buffer without prompting.
+      dired-auto-revert-buffer #'dired-buffer-stale-p
+      image-dired-thumb-size 150)
+
+;; Disable the prompt about killing the Dired buffer for a deleted directory.
+(setq dired-clean-confirm-killing-deleted-buffers nil)
+
+;; Dired-omit
+
+(setq dired-omit-verbose nil)
+(setq dired-omit-files (concat "\\`[.]?#\\|\\`[.][.]?\\'"
+                               "\\|\\(?:\\.js\\)?\\.meta\\'"
+                               "\\|\\.\\(?:elc|a\\|o\\|pyc\\|pyo\\|swp\\|class\\)\\'"
+                               "\\|^\\.DS_Store\\'"
+                               "\\|^\\.\\(?:svn\\|git\\)\\'"
+                               "\\|^\\.ccls-cache\\'"
+                               "\\|^__pycache__\\'"
+                               "\\|^\\.project\\(?:ile\\)?\\'"
+                               "\\|^flycheck_.*"
+                               "\\|^flymake_.*"))
+
+;; ls-lisp
+(setq ls-lisp-verbosity nil)
+(setq ls-lisp-dirs-first t)
 
 ;;; Font / Text scale
 
@@ -401,9 +456,51 @@
 (setq ediff-window-setup-function #'ediff-setup-windows-plain
       ediff-split-window-function #'split-window-horizontally)
 
-;;; Load post-init.el
+;;; Help
+
+;; Enhance `apropos' and related functions to perform more extensive searches
+(setq apropos-do-all t)
+
+;; Fixes #11: Prevents help command completion from triggering autoload.
+;; (e.g., apropos-command, apropos-variable, apropos...)
+;; Loading additional files for completion can slow down help commands
+;; and may unintentionally execute initialization code from some libraries.
+(setq help-enable-completion-autoload nil)
+(setq help-enable-autoload nil)
+(setq help-enable-symbol-autoload nil)
+
+;;; Eglot
+
+(setq eglot-sync-connect 1
+      eglot-autoshutdown t)
+
+;; Activate Eglot in cross-referenced non-project files
+(setq eglot-extend-to-xref t)
+
+;; Eglot optimization
+(setq jsonrpc-event-hook nil)
+(setq eglot-events-buffer-size 0)
+(setq eglot-report-progress nil)  ; Prevent Eglot minibuffer spam
+
+;; Eglot optimization: Disable `eglot-events-buffer' to maintain consistent
+;; performance in long-running Emacs sessions. By default, it retains 2,000,000
+;; lines, and each new event triggers pretty-printing of the entire buffer,
+;; leading to a gradual performance decline.
+(setq eglot-events-buffer-config '(:size 0 :format full))
+
 (minimal-emacs-load-user-init "post-init.el")
 
 (provide 'init)
+
+;;; Flymake
+
+(setq flymake-fringe-indicator-position 'left-fringe)
+(setq flymake-show-diagnostics-at-end-of-line nil)
+
+;; Suppress the display of Flymake error counters when there are no errors.
+(setq flymake-suppress-zero-counters t)
+
+;; Disable wrapping around when navigating Flymake errors.
+(setq flymake-wrap-around nil)
 
 ;;; init.el ends here
