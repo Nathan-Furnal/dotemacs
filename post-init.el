@@ -14,17 +14,12 @@
 
 (use-package compile-angel
   :ensure t
-  :demand t 
+  :demand t
+  :custom
+  (compile-angel-verbose t)
   :config
   (compile-angel-on-load-mode)
-  (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode))
-
-;; Ensure Emacs loads the most recent byte-compiled files.
-(setq load-prefer-newer t)
-
-;; Ensure JIT compilation is enabled for improved performance by
-;; native-compiling loaded .elc files asynchronously
-(setq native-comp-jit-compilation t)
+  :hook (emacs-lisp-mode . compile-angel-on-save-local-mode))
 
 ;;;========================================
 ;;; Defaults
@@ -465,8 +460,8 @@
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
   
   :hook (org-mode . (lambda ()
-			   (variable-pitch-mode t)
-			   (setq-default fill-column 100))))
+			          (variable-pitch-mode t)
+			          (setq-default fill-column 89))))
 
 ;; Simple notes for Emacs with an efficient file-naming scheme
 (use-package denote
@@ -634,7 +629,10 @@
      ("https://www.mattkeeter.com/blog/" rust lowl-level graphics)
      ("https://third-bit.com/atom.xml" software-design teaching)
      ("https://borretti.me/feed.xml" software)
-     ("https://cybercat-institute.github.io//feed.xml" software-engineering plt machine-learing))))
+     ("https://cybercat-institute.github.io//feed.xml" software-engineering plt machine-learing)
+     ("https://dev.arie.bovenberg.net/feed.xml" python)
+     ("https://martinfowler.com/feed.atom" software)
+     ("https://yosefk.com/blog/feed" software))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -687,20 +685,13 @@
 (use-package eglot
   :pin gnu
   :ensure t
-  :defer t
-  :custom
-  (eldoc-echo-area-use-multiline-p)
-  (eglot-autoshutdown t)
-  (eglot-report-progress nil)  ; Prevent minibuffer spam  
+  :defer t 
   :commands (eglot
              eglot-rename
              eglot-ensure
              eglot-rename
              eglot-format-buffer)
   :config
-  ;; Optimizations
-  (fset #'jsonrpc--log-event #'ignore)
-  (setq jsonrpc-event-hook nil)  
   ;; Python specific
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
@@ -1029,6 +1020,36 @@
   :hook (haskell-ts-mode . hindent-mode))
 
 ;;;========================================
+;;; OCaml
+;;;========================================
+
+;; Ocaml mode
+(use-package tuareg
+  :ensure t
+  :defer t)
+
+;; IDE-like features
+(use-package merlin
+  :ensure t
+  :defer t
+  :hook (tuareg-mode . merlin-mode))
+
+(use-package ocamlformat
+  :ensure t
+  :defer t)
+
+;; REPL
+(use-package utop
+  :ensure t
+  :defer t
+  :hook (tuareg-mode . utop-minor-mode))
+
+;; Build system
+(use-package dune
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; Array languages
 ;;;========================================
 
@@ -1056,4 +1077,7 @@
   :ensure t
   :defer t)
 
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 ;;; post-init.el ends here
