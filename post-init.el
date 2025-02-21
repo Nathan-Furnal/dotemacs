@@ -108,7 +108,6 @@
 ;;;========================================
 
 (use-package modus-themes
-  :disabled t                           ; Use ef-themes for now
   :pin melpa
   :ensure t
   :init
@@ -130,17 +129,6 @@
                 (3 . (overline 1.1))
                 (t . (monochrome))))))
 
-(use-package ef-themes
-  :ensure t
-  :defer t
-  :init
-  (setq ef-themes-headings
-      '((1 overline variable-pitch 1.5)
-        (2 overline-variable-pitch 1.3)
-        (3 overline 1.1)
-        (agenda-date 1.3)     
-        (t monochrome))))
-
 ;; Running modus-themes depending on the time of the day.
 (use-package circadian
   :pin melpa
@@ -148,8 +136,8 @@
   :custom
   (calendar-latitude 50.85)
   (calendar-longitude 4.35)
-  (circadian-themes '((:sunrise . ef-reverie)
-                      (:sunset  . ef-dream)))
+  (circadian-themes '((:sunrise . modus-operandi)
+                      (:sunset  . modus-vivendi)))
   :config
   (circadian-setup)
   :hook (after-init . circadian-setup))
