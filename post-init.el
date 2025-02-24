@@ -116,13 +116,14 @@
 	modus-themes-bold-constructs t
 	modus-themes-mixed-fonts t
 	modus-themes-variable-pitch-ui nil
-	modus-themes-common-palette-overrides '((bg-mode-line-active bg-main)
-						(bg-mode-line-inactive bg-dim)
-						(border-mode-line-inactive bg-inactive)
-						(fringe subtle)
-						(bg-paren-match bg-yellow-intense)
-						(custom-set-faces
-						 '(mode-line ((t :family "Iosevka Etoile" :height 100 :weight 'regular))))))
+	modus-themes-common-palette-overrides
+    '((bg-mode-line-active bg-lavender)
+      (fg-mode-line-active fg-main)
+      (border-mode-line-active bg-magenta-intense)
+	  (fringe subtle)
+	  (bg-paren-match bg-yellow-intense)
+	  (custom-set-faces
+	   '(mode-line ((t :family "Iosevka Etoile" :height 100 :weight 'regular))))))
   (setq modus-themes-headings
         (quote ((1 . (overline variable-pitch 1.5))
                 (2 . (overline variable-pitch 1.3))
