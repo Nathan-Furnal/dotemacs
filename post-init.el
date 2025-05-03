@@ -824,11 +824,18 @@
 ;;; Clojure
 ;;;========================================
 
+(use-package flycheck-clj-kondo
+  :ensure t
+  :defer t
+  :hook ((clojure-mode clojurescript-mode clojure-ts-mode) . flycheck-mode))
+
 (use-package clojure-ts-mode
   :ensure t
   :defer t
   :custom
-  (clojure-ts-indent-style 'fixed))
+  (clojure-ts-indent-style 'fixed)
+  :config
+  (require 'flycheck-clj-kondo))
 
 (use-package cider
   :ensure t
@@ -839,12 +846,7 @@
   :defer t
   :config
   (cljr-add-keybindings-with-prefix "C-c C-m")
-  :hook clojure-ts-mode)
-
-(use-package flycheck-clj-kondo
-  :ensure t
-  :defer t
-  :hook (clojure-mode clojurescript-mode))
+  :hook (clojure-mode clojure-ts-mode))
 
 ;;;========================================
 ;;; Maxima
