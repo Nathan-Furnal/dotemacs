@@ -137,8 +137,8 @@
   :custom
   (calendar-latitude 50.85)
   (calendar-longitude 4.35)
-  (circadian-themes '((:sunrise . modus-operandi)
-                      (:sunset  . modus-vivendi)))
+  (circadian-themes '((:sunrise . modus-operandi-tinted)
+                      (:sunset  . modus-vivendi-tinted)))
   :config
   (circadian-setup)
   :hook (after-init . circadian-setup))
@@ -621,7 +621,8 @@
      ("https://cybercat-institute.github.io//feed.xml" software-engineering plt machine-learing)
      ("https://dev.arie.bovenberg.net/feed.xml" python)
      ("https://martinfowler.com/feed.atom" software)
-     ("https://yosefk.com/blog/feed" software))))
+     ("https://yosefk.com/blog/feed" software)
+     ("https://concerningquality.com/feed.xml" software))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -680,6 +681,8 @@
              eglot-ensure
              eglot-rename
              eglot-format-buffer)
+  :custom
+  (eldoc-echo-area-use-multiline-p nil)
   :config
   ;; Python specific
   (add-to-list 'eglot-server-programs
@@ -770,8 +773,8 @@
   :pin melpa
   :ensure t
   :defer t
-  :config
-  (setq inferior-lisp-program "sbcl"))
+  :custom
+  (inferior-lisp-program "sbcl"))
 
 (use-package puni
   :pin melpa
@@ -841,7 +844,7 @@
 (use-package flycheck-clj-kondo
   :ensure t
   :defer t
-  :hook (clojure-ts-mode clojurescript-mode))
+  :hook (clojure-mode clojurescript-mode))
 
 ;;;========================================
 ;;; Maxima
