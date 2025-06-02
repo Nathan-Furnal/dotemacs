@@ -556,6 +556,12 @@
   :ensure t
   :defer t)
 
+;; Drawing with UTF-8
+(use-package uniline
+  :ensure t
+  :defer t
+  :config (set-default 'uniline-hint-style 1))
+
 ;;;========================================
 ;;; Reading
 ;;;========================================
@@ -576,6 +582,13 @@
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
 	      ("C-r" . isearch-backward)))
+
+(use-package nov
+  :pin melpa
+  :ensure t
+  :defer t
+  :commands (nov-mode)
+  :mode ("\\.epub\\'" . nov-mode))
 
 ;;;========================================
 ;;; Atom/RSS
@@ -835,11 +848,14 @@
   :custom
   (clojure-ts-indent-style 'fixed)
   :config
+  (add-hook 'before-save-hook 'cider-format-buffer t t)
   (require 'flycheck-clj-kondo))
 
 (use-package cider
   :ensure t
-  :defer t)
+  :defer t
+  :custom
+  (cider-enable-nrepl-jvmti-agent t))
 
 (use-package clj-refactor
   :ensure t
@@ -906,6 +922,11 @@
                               (flymake-mode 1)
                               (flymake-ruff-load))))
 
+;; Documentation
+(use-package sphinx-mode
+  :ensure t
+  :defer t)
+
 ;;;========================================
 ;;; Lua
 ;;;========================================
@@ -962,8 +983,12 @@
   (defun nf/insert-pipe()
     (interactive)
     (insert "|>"))
+  (defun nf/insert-pry()
+    (interactive)
+    (insert "require IEx; IEx.pry()"))
   :bind (:map elixir-ts-mode-map
-              ("C-c &" . nf/insert-pipe)))
+              ("C-c &" . nf/insert-pipe)
+              ("C-c b" . nf/insert-pry)))
 
 ;; Build tool
 (use-package mix
@@ -990,7 +1015,7 @@
 
 (use-package inf-elixir
   :ensure t
-  :defer t
+  :defer t  
   :bind (:map elixir-ts-mode-map
          ("C-c i i" . inf-elixir)
          ("C-c i p" . inf-elixir-project)
@@ -1075,3 +1100,4 @@
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 ;;; post-init.el ends here
+
