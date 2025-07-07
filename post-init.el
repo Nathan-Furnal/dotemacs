@@ -1077,6 +1077,20 @@
   :defer t)
 
 ;;;========================================
+;;; Concatenative languages
+;;;========================================
+
+;; Forth
+(use-package forth-mode
+  :ensure t
+  :defer t)
+
+;; Factor
+(use-package fuel
+  :ensure t
+  :defer t)
+
+;;;========================================
 ;;; Roc
 ;;;========================================
 
