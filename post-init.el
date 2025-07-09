@@ -9,22 +9,42 @@
 ;;; Commentary:
 ;; My Emacs config
 
-
 ;;; Code:
 
 (use-package compile-angel
   :ensure t
   :demand t
   :custom
+  ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
+  ;; Drawback: The minibuffer will not display compile-angel's actions.
   (compile-angel-verbose t)
+
   :config
-  (compile-angel-on-load-mode)
-  :hook (emacs-lisp-mode . compile-angel-on-save-local-mode))
+  ;; The following directive prevents compile-angel from compiling your init
+  ;; files. If you choose to remove this push to `compile-angel-excluded-files'
+  ;; and compile your pre/post-init files, ensure you understand the
+  ;; implications and thoroughly test your code. For example, if you're using
+  ;; `use-package', you'll need to explicitly add `(require 'use-package)` at
+  ;; the top of your init file.
+  (push "/init.el" compile-angel-excluded-files)
+  (push "/early-init.el" compile-angel-excluded-files)
+  (push "/pre-init.el" compile-angel-excluded-files)
+  (push "/post-init.el" compile-angel-excluded-files)
+  (push "/pre-early-init.el" compile-angel-excluded-files)
+  (push "/post-early-init.el" compile-angel-excluded-files)
+
+  ;; A local mode that compiles .el files whenever the user saves them.
+  ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
+
+  ;; A global mode that compiles .el files before they are loaded.
+  (compile-angel-on-load-mode))
 
 ;;;========================================
 ;;; Defaults
 ;;;========================================
-
+(use-package use-package
+  :custom
+  (use-package-compute-statistics t))
 (use-package diminish :ensure t :after use-package) ;; if you use :diminish
 (use-package bind-key :ensure t :after use-package) ;; if you use any :bind variant
 
@@ -36,7 +56,12 @@
 ;; recentf is an Emacs package that maintains a list of recently
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
-(add-hook 'after-init-hook #'recentf-mode)
+(add-hook 'after-init-hook #'(lambda()
+                               (let ((inhibit-message t))
+                                 (recentf-mode 1))))
+
+(with-eval-after-load "recentf"
+  (add-hook 'kill-emacs-hook #'recentf-cleanup))
 
 ;; savehist is an Emacs feature that preserves the minibuffer history between
 ;; sessions. It saves the history of inputs in the minibuffer, such as commands,
@@ -182,6 +207,11 @@
   (corfu-preselect 'prompt)      ;; Preselect the prompt
   (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-scroll-margin 5)        ;; Use scroll margin
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Disable Ispell completion function. As an alternative try `cape-dict'.
+  (text-mode-ispell-word-completion nil)
+  (tab-always-indent 'complete)
 
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since Dabbrev can be used globally (M-/).
@@ -190,28 +220,15 @@
 
 ;; Better completion at point
 (use-package cape
-  :pin melpa
   :ensure t
-  ;; Bind dedicated completion commands
-  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :commands (cape-dabbrev cape-file cape-elisp-block)
+  :bind ("C-c p" . cape-prefix-map)
   :init
   ;; Add to the global default value of `completion-at-point-functions' which is
-  ;; used by `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of buffer-local
-  ;; completion functions takes precedence over the global list.
+  ;; used by `completion-at-point'.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
-  ;; (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  (add-hook 'completion-at-point-functions #'cape-history)
-  ;; (add-hook 'completion-at-point-functions #'cape-keyword)
-  ;; (add-hook 'completion-at-point-functions #'cape-tex)
-  ;; (add-hook 'completion-at-point-functions #'cape-sgml)
-  ;; (add-hook 'completion-at-point-functions #'cape-rfc1345)
-  (add-hook 'completion-at-point-functions #'cape-abbrev)
-  (add-hook 'completion-at-point-functions #'cape-dict)
-  ;; (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
-  ;; (add-hook 'completion-at-point-functions #'cape-line)
-  )
+  (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 ;; Example configuration for Consult
 (use-package consult
@@ -355,7 +372,7 @@
   :ensure t
   :defer t
   :hook
-  (embark-collect-mode-hook . consult-preview-at-point-mode))
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;;========================================
 ;;; Version control
@@ -434,23 +451,34 @@
   (org-src-preserve-indentation t)         ; Preserving indentation in source blocks
   (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
   (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
-  (org-cite-csl-styles-dir "~/Zotero/styles") ; Use Zotero styles for CSL exports (bibliography management)
   (org-log-done 'time)                        ; When TODO is one, record timestamp
   (org-return-follows-link t)                 ; Follows links on RET
   ;; See `C-h v` for detail on the keywords, @ means adding a note with time and ! only registers
   ;; the timestamp on state change
   (org-todo-keywords
    '((sequence "TODO(t)" "IN-PROGRESS(i@/!)" "PENDING-CLARIFICATION(p@/!)" "VERIFY(v!)" "|" "DONE(d!)" "WONT-DO(w@/!)")))
-  (org-agenda-files '("~/Documents/notes/agendas/"))
-  (org-agenda-start-on-weekday 1)       ; Start on Monday
   (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
   :config
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
-  
   :hook (org-mode . (lambda ()
 			          (variable-pitch-mode t)
 			          (setq-default fill-column 89))))
+
+(use-package org-agenda
+  :ensure nil
+  :defer t
+  :after org
+  :custom
+  (org-agenda-files '("~/Documents/notes/agendas/"))
+  (org-agenda-start-on-weekday 1))
+
+(use-package oc
+  :ensure nil
+  :defer t
+  :after org
+  :custom
+  (org-cite-csl-styles-dir "~/Zotero/styles"))
 
 ;; Simple notes for Emacs with an efficient file-naming scheme
 (use-package denote
@@ -470,22 +498,13 @@
   :ensure t
   :defer t)
 
-;; LaTeX exports from org-mode
-(use-package ox-latex
-  :ensure nil
-  :after org)
-
 (use-package engrave-faces
   :ensure t
+  :defer t
   :custom
   (org-latex-src-block-backend 'engraved)
   :config
   (add-to-list 'org-latex-engraved-options '("numbers" . "left")))
-
-(use-package ox-tufte
-  :pin melpa
-  :ensure t
-  :defer t)
 
 ;; Custome LaTeX templates Requires a full LaTeX install, usually
 ;; called `texlive'.  The arch wiki
@@ -910,8 +929,8 @@
 (use-package pet
   :pin melpa
   :ensure t
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
+  :defer t
+  :hook (python-base-mode . pet-mode))
 
 ;; Use ruff with flymake in Python buffer
 (use-package flymake-ruff
@@ -1039,36 +1058,6 @@
   :hook (haskell-ts-mode . hindent-mode))
 
 ;;;========================================
-;;; OCaml
-;;;========================================
-
-;; Ocaml mode
-(use-package tuareg
-  :ensure t
-  :defer t)
-
-;; IDE-like features
-(use-package merlin
-  :ensure t
-  :defer t
-  :hook (tuareg-mode . merlin-mode))
-
-(use-package ocamlformat
-  :ensure t
-  :defer t)
-
-;; REPL
-(use-package utop
-  :ensure t
-  :defer t
-  :hook (tuareg-mode . utop-minor-mode))
-
-;; Build system
-(use-package dune
-  :ensure t
-  :defer t)
-
-;;;========================================
 ;;; Array languages
 ;;;========================================
 
@@ -1110,8 +1099,5 @@
   :ensure t
   :defer t)
 
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 ;;; post-init.el ends here
 
