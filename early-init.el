@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.2.1
+;; Version: 1.3.0
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -218,6 +218,14 @@ pre-early-init.el, and post-early-init.el.")
 (when minimal-emacs-debug
   (setq message-log-max 16384))
 
+;; In PGTK, this timeout introduces latency. Reducing it from the default 0.1
+;; improves responsiveness of childframes and related packages.
+(when (boundp 'pgtk-wait-for-event-timeout)
+  (setq pgtk-wait-for-event-timeout 0.001))
+
+;; Disable warnings from the legacy advice API. They aren't useful.
+(setq ad-redefinition-action 'accept)
+
 ;;; Performance: Miscellaneous options
 
 ;; Font compacting can be very resource-intensive, especially when rendering
@@ -429,6 +437,7 @@ this stage of initialization."
   (push '(tool-bar-lines . 0) default-frame-alist)
   (setq tool-bar-mode nil))
 
+(setq default-frame-scroll-bars 'right)
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(horizontal-scroll-bars) default-frame-alist)
 (setq scroll-bar-mode nil)

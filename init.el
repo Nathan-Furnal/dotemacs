@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.2.1
+;; Version: 1.3.0
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -37,11 +37,6 @@
 (if (boundp 'use-short-answers)
     (setq use-short-answers t)
   (advice-add 'yes-or-no-p :override #'y-or-n-p))
-
-;;; Features, warnings, and errors
-
-;; Disable warnings from the legacy advice API. They aren't useful.
-(setq ad-redefinition-action 'accept)
 
 ;;; Undo/redo
 
@@ -84,11 +79,6 @@
 ;; No beeping or blinking
 (setq visible-bell nil)
 (setq ring-bell-function #'ignore)
-
-;; In PGTK, this timeout introduces latency. Reducing it from the default 0.1
-;; improves responsiveness of childframes and related packages.
-(when (boundp 'pgtk-wait-for-event-timeout)
-  (setq pgtk-wait-for-event-timeout 0.001))
 
 ;;; Show-paren
 
@@ -576,4 +566,3 @@
 ;; End:
 
 ;;; init.el ends here
-

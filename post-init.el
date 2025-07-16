@@ -820,7 +820,13 @@
   :defer t
   :custom
   (setq parinfer-rust-auto-download t)
-  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode clojure-ts-mode clojurescript-mode)))
+  :hook ((emacs-lisp-mode
+          lisp-mode
+          racket-mode
+          scheme-mode
+          clojure-ts-mode
+          clojurescript-mode
+          janet-ts-mode)))
 
 ;;;========================================
 ;;; Scheme 
