@@ -24,10 +24,14 @@
 
 ;;; Internal variables
 
-(defvar minimal-emacs--backup-gc-cons-threshold gc-cons-threshold
-  "Backup of the original value of `gc-cons-threshold' before startup.")
+;; Backup of `gc-cons-threshold' and `gc-cons-percentage' before startup.
+(defvar minimal-emacs--backup-gc-cons-threshold gc-cons-threshold)
+(defvar minimal-emacs--backup-gc-cons-percentage gc-cons-percentage)
 
+;; Temporarily raise the garbage collection threshold to its maximum value.
+;; It will be restored later to controlled values.
 (setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-percentage 1.0)
 
 ;;; Variables
 
@@ -55,18 +59,12 @@ stored in `minimal-emacs-gc-cons-threshold'.")
   "Value to which `gc-cons-threshold' is set after Emacs startup.
 Ignored if `minimal-emacs-optimize-startup-gc' is nil.")
 
+(defvar minimal-emacs-gc-cons-percentage gc-cons-percentage
+  "Value to which `gc-cons-percentage' is set after Emacs startup.
+Ignored if `minimal-emacs-optimize-startup-gc' is nil.")
+
 (defvar minimal-emacs-gc-cons-threshold-restore-delay nil
   "Number of seconds to wait before restoring `gc-cons-threshold'.")
-
-(defvar minimal-emacs-inhibit-redisplay-during-startup nil
-  "Suppress redisplay during startup to improve performance.
-This prevents visual updates while Emacs initializes. The tradeoff is that you
-won't see the progress or activities during the startup process.")
-
-(defvar minimal-emacs-inhibit-message-during-startup nil
-  "Suppress startup messages for a cleaner experience.
-This slightly enhances performance. The tradeoff is that you won't be informed
-of the progress or any relevant activities during startup.")
 
 (defvar minimal-emacs-optimize-file-name-handler-alist t
   "Enable optimization of `file-name-handler-alist'.
@@ -93,11 +91,19 @@ native compilation features:
 If nil, these variables are left at their default values and are not
 modified during setup.")
 
-(defvar minimal-emacs-user-directory user-emacs-directory
-  "The default value of the `user-emacs-directory' variable.")
+(defvar minimal-emacs-inhibit-redisplay-during-startup nil
+  "Suppress redisplay during startup to improve performance.
+This prevents visual updates while Emacs initializes. The tradeoff is that you
+won't see the progress or activities during the startup process.")
 
-(defvar minimal-emacs-dired-group-directories-first nil
-  "If non-nil, group directories first in Dired listings.")
+(defvar minimal-emacs-inhibit-message-during-startup nil
+  "Suppress startup messages for a cleaner experience.
+This slightly enhances performance. The tradeoff is that you won't be informed
+of the progress or any relevant activities during startup.")
+
+(defvar minimal-emacs-user-directory user-emacs-directory
+  "Directory beneath minimal-emacs.d files are placed.
+Note that this should end with a directory separator.")
 
 ;;; Load pre-early-init.el
 
@@ -140,16 +146,17 @@ pre-early-init.el, and post-early-init.el.")
   (let ((init-file (expand-file-name filename
                                      minimal-emacs-user-directory)))
     (if (not minimal-emacs-load-compiled-init-files)
-        (load init-file :no-error :no-message :nosuffix)
+        (load init-file :no-error (not init-file-debug) :nosuffix)
       ;; Remove the file suffix (.el, .el.gz, etc.) to let the `load' function
       ;; select between .el and .elc files.
       (setq init-file (minimal-emacs--remove-el-file-suffix init-file))
-      (load init-file :no-error :no-message))))
+      (load init-file :no-error (not init-file-debug)))))
 
 (minimal-emacs-load-user-init "pre-early-init.el")
 
 (setq custom-theme-directory
       (expand-file-name "themes/" minimal-emacs-user-directory))
+
 (setq custom-file (expand-file-name "custom.el" minimal-emacs-user-directory))
 
 ;;; Garbage collection
@@ -158,23 +165,26 @@ pre-early-init.el, and post-early-init.el.")
 
 (setq garbage-collection-messages minimal-emacs-debug)
 
-(defun minimal-emacs--restore-gc-cons-threshold ()
-  "Restore `gc-cons-threshold' to `minimal-emacs-gc-cons-threshold'."
+(defun minimal-emacs--restore-gc-values ()
+  "Restore garbage collection values to minimal-emacs.d values."
+  (setq gc-cons-threshold minimal-emacs-gc-cons-threshold)
+  (setq gc-cons-percentage minimal-emacs-gc-cons-percentage))
+
+(defun minimal-emacs--restore-gc ()
+  "Restore garbage collection settings."
   (if (bound-and-true-p minimal-emacs-gc-cons-threshold-restore-delay)
       ;; Defer garbage collection during initialization to avoid 2 collections.
-      (run-at-time
-       minimal-emacs-gc-cons-threshold-restore-delay nil
-       (lambda () (setq gc-cons-threshold minimal-emacs-gc-cons-threshold)))
-    (setq gc-cons-threshold minimal-emacs-gc-cons-threshold)))
+      (run-with-timer minimal-emacs-gc-cons-threshold-restore-delay nil
+                      #'minimal-emacs--restore-gc-values)
+    (minimal-emacs--restore-gc-values)))
 
 (if minimal-emacs-optimize-startup-gc
     ;; `gc-cons-threshold' is managed by minimal-emacs.d
-    (add-hook 'emacs-startup-hook #'minimal-emacs--restore-gc-cons-threshold 105)
+    (add-hook 'emacs-startup-hook #'minimal-emacs--restore-gc 105)
   ;; gc-cons-threshold is not managed by minimal-emacs.d.
-  ;; If it is equal to `most-positive-fixnum', this indicates that the user has
-  ;; not overridden the value in their `pre-early-init.el' configuration.
   (when (= gc-cons-threshold most-positive-fixnum)
-    (setq gc-cons-threshold minimal-emacs--backup-gc-cons-threshold)))
+    (setq gc-cons-threshold minimal-emacs--backup-gc-cons-threshold)
+    (setq gc-cons-percentage minimal-emacs--backup-gc-cons-percentage)))
 
 ;;; Native compilation and Byte compilation
 
@@ -183,15 +193,12 @@ pre-early-init.el, and post-early-init.el.")
          (native-comp-available-p))
     (when minimal-emacs-setup-native-compilation
       ;; Activate `native-compile'
-      (setq native-comp-deferred-compilation t
-            native-comp-jit-compilation t
-            package-native-compile t))
+      (setq package-native-compile t))
   ;; Deactivate the `native-compile' feature if it is not available
   (setq features (delq 'native-compile features)))
 
 (setq native-comp-warning-on-missing-source minimal-emacs-debug
-      native-comp-async-report-warnings-errors (or minimal-emacs-debug 'silent)
-      native-comp-verbose (if minimal-emacs-debug 1 0))
+      native-comp-async-report-warnings-errors (or minimal-emacs-debug 'silent))
 
 (setq jka-compr-verbose minimal-emacs-debug)
 (setq byte-compile-warnings minimal-emacs-debug
@@ -469,17 +476,17 @@ this stage of initialization."
 (setq package-enable-at-startup nil)  ; Let the init.el file handle this
 (setq use-package-always-ensure t)
 (setq use-package-enable-imenu-support t)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(setq package-archives '(("melpa"        . "https://melpa.org/packages/")
+                         ("gnu"          . "https://elpa.gnu.org/packages/")
+                         ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/")))
 (setq package-archive-priorities '(("gnu"    . 99)
                                    ("nongnu" . 80)
-                                   ("melpa"  . 70)))
+                                   ("melpa"  . 70)
+                                   ("melpa-stable" . 50)))
 
 ;;; Load post-early-init.el
 (minimal-emacs-load-user-init "post-early-init.el")
-
-(provide 'early-init)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not obsolete free-vars)

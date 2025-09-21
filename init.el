@@ -87,12 +87,6 @@
       show-paren-when-point-inside-paren t
       show-paren-when-point-in-periphery t)
 
-;;; Compilation
-
-(setq compilation-always-kill t
-      compilation-ask-about-save nil
-      compilation-scroll-output 'first-error)
-
 ;;; Misc
 
 (setq custom-buffer-done-kill t)
@@ -147,8 +141,17 @@
 
 (setq uniquify-buffer-name-style 'forward)
 
-(setq comint-prompt-read-only t)
-(setq comint-buffer-maximum-size 2048)
+;;; comint (general command interpreter in a window)
+
+(setq ansi-color-for-comint-mode t
+      comint-prompt-read-only t
+      comint-buffer-maximum-size 4096)
+
+;;; Compilation
+
+(setq compilation-ask-about-save nil
+      compilation-always-kill t
+      compilation-scroll-output 'first-error)
 
 ;; Skip confirmation prompts when creating a new file or buffer
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -214,7 +217,7 @@
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
-(setq recentf-auto-cleanup (if (daemonp) 300 'never))
+(setq recentf-auto-cleanup 'mode)
 
 ;; Update recentf-exclude
 (setq recentf-exclude (list "^/\\(?:ssh\\|su\\|sudo\\)?:"))
@@ -269,9 +272,10 @@
 ;; Keep screen position if scroll command moved it vertically out of the window.
 (setq scroll-preserve-screen-position t)
 
-;; If `scroll-conservatively' is set above 100, the window is never
-;; automatically recentered, which decreases the time spend recentering.
-(setq scroll-conservatively 101)
+;; Emacs recenters the window when the cursor moves past `scroll-conservatively'
+;; lines beyond the window edge. A value over 101 disables recentering; the
+;; default (0) is too eager. Here it is set to 20 for a balanced behavior.
+(setq scroll-conservatively 20)
 
 ;; 1. Preventing automatic adjustments to `window-vscroll' for long lines.
 ;; 2. Resolving the issue of random half-screen jumps during scrolling.
@@ -300,7 +304,8 @@
 
 ;; The blinking cursor is distracting and interferes with cursor settings in
 ;; some minor modes that try to change it buffer-locally (e.g., Treemacs).
-(blink-cursor-mode -1)
+(when (bound-and-true-p blink-cursor-mode)
+  (blink-cursor-mode -1))
 
 ;; Don't blink the paren matching the one at point, it's too distracting.
 (setq blink-matching-paren nil)
@@ -325,7 +330,7 @@
 (setq-default left-fringe-width  8)
 (setq-default right-fringe-width 8)
 
-;; Do not show an arrow at the top/bottomin the fringe and empty lines
+;; Disable visual indicators in the fringe for buffer boundaries and empty lines
 (setq-default indicate-buffer-boundaries nil)
 (setq-default indicate-empty-lines nil)
 
@@ -398,7 +403,10 @@
       dired-filter-verbose nil
       dired-recursive-deletes 'top
       dired-recursive-copies 'always
-      dired-create-destination-dirs 'ask)
+      dired-vc-rename-file t
+      dired-create-destination-dirs 'ask
+      ;; Suppress Dired buffer kill prompt for deleted dirs
+      dired-clean-confirm-killing-deleted-buffers nil)
 
 ;; This is a higher-level predicate that wraps `dired-directory-changed-p'
 ;; with additional logic. This `dired-buffer-stale-p' predicate handles remote
@@ -407,26 +415,9 @@
 (setq auto-revert-remote-files nil)
 (setq dired-auto-revert-buffer 'dired-buffer-stale-p)
 
-(setq dired-vc-rename-file t)
-
-;; Disable the prompt about killing the Dired buffer for a deleted directory.
-(setq dired-clean-confirm-killing-deleted-buffers nil)
-
 ;; dired-omit-mode
-(setq dired-omit-verbose nil)
-(setq dired-omit-files (concat "\\`[.]\\'"))
-
-;; Group directories first
-(when minimal-emacs-dired-group-directories-first
-  (with-eval-after-load 'dired
-    (let ((args "--group-directories-first -ahlv"))
-      (when (or (eq system-type 'darwin)
-                (eq system-type 'berkeley-unix))
-        (if-let* ((gls (executable-find "gls")))
-            (setq insert-directory-program gls)
-          (setq args nil)))
-      (when args
-        (setq dired-listing-switches args)))))
+(setq dired-omit-verbose nil
+      dired-omit-files (concat "\\`[.]\\'"))
 
 (setq ls-lisp-verbosity nil)
 (setq ls-lisp-dirs-first t)
@@ -538,7 +529,8 @@
 (setq dabbrev-upcase-means-case-search t)
 
 (setq dabbrev-ignored-buffer-modes
-      '(archive-mode image-mode docview-mode tags-table-mode pdf-view-mode))
+      '(archive-mode image-mode docview-mode tags-table-mode
+                     pdf-view-mode tags-table-mode))
 
 (setq dabbrev-ignored-buffer-regexps
       '(;; - Buffers starting with a space (internal or temporary buffers)
@@ -551,15 +543,13 @@
 
 (dolist (cmd '(list-timers narrow-to-region upcase-region downcase-region
                            list-threads erase-buffer scroll-left
-                           dired-find-alternate-file))
+                           dired-find-alternate-file set-goal-column))
   (put cmd 'disabled nil))
 
 ;;; Load post init
 (when (fboundp 'minimal-emacs-load-user-init)
   (minimal-emacs-load-user-init "post-init.el"))
 (setq minimal-emacs--success t)
-
-(provide 'init)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not obsolete free-vars)
