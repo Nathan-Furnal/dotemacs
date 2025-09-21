@@ -112,6 +112,10 @@
   :custom
   (treesit-auto-install 'prompt)
   :config
+  (add-to-list 'treesit-load-name-override-list
+               '(janet "libtree-sitter-janet-simple" "tree_sitter_janet_simple"))
+(add-to-list 'treesit-language-source-alist
+             '(janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple")))  
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
@@ -654,7 +658,10 @@
      ("https://dev.arie.bovenberg.net/feed.xml" python)
      ("https://martinfowler.com/feed.atom" software)
      ("https://yosefk.com/blog/feed" software)
-     ("https://concerningquality.com/feed.xml" software))))
+     ("https://typesanitizer.com/blog/rss.xml" software software-design complexity)
+     ("https://concerningquality.com/feed.xml" software)
+     ("https://fossandcrafts.org/rss-feed.rss" hacking craft foss)
+     ("https://entropicthoughts.com/feed.xml" software statistics software-design))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -813,7 +820,7 @@
   :diminish puni-mode
   :ensure t
   :defer t
-  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode) . puni-mode))
+  :hook ((emacs-lisp-mode lisp-mode racket-mode scheme-mode janet-ts-mode) . puni-mode))
 
 (use-package parinfer-rust-mode
   :ensure t
@@ -888,6 +895,23 @@
   :config
   (cljr-add-keybindings-with-prefix "C-c C-m")
   :hook (clojure-mode clojure-ts-mode))
+
+;;;========================================
+;;; Janet
+;;;========================================
+
+(use-package janet-ts-mode
+  :ensure t
+  :defer t
+  :vc (:url "https://github.com/sogaiu/janet-ts-mode"
+            :rev :newest))
+
+(use-package ajrepl
+  :ensure t
+  :defer t
+  :vc (:url "https://github.com/sogaiu/ajrepl"
+            :rev :newest)
+  :hook (janet-ts-mode . ajrepl-interaction-mode))
 
 ;;;========================================
 ;;; Maxima
@@ -1090,6 +1114,18 @@
 ;;;========================================
 
 (use-package roc-ts-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
+;;; Ada
+;;;========================================
+
+(use-package ada-ts-mode
+  :ensure t
+  :defer t)
+
+(use-package gpr-ts-mode
   :ensure t
   :defer t)
 
