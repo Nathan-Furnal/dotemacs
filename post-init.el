@@ -3,7 +3,7 @@
 ;; Author: Nathan Furnal
 ;; URL:  https://gitlab.com/nathanfurnal/dotemacs
 ;; Package-Requires: ((emacs "29.1"))
-;; Keywords: maint
+;; Keywords: main
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -114,7 +114,7 @@
   :config
   (add-to-list 'treesit-load-name-override-list
                '(janet "libtree-sitter-janet-simple" "tree_sitter_janet_simple"))
-(add-to-list 'treesit-language-source-alist
+  (add-to-list 'treesit-language-source-alist
              '(janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple")))  
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
@@ -661,7 +661,7 @@
      ("https://typesanitizer.com/blog/rss.xml" software software-design complexity)
      ("https://concerningquality.com/feed.xml" software)
      ("https://fossandcrafts.org/rss-feed.rss" hacking craft foss)
-     ("https://entropicthoughts.com/feed.xml" software statistics software-design))
+     ("https://entropicthoughts.com/feed.xml" software statistics software-design))))
 
 ;;;========================================
 ;;; Agenda & Organization
@@ -1142,4 +1142,3 @@
   :defer t)
 
 ;;; post-init.el ends here
-
