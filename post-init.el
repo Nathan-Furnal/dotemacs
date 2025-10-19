@@ -132,14 +132,22 @@
   (rainbow-delimiters-max-face-count 6)
   :hook (prog-mode . rainbow-delimiters-mode))
 
+;; Better key handling when running inside a terminal via `emacs -nw`
+(use-package kkp
+  :ensure t
+  :if (not (display-graphic-p))
+  :config
+  ;; (setq kkp-alt-modifier 'alt) ;; use this if you want to map the Alt keyboard modifier to Alt in Emacs (and not to Meta)
+  (global-kkp-mode +1))
+
 ;;;========================================
 ;;; Themes
 ;;;========================================
 
 (use-package modus-themes
-  :pin melpa
-  :ensure t
   :init
+  (require-theme 'modus-themes) ; `require-theme' is ONLY for the built-in Modus themes
+  :config
   (setq modus-themes-org-blocks 'tinted-background
 	modus-themes-italic-constructs t
 	modus-themes-bold-constructs t
@@ -157,20 +165,12 @@
         (quote ((1 . (overline variable-pitch 1.5))
                 (2 . (overline variable-pitch 1.3))
                 (3 . (overline 1.1))
-                (t . (monochrome))))))
-
-;; Running modus-themes depending on the time of the day.
-(use-package circadian
-  :pin melpa
-  :ensure t
-  :custom
-  (calendar-latitude 50.85)
-  (calendar-longitude 4.35)
-  (circadian-themes '((:sunrise . modus-operandi-tinted)
-                      (:sunset  . modus-vivendi-tinted)))
-  :config
-  (circadian-setup)
-  :hook (after-init . circadian-setup))
+                (t . (monochrome)))))
+  (if (display-graphic-p)
+      (modus-themes-load-theme 'modus-operandi-tinted)
+    (modus-themes-load-theme 'modus-vivendi-tinted))
+  (setq modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
+  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
 ;;;========================================
 ;;; Completion, navigation & actions
@@ -445,7 +445,9 @@
 (use-package org
   :pin gnu
   :ensure nil
+  :defer t
   :diminish "Οrg"
+  :if (display-graphic-p)
   :custom
   (org-imenu-depth 5)
   
@@ -465,9 +467,10 @@
   :config
   ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
   (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
-  :hook (org-mode . (lambda ()
-			          (variable-pitch-mode t)
-			          (setq-default fill-column 89))))
+  :hook ((after-init . org-mode)
+         (org-mode . (lambda ()
+			           (variable-pitch-mode t)
+			           (setq-default fill-column 89)))))
 
 (use-package org-agenda
   :ensure nil
@@ -501,14 +504,6 @@
   (consult-denote-grep-command #'consult-ripgrep)
   :ensure t
   :defer t)
-
-(use-package engrave-faces
-  :ensure t
-  :defer t
-  :custom
-  (org-latex-src-block-backend 'engraved)
-  :config
-  (add-to-list 'org-latex-engraved-options '("numbers" . "left")))
 
 ;; Custome LaTeX templates Requires a full LaTeX install, usually
 ;; called `texlive'.  The arch wiki
@@ -661,6 +656,7 @@
      ("https://typesanitizer.com/blog/rss.xml" software software-design complexity)
      ("https://concerningquality.com/feed.xml" software)
      ("https://fossandcrafts.org/rss-feed.rss" hacking craft foss)
+     ("https://sunshowers.io/atom.xml" software testing)
      ("https://entropicthoughts.com/feed.xml" software statistics software-design))))
 
 ;;;========================================
@@ -924,8 +920,8 @@
 (use-package maxima
   :ensure t
   :defer t
-  :custom
-  (org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
+  :config
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0)
 	                        maxima-display-maxima-buffer nil)
   :mode (("\\.mac\\'" . maxima-mode))
   :interpreter ("maxima" . maxima-mode))
@@ -970,11 +966,6 @@
   :hook (python-base-mode . (lambda ()
                               (flymake-mode 1)
                               (flymake-ruff-load))))
-
-;; Documentation
-(use-package sphinx-mode
-  :ensure t
-  :defer t)
 
 ;;;========================================
 ;;; Lua
