@@ -135,7 +135,6 @@
 ;; Better key handling when running inside a terminal via `emacs -nw`
 (use-package kkp
   :ensure t
-  :if (not (display-graphic-p))
   :config
   ;; (setq kkp-alt-modifier 'alt) ;; use this if you want to map the Alt keyboard modifier to Alt in Emacs (and not to Meta)
   (global-kkp-mode +1))
@@ -743,6 +742,16 @@
                      (globalOn . :json-false))))))  ;; disable stan
   ;; Roc specific
   (add-to-list 'eglot-server-programs '(roc-ts-mode "roc_language_server"))
+  ;; Prolog specific: https://github.com/jamesnvc/lsp_server
+  (setopt eglot-server-programs (cons
+                                 (cons 'prolog-mode
+                                       (list "swipl"
+                                             "-O"
+                                             "-g" "use_module(library(lsp_server))."
+                                             "-g" "lsp_server:main"
+                                             "-t" "halt"
+                                             "--" "port" :autoport))
+                                 eglot-server-programs))
   :bind (("C-c l b" . eglot-format-buffer)
 	 ("C-c l a" . eglot-code-actions)
 	 ("C-c l e" . eglot-reconnect)
@@ -1117,6 +1126,15 @@
   :defer t)
 
 (use-package gpr-ts-mode
+  :ensure t
+  :defer t)
+
+;;;========================================
+;;; Prolog
+;;;========================================
+
+;; Requires swi-prolog (and swipl exec)
+(use-package sweeprolog
   :ensure t
   :defer t)
 
