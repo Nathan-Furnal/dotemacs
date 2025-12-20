@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.3.0
+;; Version: 1.3.1
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -106,8 +106,6 @@
 ;; Position underlines at the descent line instead of the baseline.
 (setq x-underline-at-descent-line t)
 
-(setq tramp-verbose 1)
-(setq tramp-completion-reread-directory-timeout 50)
 (setq remote-file-name-inhibit-cache 50)
 
 ;; Automatically rescan the buffer for Imenu entries when `imenu' is invoked
@@ -119,6 +117,15 @@
 
 ;; Disable auto-adding a new line at the bottom when scrolling.
 (setq next-line-add-newlines nil)
+
+;; This setting forces Emacs to save bookmarks immediately after each change.
+;; Benefit: you never lose bookmarks if Emacs crashes.
+(setq bookmark-save-flag 1)
+
+;;; tramp
+
+(setq tramp-verbose 1)
+(setq tramp-completion-reread-directory-timeout 50)
 
 ;;; Files
 
@@ -218,9 +225,7 @@
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
 (setq recentf-auto-cleanup 'mode)
-
-;; Update recentf-exclude
-(setq recentf-exclude (list "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+(setq recentf-exclude nil)
 
 ;;; saveplace
 
@@ -541,7 +546,8 @@
 
 ;;; Remove warnings from narrow-to-region, upcase-region...
 
-(dolist (cmd '(list-timers narrow-to-region upcase-region downcase-region
+(dolist (cmd '(list-timers narrow-to-region narrow-to-page
+                           upcase-region downcase-region
                            list-threads erase-buffer scroll-left
                            dired-find-alternate-file set-goal-column))
   (put cmd 'disabled nil))
