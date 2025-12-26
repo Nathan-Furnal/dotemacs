@@ -37,7 +37,7 @@
   ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
 
   ;; A global mode that compiles .el files before they are loaded.
-  (compile-angel-on-load-mode))
+  (compile-angel-on-load-mode 1))
 
 ;;;========================================
 ;;; Defaults
@@ -199,6 +199,7 @@
 (use-package corfu
   :pin gnu
   :ensure t
+  :commands (corfu-mode global-corfu-mode)  
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
@@ -215,11 +216,11 @@
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
-
-  ;; Recommended: Enable Corfu globally.
-  ;; This is recommended since Dabbrev can be used globally (M-/).
-  ;; See also `corfu-excluded-modes'.
-  :hook (after-init . global-corfu-mode))
+  :config
+  (global-corfu-mode)
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode)))
 
 ;; Better completion at point
 (use-package cape
