@@ -18,10 +18,17 @@
 	     ("M-µ" . xref-find-references)
 	     ("M-ç" . text-scale-increase)
 	     ("M-à" . text-scale-decrease)
-	     ("C-l" . duplicate-dwim)))
+         ;; Other helpers
+	     ("C-l" . duplicate-dwim)
+         ("C-<prior>" . tab-bar-switch-to-prev-tab)
+         ("C-<next>" . tab-bar-switch-to-next-tab)))
 
 ;; Own
-
+;; Allow built-in packages to be updated
+(setq package-install-upgrade-built-in t)
+;; Tabs and keep layouts
+(tab-bar-mode +1)
+;; Deletion actually delete
 (delete-selection-mode t)
 
 ;; Thanks Prot'
