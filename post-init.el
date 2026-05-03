@@ -115,7 +115,10 @@
   (add-to-list 'treesit-load-name-override-list
                '(janet "libtree-sitter-janet-simple" "tree_sitter_janet_simple"))
   (add-to-list 'treesit-language-source-alist
-             '(janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple")))  
+               '(janet-simple . ("https://github.com/sogaiu/tree-sitter-janet-simple")))
+  ;; Don't let treesit-auto manage the clojure grammar —
+  ;; clojure-ts-mode needs the experimental branch.
+  (setq treesit-auto-langs (remq 'clojure treesit-auto-langs))
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
@@ -138,6 +141,19 @@
   :config
   ;; (setq kkp-alt-modifier 'alt) ;; use this if you want to map the Alt keyboard modifier to Alt in Emacs (and not to Meta)
   (global-kkp-mode +1))
+
+;; Load the path correctly
+(use-package exec-path-from-shell
+  :ensure t
+  :when (or (memq window-system '(mac ns x pgtk))
+            (daemonp))
+  :custom
+  (exec-path-from-shell-shell-name "fish")
+  (exec-path-from-shell-arguments nil)
+  (exec-path-from-shell-variables
+   '("PATH" "MANPATH" "SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO"))
+  :config
+  (exec-path-from-shell-initialize))
 
 ;;;========================================
 ;;; Themes
@@ -716,7 +732,7 @@
   ;; Python specific
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
-                 "basedpyright-langserver" "--stdio"))
+                 "ty" "server"))
   ;; Elixir specific
   (add-to-list 'eglot-server-programs
 	           '((elixir-ts-mode elixir-mode heex-ts-mode) . ("elixir-ls" "--stdio")))
@@ -775,6 +791,19 @@
   ;; Save buffers on startup, useful for interpreted languages
   ;; (add-hook 'dape-on-start-hooks (lambda () (save-some-buffers t t)))
   )
+
+;; Agents
+(use-package agent-shell
+  :ensure t
+  :custom
+  (agent-shell-session-strategy 'prompt)
+  (agent-shell-preferred-agent-config 'opencode)
+  :config
+  (setq agent-shell-opencode-authentication
+        (agent-shell-opencode-make-authentication :none t))
+  (setq agent-shell-opencode-environment
+        (agent-shell-make-environment-variables
+         :inherit-env t)))
 
 ;;;========================================
 ;;; (E)Lisp development
@@ -869,19 +898,21 @@
 ;;; Clojure
 ;;;========================================
 
-(use-package flycheck-clj-kondo
-  :ensure t
-  :defer t
-  :hook ((clojure-mode clojurescript-mode clojure-ts-mode) . flycheck-mode))
-
 (use-package clojure-ts-mode
   :ensure t
   :defer t
   :custom
   (clojure-ts-indent-style 'fixed)
+  :init
+  ;; Populate treesit-language-source-alist with the experimental
+  ;; grammar recipe before any buffer tries to load. This runs early
+  ;; enough that M-x treesit-install-language-grammar picks it up.
+  (with-eval-after-load 'clojure-ts-mode
+    (dolist (recipe clojure-ts-grammar-recipes)
+      (setf (alist-get (car recipe) treesit-language-source-alist)
+            (cdr recipe))))  
   :config
-  (add-hook 'before-save-hook 'cider-format-buffer t t)
-  (require 'flycheck-clj-kondo))
+  (add-hook 'before-save-hook 'cider-format-buffer t t))
 
 (use-package cider
   :ensure t

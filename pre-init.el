@@ -30,6 +30,8 @@
 (tab-bar-mode +1)
 ;; Deletion actually delete
 (delete-selection-mode t)
+;; Show column number as well
+(column-number-mode +1)
 
 ;; Thanks Prot'
 ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
