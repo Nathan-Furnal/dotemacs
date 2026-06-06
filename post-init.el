@@ -153,7 +153,10 @@
   (exec-path-from-shell-variables
    '("PATH" "MANPATH" "SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO"))
   :config
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  ;; Fixing XDG open usage for Emacs inside toolbx
+  (setq browse-url-generic-program (expand-file-name "~/.local/bin/xdg-open")
+        browse-url-browser-function #'browse-url-generic))
 
 ;;;========================================
 ;;; Themes
@@ -590,6 +593,27 @@
   :defer t
   :config (set-default 'uniline-hint-style 1))
 
+;; Presentations
+(use-package olivetti
+  :ensure t
+  :defer t)
+
+(use-package logos
+  :ensure t
+  :defer t
+  :config
+  (setq olivetti-body-width 0.7
+      olivetti-minimum-body-width 80
+      olivetti-recall-visual-line-mode-entry-state t)
+  (setq-default logos-hide-cursor nil
+              logos-hide-mode-line t
+              logos-hide-header-line t
+              logos-hide-buffer-boundaries t
+              logos-hide-fringe t
+              logos-variable-pitch nil
+              logos-buffer-read-only nil
+              logos-scroll-lock nil))
+
 ;;;========================================
 ;;; Reading
 ;;;========================================
@@ -735,7 +759,7 @@
                  "ty" "server"))
   ;; Elixir specific
   (add-to-list 'eglot-server-programs
-	           '((elixir-ts-mode elixir-mode heex-ts-mode) . ("elixir-ls" "--stdio")))
+	           '((elixir-ts-mode elixir-mode heex-ts-mode) . ("expert" "--stdio")))
   ;; Golang specific
   (setq-default eglot-workspace-configuration
     '((:gopls .
@@ -1071,15 +1095,6 @@
   :ensure t
   :defer t
   :hook (elixir-ts-mode . mix-minor-mode))
-
-;; Static code analysis
-(use-package flycheck-credo
-  :pin melpa
-  :ensure t
-  :defer t  
-  :custom
-  (flycheck-elixir-credo-strict t)
-  :hook (elixir-ts-mode . flycheck-mode))
 
 ;; Commands for exUnit
 (use-package exunit

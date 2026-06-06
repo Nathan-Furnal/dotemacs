@@ -1,8 +1,8 @@
 ;;; pre-init.el --- Init -*- no-byte-compile: t; lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "Iosevka Term Curly" :height 140 :weight 'regular)
-(set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 140 :weight 'medium)
-(set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 135 :weight 'medium)
+(set-face-attribute 'default nil :family "Iosevka Term Curly" :height 130 :weight 'regular)
+(set-face-attribute 'fixed-pitch nil :family "Iosevka Term" :height 130 :weight 'medium)
+(set-face-attribute 'variable-pitch nil :family "Iosevka Aile" :height 130 :weight 'medium)
 (put 'narrow-to-region 'disabled nil) ; Allows narrowing bound to C-x n n (region) and C-x n w (widen)
 
 (use-package emacs
