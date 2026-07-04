@@ -166,24 +166,6 @@
   :init
   (require-theme 'modus-themes) ; `require-theme' is ONLY for the built-in Modus themes
   :config
-  (setq modus-themes-org-blocks 'tinted-background
-	modus-themes-italic-constructs t
-	modus-themes-bold-constructs t
-	modus-themes-mixed-fonts t
-	modus-themes-variable-pitch-ui nil
-	modus-themes-common-palette-overrides
-    '((bg-mode-line-active bg-lavender)
-      (fg-mode-line-active fg-main)
-      (border-mode-line-active bg-magenta-intense)
-	  (fringe subtle)
-	  (bg-paren-match bg-yellow-intense)
-	  (custom-set-faces
-	   '(mode-line ((t :family "Iosevka Etoile" :height 100 :weight 'regular))))))
-  (setq modus-themes-headings
-        (quote ((1 . (overline variable-pitch 1.5))
-                (2 . (overline variable-pitch 1.3))
-                (3 . (overline 1.1))
-                (t . (monochrome)))))
   (if (display-graphic-p)
       (modus-themes-load-theme 'modus-operandi-tinted)
     (modus-themes-load-theme 'modus-vivendi-tinted))
@@ -209,37 +191,30 @@
 (use-package marginalia
   :pin melpa
   :ensure t
-  :commands (marginalia-mode marginalia-cycle)  
-  :custom
-  (marginalia-annotators '(marginalia-annotators-light))
+  :commands (marginalia-mode marginalia-cycle)
   :hook (after-init . marginalia-mode))
 
 ;; Better completion popup
 (use-package corfu
   :pin gnu
   :ensure t
-  :commands (corfu-mode global-corfu-mode)  
-  ;; Optional customizations
+  :commands (corfu-mode global-corfu-mode)
   :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  (corfu-separator ?\s)          ;; Orderless field separator
-  (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
-  (corfu-quit-no-match t)      ;; Never quit, even if there is no match
-  (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-preselect 'prompt)      ;; Preselect the prompt
-  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  (corfu-scroll-margin 5)        ;; Use scroll margin
+  (corfu-cycle t)                       ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                        ;; Enable auto completion
+  (corfu-separator ?\s)                 ;; Orderless field separator
+  (corfu-quit-at-boundary 'separator)   ;; Quit at boundary, except on the separator
+  (corfu-quit-no-match 'separator)      ;; Quit on no match, except while typing the separator
+  (corfu-preview-current nil)           ;; Disable current candidate preview
+  (corfu-preselect 'prompt)             ;; Preselect the prompt
+  (corfu-on-exact-match nil)            ;; Configure handling of exact matches
+  (corfu-scroll-margin 5)               ;; Use scroll margin
   ;; Hide commands in M-x which do not apply to the current mode.
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Disable Ispell completion function. As an alternative try `cape-dict'.
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
-  :config
-  (global-corfu-mode)
-  :hook ((prog-mode . corfu-mode)
-         (shell-mode . corfu-mode)
-         (eshell-mode . corfu-mode)))
+  :hook (after-init . global-corfu-mode))
 
 ;; Better completion at point
 (use-package cape
@@ -460,30 +435,24 @@
   :ensure nil
   :defer t
   :diminish "Οrg"
-  :if (display-graphic-p)
   :custom
   (org-imenu-depth 5)
-  
-  (org-confirm-babel-evaluate nil)         ; Don't prompt before running code in org
-  (org-src-fontify-natively t)             ; Fontify code in code blocks
-  (org-src-tab-acts-natively t)            ; Tabs act as 4 spaces in source blocks
-  (org-src-preserve-indentation t)         ; Preserving indentation in source blocks
-  (org-highlight-latex-and-related '(latex))    ; Coloring latex code in mode
-  (org-latex-prefer-user-labels t)         ; Prefer user names and labels for references
-  (org-log-done 'time)                        ; When TODO is one, record timestamp
-  (org-return-follows-link t)                 ; Follows links on RET
-  ;; See `C-h v` for detail on the keywords, @ means adding a note with time and ! only registers
-  ;; the timestamp on state change
+  (org-confirm-babel-evaluate nil)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-src-preserve-indentation t)
+  (org-highlight-latex-and-related '(latex))
+  (org-latex-prefer-user-labels t)
+  (org-log-done 'time)
+  (org-return-follows-link t)
   (org-todo-keywords
    '((sequence "TODO(t)" "IN-PROGRESS(i@/!)" "PENDING-CLARIFICATION(p@/!)" "VERIFY(v!)" "|" "DONE(d!)" "WONT-DO(w@/!)")))
   (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
   :config
-  ;; Set :scale to 2 instead of 1 when org mode renders LaTeX
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))   ; Open PDF's with Emacs
-  :hook ((after-init . org-mode)
-         (org-mode . (lambda ()
-			           (variable-pitch-mode t)
-			           (setq-default fill-column 89)))))
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . emacs))
+  :hook (org-mode . (lambda ()
+                      (variable-pitch-mode t)
+                      (setq fill-column 89))))
 
 (use-package org-agenda
   :ensure nil
@@ -573,7 +542,7 @@
   :defer t
   :custom
   (citar-citeproc-csl-styles-dir (expand-file-name "~/Zotero/styles"))
-  (citar-library-paths '((expand-file-name "~/Drive/KLB/")))
+  (citar-library-paths (list (expand-file-name "~/Drive/KLB/")))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -621,16 +590,14 @@
 (use-package pdf-tools
   :pin melpa
   :ensure t
-  :defer t
-  :magic ("%PDF" . pdf-view-mode)
   :hook (TeX-after-compilation-finished . TeX-revert-document-buffer)
   :defines pdf-annot-activate-created-annotations
   :custom
   (pdf-view-display-size 'fit-page)
-  ;; more fine-grained zooming
   (pdf-view-resize-factor 1.05)
-  ;; create annotation on highlight
   (pdf-annot-activate-created-annotations t)
+  :init
+  (pdf-loader-install)
   :bind (:map pdf-view-mode-map
 	      ("C-s" . isearch-forward)
 	      ("C-r" . isearch-backward)))
@@ -751,46 +718,56 @@
              eglot-rename
              eglot-format-buffer)
   :custom
-  (eldoc-echo-area-use-multiline-p nil)
+  (eglot-autoshutdown t)                                ; stop server with last buffer
+  (eglot-extend-to-xref t)                              ; xref into dependencies
+  (eglot-events-buffer-config '(:size 0 :format full))  ; disable events log (perf)
+  (eldoc-echo-area-use-multiline-p nil)                 ; single-line echo area
   :config
-  ;; Python specific
+  ;; Quiet UI
+  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
+  ;; Server programs (prepended -> win over eglot's built-in defaults).
   (add-to-list 'eglot-server-programs
-               '((python-mode python-ts-mode)
-                 "ty" "server"))
-  ;; Elixir specific
+               '((python-mode python-ts-mode) . ("ty" "server")))
   (add-to-list 'eglot-server-programs
-	           '((elixir-ts-mode elixir-mode heex-ts-mode) . ("expert" "--stdio")))
-  ;; Golang specific
+               '((elixir-ts-mode elixir-mode heex-ts-mode) . ("expert" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '((go-mode go-ts-mode) . ("gopls")))
+  ;; Rust: rust-analyzer.  Settings via :initializationOptions per the official
+  ;; rust-analyzer eglot guidance.  clippy-on-save + no cache priming (lighter).
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode) . ("rust-analyzer"
+                                    :initializationOptions
+                                    (:check (:command "clippy")
+                                     :cachePriming (:enable :json-false)))))
+  ;; Only gopls here.  No semanticTokens (eglot can't use them).  staticcheck is
+  ;; the one real cost knob for Go -- drop it if you want maximum gopls speed.
   (setq-default eglot-workspace-configuration
-    '((:gopls .
-        ((staticcheck . t)
-         (matcher . "CaseSensitive")
-         (ui.semanticTokens . t)))))
-  ;; Haskell specific
+                '(:gopls (:staticcheck t
+                          :gofumpt t
+                          :matcher "CaseSensitive"
+                          :directoryFilters ["-node_modules" "-vendor"])))
   (add-to-list 'eglot-server-programs
-               '((haskell-ts-mode)
-                 "haskell-language-server-wrapper" "--lsp"))
-  (setq-default eglot-workspace-configuration
-                '((haskell
-                   (plugin
-                    (stan
-                     (globalOn . :json-false))))))  ;; disable stan
-  ;; Roc specific
-  (add-to-list 'eglot-server-programs '(roc-ts-mode "roc_language_server"))
-  ;; Prolog specific: https://github.com/jamesnvc/lsp_server
-  (setopt eglot-server-programs (cons
-                                 (cons 'prolog-mode
-                                       (list "swipl"
-                                             "-O"
-                                             "-g" "use_module(library(lsp_server))."
-                                             "-g" "lsp_server:main"
-                                             "-t" "halt"
-                                             "--" "port" :autoport))
-                                 eglot-server-programs))
-  :bind (("C-c l b" . eglot-format-buffer)
-	 ("C-c l a" . eglot-code-actions)
-	 ("C-c l e" . eglot-reconnect)
-	 ("C-c l r" . eglot-rename)))
+               '((zig-mode) . ("zls")))
+  :bind (:map eglot-mode-map
+              ("C-c l b" . eglot-format-buffer)
+              ("C-c l a" . eglot-code-actions)
+              ("C-c l e" . eglot-reconnect)
+              ("C-c l r" . eglot-rename)))
+
+(use-package sideline
+  :ensure t
+  :hook (flymake-mode . sideline-mode)
+  :custom
+  (sideline-backends-right '(sideline-flymake))
+  (sideline-backends-right-skip-current-line t)) ; don't overlap the line you're on
+
+(use-package sideline-flymake
+  :ensure t
+  :after sideline
+  :custom
+  ;; 'line = show the current line's diagnostics (VSCode-ish, still quiet)
+  ;; 'point = only the diagnostic under point (quietest)
+  (sideline-flymake-display-mode 'line))
 
 ;; Debugger
 (use-package dape
@@ -819,6 +796,7 @@
 ;; Agents
 (use-package agent-shell
   :ensure t
+  :defer t
   :custom
   (agent-shell-session-strategy 'prompt)
   (agent-shell-preferred-agent-config 'opencode)
@@ -879,14 +857,9 @@
   :ensure t
   :defer t
   :custom
-  (setq parinfer-rust-auto-download t)
-  :hook ((emacs-lisp-mode
-          lisp-mode
-          racket-mode
-          scheme-mode
-          clojure-ts-mode
-          clojurescript-mode
-          janet-ts-mode)))
+  (parinfer-rust-auto-download t)
+  :hook ((clojure-ts-mode
+          clojurescript-mode)))
 
 ;;;========================================
 ;;; Scheme 
@@ -1017,14 +990,11 @@
   :defer t
   :hook (python-base-mode . pet-mode))
 
-;; Use ruff with flymake in Python buffer
 (use-package flymake-ruff
-  :pin melpa
   :ensure t
-  :defer t
   :hook (python-base-mode . (lambda ()
-                              (flymake-mode 1)
-                              (flymake-ruff-load))))
+                              (flymake-ruff-load)
+                              (flymake-mode 1))))
 
 ;;;========================================
 ;;; Lua
