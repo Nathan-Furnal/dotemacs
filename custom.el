@@ -9,11 +9,11 @@
                  clj-refactor clojure-ts-mode compile-angel consult-denote corfu csv-mode
                  dape difftastic diminish docker dockerfile-mode editorconfig eglot
                  elfeed elisp-lint embark-consult erc exec-path-from-shell exunit faceup
-                 fish-mode flymake-ruff forth-mode fuel geiser-chez geiser-chicken
-                 geiser-guile gnuplot go-mode gpr-ts-mode haskell-ts-mode hide-mode-line
-                 hindent idlwave inf-elixir janet-ts-mode jinx julia-snail julia-ts-mode
-                 kkp langtool logos lua-mode marginalia markdown-mode maxima mix
-                 modus-themes nov ntlm numpydoc olivetti orderless pandoc-mode
+                 fish-mode flycheck flymake-ruff forth-mode fuel geiser-chez
+                 geiser-chicken geiser-guile gnuplot go-mode gpr-ts-mode haskell-ts-mode
+                 hide-mode-line hindent idlwave inf-elixir janet-ts-mode jinx julia-snail
+                 julia-ts-mode kkp langtool logos lua-mode marginalia markdown-mode
+                 maxima mix modus-themes nov ntlm numpydoc olivetti orderless pandoc-mode
                  parinfer-rust-mode pdf-tools peg pet puni python rainbow-delimiters
                  roc-ts-mode slime so-long soap-client svg sweeprolog tramp treesit-auto
                  uniline use-package verilog-mode vertico vterm which-key window-tool-bar
