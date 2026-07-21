@@ -12,8 +12,8 @@
                  exunit faceup fish-mode flymake-ruff geiser-chez geiser-chicken
                  geiser-guile gnuplot go-mode hide-mode-line idlwave inf-elixir
                  janet-ts-mode jinx julia-snail julia-ts-mode kkp langtool logos
-                 lsp-mode lua-mode marginalia maxima mix modus-themes nov ntlm
-                 numpydoc olivetti orderless pandoc-mode parinfer-rust-mode
+                 lua-mode marginalia markdown-mode maxima mix modus-themes nov
+                 ntlm numpydoc olivetti orderless pandoc-mode parinfer-rust-mode
                  pdf-tools peg pet puni python rainbow-delimiters
                  sideline-flymake slime so-long soap-client svg tramp
                  treesit-auto uniline use-package verilog-mode vertico vterm

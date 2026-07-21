@@ -165,10 +165,20 @@
 (use-package modus-themes
   :init
   (require-theme 'modus-themes) ; `require-theme' is ONLY for the built-in Modus themes
+  :custom
+  (modus-themes-common-palette-overrides
+   '((bg-mode-line-active bg-lavender)
+     (fg-mode-line-active fg-lavender)
+     (border-mode-line-active bg-magenta-intense)
+     (fringe unspecified)
+     (fg-line-number-inactive "gray50")
+     (fg-line-number-active magenta-cooler)
+     (bg-line-number-active bg-magenta-subtle)
+     (bg-line-number-inactive unspecified)))
   :config
   (if (display-graphic-p)
       (modus-themes-load-theme 'modus-operandi-tinted)
-    (modus-themes-load-theme 'modus-vivendi-tinted))
+    (modus-themes-load-theme 'modus-vivendi))
   (setq modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
