@@ -75,8 +75,8 @@
 (add-hook 'after-init-hook #'save-place-mode)
 
 ;;;========================================
-;;; Better defaults
-;;;========================================
+ ;;; Better defaults
+ ;;;========================================
 
 ;;; Improve defaults with packages (not builtins)
 
@@ -733,8 +733,6 @@
   (eglot-events-buffer-config '(:size 0 :format full))  ; disable events log (perf)
   (eldoc-echo-area-use-multiline-p nil)                 ; single-line echo area
   :config
-  ;; Quiet UI
-  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
   ;; Server programs (prepended -> win over eglot's built-in defaults).
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode) . ("ty" "server")))
@@ -762,7 +760,24 @@
               ("C-c l b" . eglot-format-buffer)
               ("C-c l a" . eglot-code-actions)
               ("C-c l e" . eglot-reconnect)
-              ("C-c l r" . eglot-rename)))
+              ("C-c l r" . eglot-rename)
+              ("C-c l d" . eldoc-doc-buffer)
+              ("C-c l p" . flymake-show-project-diagnostics)
+              ("C-c l i" . eglot-inlay-hints-mode)))
+
+;; Additional plugins for eglot
+(use-package eglot-x
+  :ensure t
+  :vc (:url "https://github.com/nemethf/eglot-x")
+  :after eglot
+  :config (eglot-x-setup))
+
+(use-package consult-eglot
+  :ensure t
+  :defer t
+  :after (consult eglot)
+  :bind (:map eglot-mode-map
+              ("M-g s" . consult-eglot-symbols)))
 
 (use-package sideline
   :ensure t
@@ -786,22 +801,16 @@
   :custom
   (dape-buffer-window-arrangement 'gud)
   :config
-  ;; Global bindings for setting breakpoints with mouse
+  ;; NOTE: takes effect only once dape has loaded (deferred) — gutter-click
+  ;; breakpoints don't exist until the first dape use in a session.
   (dape-breakpoint-global-mode)
-  ;; To not display info and/or buffers on startup
-  ;; (remove-hook 'dape-on-start-hooks 'dape-info)
-  ;; (remove-hook 'dape-on-start-hooks 'dape-repl)
-
-  ;; To display info and/or repl buffers on stopped
-  ;; (add-hook 'dape-on-stopped-hooks 'dape-info)
-  ;; (add-hook 'dape-on-stopped-hooks 'dape-repl)
-
-  ;; Kill compile buffer on build success
-  (add-hook 'dape-compile-compile-hooks 'kill-buffer)
-
-  ;; Save buffers on startup, useful for interpreted languages
-  ;; (add-hook 'dape-on-start-hooks (lambda () (save-some-buffers t t)))
+  (add-hook 'dape-compile-hook #'kill-buffer)
+  ;; Optional quality-of-life, current names:
+  ;; (add-hook 'dape-start-hook   (lambda () (save-some-buffers t t)))
+  ;; (add-hook 'dape-stopped-hook #'dape-info)
+  ;; (add-hook 'dape-display-source-hook #'pulse-momentary-highlight-one-line)
   )
+
 
 ;; Agents
 (use-package agent-shell
@@ -1005,6 +1014,36 @@
   :hook (python-base-mode . (lambda ()
                               (flymake-ruff-load)
                               (flymake-mode 1))))
+
+;;;========================================
+;;; Rust
+;;;========================================
+
+(use-package rust-ts-mode
+  :mode "\\.rs\\'"
+  :hook ((rust-ts-mode . eglot-ensure)
+         (rust-ts-mode . eglot-inlay-hints-mode)))
+
+(use-package cargo-mode
+  :ensure t
+  :defer t
+  :hook (rust-ts-mode . cargo-minor-mode)
+  :config
+  (setq compilation-scroll-output 'first-error  ; scroll, stop at first error
+        compilation-ask-about-save nil))        ; just save and run
+
+(use-package beardbolt
+  :ensure t
+  :defer t
+  :vc (:url "https://github.com/joaotavora/beardbolt" :rev :newest)
+  :commands (beardbolt-starter beardbolt-mode)
+  :config
+  (setq beardbolt-demangle t))  ; needs `cargo install rustfilt`
+
+(use-package elf-mode
+  :ensure t
+  :defer t
+  :config (elf-setup-default))
 
 ;;;========================================
 ;;; Lua

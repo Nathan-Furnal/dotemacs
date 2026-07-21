@@ -32,6 +32,8 @@
 (delete-selection-mode t)
 ;; Show column number as well
 (column-number-mode +1)
+;; Allow repeat-mode
+(repeat-mode +1)
 
 ;; Thanks Prot'
 ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
